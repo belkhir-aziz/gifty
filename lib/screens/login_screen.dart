@@ -1,8 +1,10 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
+import 'package:datingapp/screens/notification_banner_screen.dart';
 import 'package:datingapp/screens/verify_otp_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginScreen extends BaseRoute {
   const LoginScreen({super.key, super.a, super.o}) : super(r: 'LoginScreen');
@@ -12,229 +14,204 @@ class LoginScreen extends BaseRoute {
 }
 
 class _LoginScreenState extends BaseRouteState {
-  final TextEditingController _cContactNo = TextEditingController();
+  final TextEditingController _cEmail = TextEditingController();
+  final TextEditingController _cPassword = TextEditingController();
+  final TextEditingController _cConfirmPassword = TextEditingController();
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool isLogin = true; // Toggle between Login and Sign-Up modes
 
   _LoginScreenState();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    resizeToAvoidBottomInset: false,
-    key: _scaffoldKey,
-    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    body: Center(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Text(
-                AppLocalizations.of(context)!.lbl_login,
-                style: Theme.of(context).primaryTextTheme.displayLarge,
-              ),
-            ),
-            Text(
-              AppLocalizations.of(context)!.lbl_login_subtitle1,
-              style: Theme.of(context).primaryTextTheme.titleSmall,
-            ),
-            Text(
-              AppLocalizations.of(context)!.lbl_login_subtitle2,
-              style: Theme.of(context).primaryTextTheme.titleSmall,
-            ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-              padding: const EdgeInsets.all(1.5),
-              height: 55,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: g.gradientColors,
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+      resizeToAvoidBottomInset: false,
+      key: _scaffoldKey,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Text(
+                  isLogin
+                      ? AppLocalizations.of(context)!.lbl_login
+                      : "Sign Up", // Adjust the title dynamically
+                  style: Theme.of(context).primaryTextTheme.displayLarge,
                 ),
-                borderRadius: BorderRadius.circular(35),
               ),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: g.isDarkModeEnable
-                      ? Colors.black
-                      : Theme.of(context).scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(35),
+              TextFormField(
+                controller: _cEmail,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(20),
+                  hintText: 'Enter your email',
+                  prefixIcon: Icon(
+                    Icons.email,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
                 ),
-                height: 55,
-                child: TextFormField(
-                  style: Theme.of(context).primaryTextTheme.titleSmall,
-                  controller: _cContactNo,
-                  keyboardType: TextInputType.number,
+              ),
+              const SizedBox(height: 15),
+              TextFormField(
+                controller: _cPassword,
+                obscureText: true,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(20),
+                  hintText: 'Enter your password',
+                  prefixIcon: Icon(
+                    Icons.lock,
+                    color: Theme.of(context).iconTheme.color,
+                  ),
+                ),
+              ),
+              if (!isLogin) // Show confirm password only for Sign-Up
+                const SizedBox(height: 15),
+              if (!isLogin)
+                TextFormField(
+                  controller: _cConfirmPassword,
+                  obscureText: true,
                   decoration: InputDecoration(
                     contentPadding: const EdgeInsets.all(20),
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Image.asset(
-                              'assets/images/flag1.png',
-                              fit: BoxFit.fitWidth,
-                              height: 15,
-                            ),
-                          ),
-                          Text(
-                            '(+01)',
-                            style: Theme.of(context)
-                                .primaryTextTheme
-                                .titleSmall,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Icon(
-                              Icons.expand_more,
-                              color: Theme.of(context).iconTheme.color,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: VerticalDivider(
-                              thickness: 2,
-                              color: Theme.of(context).iconTheme.color,
-                            ),
-                          )
-                        ],
-                      ),
+                    hintText: 'Confirm your password',
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      color: Theme.of(context).iconTheme.color,
                     ),
                   ),
                 ),
-              ),
-            ),
-            Container(
-              height: 50,
-              width: 150,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(25),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: g.gradientColors,
+              const SizedBox(height: 20),
+              Container(
+                height: 50,
+                width: 150,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: g.gradientColors,
+                  ),
+                ),
+                child: TextButton(
+                  onPressed: isLogin ? _loginUser : _signUpUser,
+                  child: Text(
+                    isLogin ? 'Login' : 'Sign Up',
+                    style: Theme.of(context)
+                        .textButtonTheme
+                        .style!
+                        .textStyle!
+                        .resolve({
+                      WidgetState.pressed,
+                    }),
+                  ),
                 ),
               ),
-              child: TextButton(
+              TextButton(
                 onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => VerifyOtpScreen(
-                            a: widget.analytics,
-                            o: widget.observer,
-                          )));
+                  setState(() {
+                    isLogin = !isLogin;
+                  });
                 },
                 child: Text(
-                  AppLocalizations.of(context)!.btn_submit,
-                  style: Theme.of(context)
-                      .textButtonTheme
-                      .style!
-                      .textStyle!
-                      .resolve({
-                    WidgetState.pressed,
-                  }),
+                  isLogin
+                      ? "Don’t have an account? Sign Up"
+                      : "Already have an account? Login",
+                  style: Theme.of(context).primaryTextTheme.bodyMedium,
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 25, bottom: 20),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Container(
-                    margin: const EdgeInsets.all(15),
-                    height: 0.5,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: g.gradientColors,
-                      ),
-                    ),
-                    child: const Divider(),
-                  ),
-                  Container(
-                      margin: const EdgeInsets.all(15),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(
-                          color: const Color(0xFF3F1444),
-                        ),
-                      ),
-                      child: g.isDarkModeEnable
-                          ? CircleAvatar(
-                              radius: 24,
-                              backgroundColor: Colors.black,
-                              child: Text(
-                                AppLocalizations.of(context)!.lbl_or,
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .titleSmall,
-                              ),
-                            )
-                          : CircleAvatar(
-                              radius: 24,
-                              backgroundColor: Colors.white,
-                              child: Text(
-                                AppLocalizations.of(context)!.lbl_or,
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .titleSmall,
-                              ),
-                            ))
-                ],
-              ),
-            ),
-            Text(
-              AppLocalizations.of(context)!.lbl_login_using,
-              style: Theme.of(context).primaryTextTheme.displaySmall,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 25),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  CircleAvatar(
-                    radius: 25,
-                    backgroundColor: const Color(0xFF2942C7),
-                    child: Text(
-                      'f',
-                      style: Theme.of(context)
-                          .textTheme
-                          .displayMedium
-                          ?.copyWith(color: Colors.white, fontSize: 20),
-                    ),
-                  ),
-                  Padding(
-                    padding: g.isRTL
-                        ? const EdgeInsets.only(right: 15)
-                        : const EdgeInsets.only(left: 15),
-                    child: CircleAvatar(
-                      radius: 25,
-                      backgroundColor: const Color(0xFFDF4D5F),
-                      child: Text(
-                        'G',
-                        style: Theme.of(context)
-                            .textTheme
-                            .displayMedium
-                            ?.copyWith(color: Colors.white, fontSize: 20),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          ],
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
+
+  Future<void> _loginUser() async {
+  final email = _cEmail.text.trim();
+  final password = _cPassword.text.trim();
+
+  if (email.isEmpty || password.isEmpty) {
+    _showNotification('Email and Password cannot be empty', isError: true);
+    return;
+  }
+
+  try {
+    final response = await Supabase.instance.client.auth.signInWithPassword(
+      email: email,
+      password: password,
+    );
+
+    if (response.session != null) {
+      _showNotification('Login successful!', isError: false);
+      // Navigate to the next screen
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => VerifyOtpScreen(
+          a: widget.analytics,
+          o: widget.observer,
+        ),
+      ));
+    }
+  } catch (e) {
+    _showNotification('Login failed: $e', isError: true);
+  }
+}
+
+
+
+Future<void> _signUpUser() async {
+  final email = _cEmail.text.trim();
+  final password = _cPassword.text.trim();
+  final confirmPassword = _cConfirmPassword.text.trim();
+
+  if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+    _showNotification('Please fill in all fields', isError: true);
+    return;
+  }
+
+  if (password != confirmPassword) {
+    _showNotification('Passwords do not match', isError: true);
+    return;
+  }
+
+  try {
+    final response = await Supabase.instance.client.auth.signUp(
+      email: email,
+      password: password,
+    );
+
+    if (response.user != null) {
+      _showNotification('Sign-up successful! Check your email for verification.', isError: false);
+      // Navigate to the next screen
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => VerifyOtpScreen(
+          a: widget.analytics,
+          o: widget.observer,
+        ),
+      ));
+    }
+  } catch (e) {
+    _showNotification('Sign-up failed: $e', isError: true);
+  }
+}
+
+void _showNotification(String message, {bool isError = false}) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    builder: (context) {
+      return FancyNotificationBanner(
+        message: message,
+        isError: isError,
+        icon: isError ? Icons.error_outline : Icons.check_circle_outline,
+      );
+    },
+  );
+}
+
+
 
 }

@@ -8,8 +8,13 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+const supabaseUrl = 'https://qczlshaglldtcmgczbgj.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFjemxzaGFnbGxkdGNtZ2N6YmdqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzNDE3MzgsImV4cCI6MjA1NjkxNzczOH0.jzRZj9_vyvprqBpJuJBOXZwxSI0I6Ncl3LpaLks1Kto';
+Future<void> main() async {
+  await Supabase.initialize(url: supabaseUrl, anonKey: supabaseKey);
+
   WidgetsFlutterBinding.ensureInitialized();
   runApp(Phoenix(child: const MyApp()));
 }

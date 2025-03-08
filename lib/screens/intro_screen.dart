@@ -1,6 +1,6 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
-import 'package:datingapp/screens/start_dating_screen.dart';
+import 'package:datingapp/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -32,8 +32,8 @@ class _IntroScreenState extends BaseRouteState {
                 Expanded(
                   child: Image.asset(
                     g.isDarkModeEnable
-                        ? 'assets/images/intro_new_dark_1.jpg'
-                        : 'assets/images/intro_new_remove_light.png',
+                        ? 'assets/images/splash_new_dark.png'
+                        : 'assets/images/splash_new_light.png',
                     fit: BoxFit.contain,
                   ),
                 ),
@@ -45,11 +45,11 @@ class _IntroScreenState extends BaseRouteState {
                   highlightColor: Colors.transparent,
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => StartDatingScreen(
-                              a: widget.analytics,
-                              o: widget.observer,
-                            )));
-                  },
+                        builder: (context) => LoginScreen(
+                                a: widget.analytics,
+                                o: widget.observer,
+                              ))); 
+                    },
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

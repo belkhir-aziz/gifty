@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfileDetailScreen extends BaseRoute {
-  const ProfileDetailScreen({super.key, super.a, super.o}) : super(r: 'ProfileDetailScreen');
+  const ProfileDetailScreen({super.key, super.a, super.o, required profileUser}) : super(r: 'ProfileDetailScreen');
 
   @override
   BaseRouteState createState() => _ProfileDetailScreenState();

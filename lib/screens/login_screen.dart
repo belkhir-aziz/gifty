@@ -1,7 +1,10 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
+import 'package:datingapp/models/user_profile.dart';
+import 'package:datingapp/provider/user_profile_handler.dart';
 import 'package:datingapp/screens/notification_banner_screen.dart';
-import 'package:datingapp/screens/verify_otp_screen.dart';
+import 'package:datingapp/screens/profile_detail_screen.dart';
+import 'package:datingapp/widgets/bottom_navigation_bar_widget_light.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -17,6 +20,7 @@ class _LoginScreenState extends BaseRouteState {
   final TextEditingController _cEmail = TextEditingController();
   final TextEditingController _cPassword = TextEditingController();
   final TextEditingController _cConfirmPassword = TextEditingController();
+  final UserProfileHandler _profileHandler = UserProfileHandler();
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isLogin = true; // Toggle between Login and Sign-Up modes
@@ -130,37 +134,67 @@ class _LoginScreenState extends BaseRouteState {
     );
   }
 
-  Future<void> _loginUser() async {
+Future<void> _loginUser() async {
   final email = _cEmail.text.trim();
   final password = _cPassword.text.trim();
 
+  // Validate input fields
   if (email.isEmpty || password.isEmpty) {
     _showNotification('Email and Password cannot be empty', isError: true);
     return;
   }
 
   try {
+    // Attempt to log the user in
     final response = await Supabase.instance.client.auth.signInWithPassword(
       email: email,
       password: password,
     );
 
+    // Check if the session exists
     if (response.session != null) {
+      final userId = response.user!.id; // Get the user's UID
       _showNotification('Login successful!', isError: false);
-      // Navigate to the next screen
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => VerifyOtpScreen(
-          a: widget.analytics,
-          o: widget.observer,
-        ),
-      ));
+
+      // Retrieve the user's profile from the "Users" table
+      final profile = await _profileHandler.getUserProfileWithEmail(email);
+      if (profile == null) {
+        _showNotification('For a nice experience, please feel your data', isError: true);
+        // Create a profile for the user in the Users table
+          final userProfile = UserProfile(
+          id: userId,
+          email: email,
+          firstName: '', // Placeholder - collect later
+          lastName: '',  // Placeholder - collect later
+          gender: '',    // Placeholder - collect later
+          dateOfBirth: DateTime.now(), // Placeholder or null
+          hobbies: '',   // Placeholder - collect later
+        );
+
+        // Navigate to the next screen and pass the UID and email to other components
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => ProfileDetailScreen(
+            a: widget.analytics,
+            o: widget.observer,
+            profileUser: userProfile
+          ),
+        ));
+      } else {
+        Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  BottomNavigationWidgetLight(
+                                    currentIndex: 0,
+                                    a: widget.analytics,
+                                    o: widget.observer,
+                                  )));
+      }
+    } else {
+      _showNotification('Login failed: Invalid credentials.', isError: true);
     }
   } catch (e) {
     _showNotification('Login failed: $e', isError: true);
   }
 }
-
-
 
 Future<void> _signUpUser() async {
   final email = _cEmail.text.trim();
@@ -184,15 +218,29 @@ Future<void> _signUpUser() async {
     );
 
     if (response.user != null) {
-      _showNotification('Sign-up successful! Check your email for verification.', isError: false);
-      // Navigate to the next screen
-      Navigator.of(context).pushReplacement(MaterialPageRoute(
-        builder: (context) => VerifyOtpScreen(
-          a: widget.analytics,
-          o: widget.observer,
-        ),
-      ));
-    }
+      final id = response.user!.id; // Get the newly created user's UID
+
+      // Create a profile for the user in the Users table
+      final userProfile = UserProfile(
+      id: id,
+      email: email,
+      firstName: '', // Placeholder - collect later
+      lastName: '',  // Placeholder - collect later
+      gender: '',    // Placeholder - collect later
+      dateOfBirth: DateTime.now(), // Placeholder or null
+      hobbies: '',   // Placeholder - collect later
+    );
+
+
+        // Navigate to the next screen and pass the UID and email to other components
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => ProfileDetailScreen(
+            a: widget.analytics,
+            o: widget.observer,
+            profileUser: userProfile
+          ),
+        ));
+      } 
   } catch (e) {
     _showNotification('Sign-up failed: $e', isError: true);
   }

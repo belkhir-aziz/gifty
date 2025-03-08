@@ -1,6 +1,7 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:datingapp/screens/upload_id_screen.dart';
+import 'package:datingapp/widgets/bottom_navigation_bar_widget_light.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -1186,7 +1187,9 @@ class _LikesInterestScreenState extends BaseRouteState {
                       child: TextButton(
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => UploadIdScreen(
+                              builder: (context) =>
+                                  BottomNavigationWidgetLight(
+                                    currentIndex: 0,
                                     a: widget.analytics,
                                     o: widget.observer,
                                   )));
@@ -1231,10 +1234,12 @@ class _LikesInterestScreenState extends BaseRouteState {
                 trailing: InkWell(
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => UploadIdScreen(
-                              a: widget.analytics,
-                              o: widget.observer,
-                            )));
+                              builder: (context) =>
+                                  BottomNavigationWidgetLight(
+                                    currentIndex: 0,
+                                    a: widget.analytics,
+                                    o: widget.observer,
+                                  )));
                   },
                   child: Text(
                     AppLocalizations.of(context)!.btn_skip,

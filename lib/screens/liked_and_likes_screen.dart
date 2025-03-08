@@ -12,12 +12,16 @@ class LikedAndLikesScreen extends BaseRoute {
   BaseRouteState createState() => _LikedAndLikesScreenState();
 }
 
+
 class _LikedAndLikesScreenState extends BaseRouteState {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final List<String> _list = [];
 
   _LikedAndLikesScreenState();
-
+  void updateProfileUser() {
+    // Update the profileUser object with the current input
+    
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(

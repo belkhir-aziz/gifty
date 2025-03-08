@@ -1,17 +1,22 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
+import 'package:datingapp/models/user_profile.dart';
 import 'package:datingapp/screens/likes_and_interest_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart';
 
 class ProfileDetailScreen extends BaseRoute {
-  const ProfileDetailScreen({super.key, super.a, super.o, required profileUser}) : super(r: 'ProfileDetailScreen');
+  final UserProfile userProfile; 
+  const ProfileDetailScreen({super.key, super.a, super.o, required  this.userProfile}) : super(r: 'ProfileDetailScreen');
 
   @override
-  BaseRouteState createState() => _ProfileDetailScreenState();
+  BaseRouteState createState() => _ProfileDetailScreenState(userProfile);
 }
 
 class _ProfileDetailScreenState extends BaseRouteState {
+  final UserProfile userProfile; // Store UserProfile in state
+
   final TextEditingController _cFirstName = TextEditingController();
   final TextEditingController _cLastName = TextEditingController();
   final TextEditingController _cBDate = TextEditingController();
@@ -19,8 +24,16 @@ class _ProfileDetailScreenState extends BaseRouteState {
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  _ProfileDetailScreenState() : super();
+  _ProfileDetailScreenState(this.userProfile) : super();
 
+  void updateProfileUser() {
+    // Update the profileUser object with the current input
+    userProfile.firstName =_cFirstName.text;
+    userProfile.lastName = _cLastName.text;
+    userProfile.dateOfBirth = DateFormat("dd-MM-yyyy").parse(_cBDate.text);
+    userProfile.gender = "male";
+  }
+  
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -190,19 +203,37 @@ class _ProfileDetailScreenState extends BaseRouteState {
                         ),
                         height: 55,
                         child: TextFormField(
-                          style:
-                              Theme.of(context).primaryTextTheme.titleSmall,
+                          style: Theme.of(context).primaryTextTheme.titleSmall,
                           controller: _cBDate,
+                          readOnly: true, // Prevent keyboard input to allow only date selection
                           decoration: InputDecoration(
-                              labelText:
-                                  AppLocalizations.of(context)!.lbl_dob_hint,
-                              labelStyle: Theme.of(context)
-                                  .primaryTextTheme
-                                  .titleSmall,
-                              contentPadding: g.isRTL
-                                  ? const EdgeInsets.only(right: 20)
-                                  : const EdgeInsets.only(left: 20),
-                              suffixIcon: Padding(
+                            labelText: AppLocalizations.of(context)!.lbl_dob_hint,
+                            labelStyle: Theme.of(context).primaryTextTheme.titleSmall,
+                            contentPadding: g.isRTL
+                                ? const EdgeInsets.only(right: 20)
+                                : const EdgeInsets.only(left: 20),
+                            suffixIcon: GestureDetector(
+                              onTap: () async {
+                                // Open date picker
+                                DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(), // Current date
+                                  firstDate: DateTime(1900),   // Earliest selectable date
+                                  lastDate: DateTime.now(),   // Latest selectable date
+                                );
+
+                                if (pickedDate != null) {
+                                  // Format the selected date
+                                  String formattedDate =
+                                      "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+
+                                  // Update the TextEditingController with the selected date
+                                  setState(() {
+                                    _cBDate.text = formattedDate;
+                                  });
+                                }
+                              },
+                              child: Padding(
                                 padding: g.isRTL
                                     ? const EdgeInsets.only(left: 4)
                                     : const EdgeInsets.only(right: 4),
@@ -211,7 +242,9 @@ class _ProfileDetailScreenState extends BaseRouteState {
                                   color: Theme.of(context).iconTheme.color,
                                   size: 20,
                                 ),
-                              )),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -294,10 +327,12 @@ class _ProfileDetailScreenState extends BaseRouteState {
                         ),
                         child: TextButton(
                           onPressed: () {
+                            updateProfileUser();
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => LikesInterestScreen(
                                       a: widget.analytics,
                                       o: widget.observer,
+                                      userProfile: userProfile
                                     )));
                           },
                           child: Text(

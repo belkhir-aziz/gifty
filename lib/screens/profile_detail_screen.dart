@@ -61,7 +61,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
                             backgroundColor: Colors.white,
                             child: CircleAvatar(
                               backgroundImage:
-                                  AssetImage('assets/images/sample3.png'),
+                                  AssetImage('assets/images/sample4.png'),
                               radius: 60,
                               backgroundColor: Color(0xFF33196B),
                             ),
@@ -98,7 +98,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.all(20),
+                      margin: const EdgeInsets.fromLTRB(50, 20, 50, 20),
                       padding: const EdgeInsets.all(1.5),
                       height: 55,
                       decoration: BoxDecoration(
@@ -134,7 +134,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.all(20),
+                      margin: const EdgeInsets.fromLTRB(50, 20, 50, 20),
                       padding: const EdgeInsets.all(1.5),
                       height: 55,
                       decoration: BoxDecoration(
@@ -170,7 +170,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.all(20),
+                      margin: const EdgeInsets.fromLTRB(50, 20, 50, 20),
                       padding: const EdgeInsets.all(1.5),
                       height: 55,
                       decoration: BoxDecoration(
@@ -216,7 +216,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.all(20),
+                      margin: const EdgeInsets.fromLTRB(50, 20, 50, 20),
                       padding: const EdgeInsets.all(1.5),
                       height: 55,
                       decoration: BoxDecoration(
@@ -236,7 +236,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
                         ),
                         height: 55,
                         child: DropdownButtonFormField<String>(
-                          dropdownColor: Theme.of(context).primaryColorLight,
+                          dropdownColor: Theme.of(context).scaffoldBackgroundColor,  //Theme.of(context).primaryColorLight,
                           icon: Padding(
                             padding: g.isRTL
                                 ? const EdgeInsets.only(left: 20)

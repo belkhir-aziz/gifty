@@ -125,3 +125,4 @@ local.properties
 
 # FVM Version Cache
 .fvm/
+build/cache.dill.track.dill

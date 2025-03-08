@@ -8,6 +8,7 @@ import 'package:datingapp/widgets/bottom_navigation_bar_widget_light.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 class LoginScreen extends BaseRoute {
   const LoginScreen({super.key, super.a, super.o}) : super(r: 'LoginScreen');
@@ -153,7 +154,6 @@ Future<void> _loginUser() async {
 
     // Check if the session exists
     if (response.session != null) {
-      final userId = response.user!.id; // Get the user's UID
       _showNotification('Login successful!', isError: false);
 
       // Retrieve the user's profile from the "Users" table
@@ -162,7 +162,7 @@ Future<void> _loginUser() async {
         _showNotification('For a nice experience, please feel your data', isError: true);
         // Create a profile for the user in the Users table
           final userProfile = UserProfile(
-          id: userId,
+          id: const Uuid().v4(),
           email: email,
           firstName: '', // Placeholder - collect later
           lastName: '',  // Placeholder - collect later
@@ -176,7 +176,7 @@ Future<void> _loginUser() async {
           builder: (context) => ProfileDetailScreen(
             a: widget.analytics,
             o: widget.observer,
-            profileUser: userProfile
+            userProfile: userProfile
           ),
         ));
       } else {
@@ -237,7 +237,7 @@ Future<void> _signUpUser() async {
           builder: (context) => ProfileDetailScreen(
             a: widget.analytics,
             o: widget.observer,
-            profileUser: userProfile
+            userProfile: userProfile
           ),
         ));
       } 

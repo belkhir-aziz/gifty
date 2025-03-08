@@ -1,5 +1,6 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
+import 'package:datingapp/models/user_profile.dart';
 import 'package:datingapp/screens/profile_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -244,7 +245,7 @@ class _VerifyOtpScreenState extends BaseRouteState {
                         builder: (context) => ProfileDetailScreen(
                               a: widget.analytics,
                               o: widget.observer,
-                              profileUser: null,
+                              userProfile: new UserProfile(id: "", email: "", firstName: "", lastName: "", gender: "", dateOfBirth: DateTime.now(), hobbies: ""),
                             )));
                   },
                   child: Text(

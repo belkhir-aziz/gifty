@@ -1,11 +1,11 @@
 class UserProfile {
   final String id;
   final String email;
-  final String firstName;
-  final String lastName;
-  final String gender;
-  final DateTime dateOfBirth;
-  final String hobbies;
+  late  String firstName;
+  late  String lastName;
+  late  String gender;
+  late  DateTime dateOfBirth;
+  late  String hobbies;
 
   UserProfile({
     required this.id,
@@ -33,7 +33,7 @@ class UserProfile {
   // Convert a UserProfile object into JSON for requests
   Map<String, dynamic> toJson() {
     return {
-      'uid': id,
+      'id': id,
       'email': email,
       'first_name': firstName,
       'last_name': lastName,

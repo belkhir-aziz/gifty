@@ -5,21 +5,21 @@ class UserProfileHandler {
   final SupabaseClient supabase = Supabase.instance.client;
 
   Future<void> createUserProfile(UserProfile userProfile) async {
-    final response = await supabase.from('Users').insert(userProfile.toJson());
+    final response = await supabase.from('users').insert(userProfile.toJson());
     if (response.error != null) {
       throw Exception('Failed to create profile: ${response.error!.message}');
     }
   }
 
-  Future<UserProfile> getUserProfile(String uid) async {
-    final response = await supabase.from('Users').select().eq('id', uid).single();
+  Future<UserProfile> getUserProfile(String id) async {
+    final response = await supabase.from('users').select().eq('id', id).single();
     return UserProfile.fromJson(response);
   }
 
   Future<UserProfile?> getUserProfileWithEmail(String email) async {
   try {
     final response = await supabase
-        .from('Users')
+        .from('users')
         .select()
         .eq('email', email)
         .single();

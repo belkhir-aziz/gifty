@@ -1,6 +1,7 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
-import 'package:datingapp/screens/upload_id_screen.dart';
+import 'package:datingapp/models/user_profile.dart';
+import 'package:datingapp/provider/user_profile_handler.dart';
 import 'package:datingapp/widgets/bottom_navigation_bar_widget_light.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -8,18 +9,24 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class LikesInterestScreen extends BaseRoute {
-  const LikesInterestScreen({super.key, super.a, super.o}) : super(r: 'LikesIntrestScreen');
+  final UserProfile userProfile; 
+  const LikesInterestScreen({super.key, super.a, super.o, required this.userProfile}) : super(r: 'LikesIntrestScreen');
 
   @override
-  BaseRouteState createState() => _LikesInterestScreenState();
+  BaseRouteState createState() => _LikesInterestScreenState(userProfile);
 }
 
 class _LikesInterestScreenState extends BaseRouteState {
+  final UserProfile userProfile;
+  final UserProfileHandler userProfileHandler = UserProfileHandler();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final List<String> _list = [];
 
-  _LikesInterestScreenState();
-
+  _LikesInterestScreenState(this.userProfile);
+  void updateProfileUser() {
+    userProfile.hobbies = _list.join(", ");
+    userProfileHandler.createUserProfile(userProfile);
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1186,6 +1193,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                       ),
                       child: TextButton(
                         onPressed: () {
+                          updateProfileUser();
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) =>
                                   BottomNavigationWidgetLight(
@@ -1233,6 +1241,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                 ),
                 trailing: InkWell(
                   onTap: () {
+                    updateProfileUser();
                     Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) =>
                                   BottomNavigationWidgetLight(

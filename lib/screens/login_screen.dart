@@ -218,27 +218,12 @@ Future<void> _signUpUser() async {
     );
 
     if (response.user != null) {
-      final id = response.user!.id; // Get the newly created user's UID
-
-      // Create a profile for the user in the Users table
-      final userProfile = UserProfile(
-      id: id,
-      email: email,
-      firstName: '', // Placeholder - collect later
-      lastName: '',  // Placeholder - collect later
-      gender: '',    // Placeholder - collect later
-      dateOfBirth: DateTime.now(), // Placeholder or null
-      hobbies: '',   // Placeholder - collect later
-    );
-
-
         // Navigate to the next screen and pass the UID and email to other components
         Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => ProfileDetailScreen(
-            a: widget.analytics,
-            o: widget.observer,
-            userProfile: userProfile
-          ),
+          builder: (context) => LoginScreen(
+          a: widget.analytics,
+          o: widget.observer,
+        ),
         ));
       } 
   } catch (e) {

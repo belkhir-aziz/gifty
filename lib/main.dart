@@ -2,6 +2,7 @@ import 'package:datingapp/Theme/native_theme.dart';
 import 'package:datingapp/l10n/l10n.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:datingapp/provider/local_provider.dart';
+import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/screens/intro_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -61,8 +62,11 @@ class MyAppState extends State<MyApp> {
   // }
 
   @override
-  Widget build(BuildContext context) => ChangeNotifierProvider(
-      create: (context) => LocaleProvider(),
+  Widget build(BuildContext context) => MultiProvider(
+      providers: [
+          ChangeNotifierProvider(create: (context) => LocaleProvider()),
+          ChangeNotifierProvider(create: (context) => UserProvider()), // Add UserProvider
+        ],
       builder: (context, child) {
         final provider = Provider.of<LocaleProvider>(context);
 

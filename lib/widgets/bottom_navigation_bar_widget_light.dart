@@ -145,7 +145,7 @@ class _BottomNavigationWidgetLightState extends BaseRouteState<BottomNavigationW
 
   List<Widget> _screens() => [
     AddStoryScreen(a: widget.analytics, o: widget.observer),
-    AddYourStoryScreen(a: widget.analytics, o: widget.observer),
+    FriendsScreen(a: widget.analytics, o: widget.observer),
     AddMessageScreen(a: widget.analytics, o: widget.observer),
     MyProfileScreen(a: widget.analytics, o: widget.observer),
   ];

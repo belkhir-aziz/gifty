@@ -1,34 +1,28 @@
 import 'package:datingapp/models/add_your_story_model.dart';
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
-import 'package:datingapp/screens/create_story_screen.dart';
 import 'package:datingapp/screens/filter_options_screen.dart';
 import 'package:datingapp/screens/interest_screen.dart';
+import 'package:datingapp/screens/invitation_dialog.dart';
 
 import 'package:datingapp/screens/notification_list_screen.dart';
-import 'package:datingapp/screens/view_story_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class AddYourStoryScreen extends BaseRoute {
-  const AddYourStoryScreen({super.key, super.a, super.o}) : super(r: 'AddYourStoryScreen');
+class FriendsScreen extends BaseRoute {
+  const FriendsScreen({super.key, super.a, super.o}) : super(r: 'FriendsScreen');
 
   @override
-  BaseRouteState createState() => _AddYourStoryScreenState();
+  BaseRouteState createState() => _FriendsScreenState();
 }
 
-class _AddYourStoryScreenState extends BaseRouteState {
+class _FriendsScreenState extends BaseRouteState {
   int _currentIndex = 0;
   TabController? _tabController;
 
   final List<String> circleImageList = [
     'assets/images/img_circle_0.png',
     'assets/images/img_circle_1.png',
-    'assets/images/img_circle_2.png',
-    'assets/images/img_circle_0.png',
-    'assets/images/img_circle_1.png',
-    'assets/images/img_circle_2.png',
   ];
 
   final List<AddYourStory> _storyList = [
@@ -38,33 +32,9 @@ class _AddYourStoryScreenState extends BaseRouteState {
         km: 1.5,
         imgPath: 'assets/images/card_img_0.png',
         count: 35),
-    AddYourStory(
-        name: 'Ruby Diaz',
-        age: 33,
-        km: 1.2,
-        imgPath: 'assets/images/card_img_1.png',
-        count: 81),
-    AddYourStory(
-        name: 'Myley Corbyon',
-        age: 23,
-        km: 1.5,
-        imgPath: 'assets/images/card_img_2.png',
-        count: 49),
-    AddYourStory(
-        name: 'Tony Z',
-        age: 25,
-        km: 2,
-        imgPath: 'assets/images/card_img_1.png',
-        count: 29),
-    AddYourStory(
-        name: 'Ruby Raman',
-        age: 30,
-        km: 1.6,
-        imgPath: 'assets/images/card_img_4.png',
-        count: 50),
   ];
 
-  _AddYourStoryScreenState() : super();
+  _FriendsScreenState() : super();
 
   @override
   Widget build(BuildContext context) {
@@ -103,21 +73,13 @@ class _AddYourStoryScreenState extends BaseRouteState {
                     itemBuilder: (ctx, index) {
                       return InkWell(
                         onTap: () {
-                          index == 0
-                              ? Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          CreateStoryScreen(
-                                            a: widget.analytics,
-                                            o: widget.observer,
-                                          )))
-                              : Navigator.of(context)
-                                  .push(MaterialPageRoute(
-                                      builder: (context) => ViewStoryScreen(
-                                            a: widget.analytics,
-                                            o: widget.observer,
-                                          )));
-                        },
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const InvitationDialog();
+                          },
+                        );
+                      },
                         child: Padding(
                           padding: g.isRTL
                               ? const EdgeInsets.only(left: 10)
@@ -161,15 +123,8 @@ class _AddYourStoryScreenState extends BaseRouteState {
                     _currentIndex = index;
                     setState(() {});
                   },
-                  tabs: [
-                    Tab(text: AppLocalizations.of(context)!.lbl_Tab_All),
-                    Tab(text: AppLocalizations.of(context)!.lbl_Tab_Online),
-                    Tab(
-                        text: AppLocalizations.of(context)!
-                            .lbl_Tab_new_daters),
-                    Tab(
-                        text: AppLocalizations.of(context)!
-                            .lbl_Tab_liked_you),
+                  tabs: const [
+                    Tab(text: 'See the wished list of xxxx'), //todo
                   ],
                 ),
               ),
@@ -652,7 +607,7 @@ class _AddYourStoryScreenState extends BaseRouteState {
                     Align(
                       alignment: Alignment.bottomLeft,
                       child: Text(
-                        AppLocalizations.of(context)!.lbl_Add_your_Story,
+                        "Add Friend",  // TODO
                         style: Theme.of(context).primaryTextTheme.titleSmall,
                       ),
                     ),

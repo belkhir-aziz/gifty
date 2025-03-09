@@ -1,6 +1,5 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
-import 'package:datingapp/screens/create_story_screen.dart';
 import 'package:datingapp/screens/filter_options_screen.dart';
 import 'package:datingapp/screens/notification_list_screen.dart';
 import 'package:dots_indicator/dots_indicator.dart';
@@ -426,12 +425,73 @@ class _AddStoryScreenState extends BaseRouteState {
                       overlayColor: WidgetStateProperty.all(Colors.transparent),
                       highlightColor: Colors.transparent,
                       onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => CreateStoryScreen(
-                                  a: widget.analytics,
-                                  o: widget.observer,
-                                )));
-                      },
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              content: Container(
+                                width: MediaQuery.of(context).size.width * 0.8,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(20),
+                                      child: Text(
+                                        'Send Invitation',
+                                        style: Theme.of(context).primaryTextTheme.displayLarge,
+                                      ),
+                                    ),
+                                    TextFormField(
+                                      controller: TextEditingController(),
+                                      keyboardType: TextInputType.emailAddress,
+                                      decoration: InputDecoration(
+                                        contentPadding: const EdgeInsets.all(20),
+                                        hintText: 'Enter recipient email',
+                                        prefixIcon: Icon(
+                                          Icons.email,
+                                          color: Theme.of(context).iconTheme.color,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20),
+                                    Container(
+                                      height: 50,
+                                      width: 150,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(25),
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: g.gradientColors,
+                                        ),
+                                      ),
+                                      child: TextButton(
+                                        onPressed: () {
+                                          // Handle send invitation logic here
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text(
+                                          'Send Invitation',
+                                          style: Theme.of(context)
+                                              .textButtonTheme
+                                              .style!
+                                              .textStyle!
+                                              .resolve({
+                                            WidgetState.pressed,
+                                          }),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                                            },
                       child: CircleAvatar(
                         radius: 18,
                         backgroundColor: Theme.of(context).primaryColorLight,

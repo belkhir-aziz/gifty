@@ -127,3 +127,5 @@ local.properties
 .fvm/
 build/cache.dill.track.dill
 build/flutter_assets/NOTICES
+.flutter-plugins
+build/flutter_assets/NOTICES

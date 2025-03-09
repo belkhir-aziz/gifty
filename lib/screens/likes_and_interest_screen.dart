@@ -2,11 +2,13 @@ import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:datingapp/models/user_profile.dart';
 import 'package:datingapp/provider/user_profile_handler.dart';
+import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/widgets/bottom_navigation_bar_widget_light.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
 
 class LikesInterestScreen extends BaseRoute {
   final UserProfile userProfile; 
@@ -21,14 +23,17 @@ class _LikesInterestScreenState extends BaseRouteState {
   final UserProfileHandler userProfileHandler = UserProfileHandler();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final List<String> _list = [];
+  late UserProvider userProvider;
 
   _LikesInterestScreenState(this.userProfile);
   void updateProfileUser() {
     userProfile.hobbies = _list.join(", ");
+    userProvider.setUserProfile(userProfile);
     userProfileHandler.createUserProfile(userProfile);
   }
   @override
   Widget build(BuildContext context) {
+    userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: _appBarWidget(),
       resizeToAvoidBottomInset: false,

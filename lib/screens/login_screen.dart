@@ -2,11 +2,13 @@ import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:datingapp/models/user_profile.dart';
 import 'package:datingapp/provider/user_profile_handler.dart';
+import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/screens/notification_banner_screen.dart';
 import 'package:datingapp/screens/profile_detail_screen.dart';
 import 'package:datingapp/widgets/bottom_navigation_bar_widget_light.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -22,6 +24,7 @@ class _LoginScreenState extends BaseRouteState {
   final TextEditingController _cPassword = TextEditingController();
   final TextEditingController _cConfirmPassword = TextEditingController();
   final UserProfileHandler _profileHandler = UserProfileHandler();
+  late UserProvider userProvider;
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool isLogin = true; // Toggle between Login and Sign-Up modes
@@ -30,6 +33,7 @@ class _LoginScreenState extends BaseRouteState {
 
   @override
   Widget build(BuildContext context) {
+    userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
@@ -181,6 +185,7 @@ Future<void> _loginUser() async {
           ),
         ));
       } else {
+        userProvider.setUserProfile(profile);
         Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) =>
                                   BottomNavigationWidgetLight(

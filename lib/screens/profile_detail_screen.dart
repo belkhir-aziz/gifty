@@ -20,6 +20,9 @@ class _ProfileDetailScreenState extends BaseRouteState {
   final TextEditingController _cFirstName = TextEditingController();
   final TextEditingController _cLastName = TextEditingController();
   final TextEditingController _cBDate = TextEditingController();
+  final FocusNode _firstNameFocusNode = FocusNode();
+  final FocusNode _lastNameFocusNode = FocusNode();
+  final FocusNode _bDateFocusNode = FocusNode();
   String? _gender = 'Select Gender';
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -33,7 +36,32 @@ class _ProfileDetailScreenState extends BaseRouteState {
     userProfile.dateOfBirth = DateFormat("dd-MM-yyyy").parse(_cBDate.text);
     userProfile.gender = "male";
   }
-  
+  @override
+  void initState() {
+    super.initState();
+    _cFirstName.addListener(_updateState);
+    _cLastName.addListener(_updateState);
+    _cBDate.addListener(_updateState);
+    _firstNameFocusNode.addListener(_updateState);
+    _lastNameFocusNode.addListener(_updateState);
+    _bDateFocusNode.addListener(_updateState);
+  }
+
+  @override
+  void dispose() {
+    _cFirstName.dispose();
+    _cLastName.dispose();
+    _cBDate.dispose();
+    _firstNameFocusNode.dispose();
+    _lastNameFocusNode.dispose();
+    _bDateFocusNode.dispose();
+    super.dispose();
+  }
+
+  void _updateState() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -134,9 +162,11 @@ class _ProfileDetailScreenState extends BaseRouteState {
                           style:
                               Theme.of(context).primaryTextTheme.titleSmall,
                           controller: _cFirstName,
+                          focusNode: _firstNameFocusNode,
                           decoration: InputDecoration(
-                            labelText: AppLocalizations.of(context)!
-                                .lbl_first_name_hint,
+                            labelText: _firstNameFocusNode.hasFocus || _cFirstName.text.isNotEmpty
+                                ? null
+                                : AppLocalizations.of(context)!.lbl_first_name_hint,
                             labelStyle:
                                 Theme.of(context).primaryTextTheme.titleSmall,
                             contentPadding: g.isRTL
@@ -170,9 +200,11 @@ class _ProfileDetailScreenState extends BaseRouteState {
                           style:
                               Theme.of(context).primaryTextTheme.titleSmall,
                           controller: _cLastName,
+                          focusNode: _lastNameFocusNode,
                           decoration: InputDecoration(
-                            labelText: AppLocalizations.of(context)!
-                                .lbl_last_name_hint,
+                            labelText: _lastNameFocusNode.hasFocus || _cLastName.text.isNotEmpty
+                                ? null
+                                : AppLocalizations.of(context)!.lbl_last_name_hint,
                             labelStyle:
                                 Theme.of(context).primaryTextTheme.titleSmall,
                             contentPadding: g.isRTL
@@ -205,13 +237,19 @@ class _ProfileDetailScreenState extends BaseRouteState {
                         child: TextFormField(
                           style: Theme.of(context).primaryTextTheme.titleSmall,
                           controller: _cBDate,
+                          focusNode: _bDateFocusNode,
                           readOnly: true, // Prevent keyboard input to allow only date selection
                           decoration: InputDecoration(
-                            labelText: AppLocalizations.of(context)!.lbl_dob_hint,
+                            labelText: _bDateFocusNode.hasFocus || _cBDate.text.isNotEmpty
+                                ? null
+                                : AppLocalizations.of(context)!.lbl_dob_hint,
                             labelStyle: Theme.of(context).primaryTextTheme.titleSmall,
-                            contentPadding: g.isRTL
-                                ? const EdgeInsets.only(right: 20)
-                                : const EdgeInsets.only(left: 20),
+                            contentPadding: _cBDate.text.isNotEmpty
+            ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15) // Adjust padding when date is set
+            : g.isRTL
+                ? const EdgeInsets.only(right: 20)
+                : const EdgeInsets.only(left: 20),
+                            alignLabelWithHint: true, // Ensure label text aligns with hint text    
                             suffixIcon: GestureDetector(
                               onTap: () async {
                                 // Open date picker
@@ -220,8 +258,24 @@ class _ProfileDetailScreenState extends BaseRouteState {
                                   initialDate: DateTime.now(), // Current date
                                   firstDate: DateTime(1900),   // Earliest selectable date
                                   lastDate: DateTime.now(),   // Latest selectable date
-                                );
-
+                                  builder: (BuildContext context, Widget? child) {
+                                    return Theme(
+                                      data: Theme.of(context).copyWith(   
+                                        inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
+                                          labelStyle: TextStyle(color: Theme.of(context).colorScheme.secondary), // "Enter Date" label color
+                                          hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary), // Hint text color
+                                        ),
+                                    textButtonTheme: TextButtonThemeData(
+                                      style: TextButton.styleFrom(
+                                        foregroundColor: Colors.white, // Text color of the buttons
+                                        backgroundColor: Colors.purple, // Background color of the buttons
+                                      ),
+                                    ),
+                                  ),
+                                      child: child!,                                    
+                                    );
+                                  },
+                                );                   
                                 if (pickedDate != null) {
                                   // Format the selected date
                                   String formattedDate =
@@ -237,6 +291,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
                                 padding: g.isRTL
                                     ? const EdgeInsets.only(left: 4)
                                     : const EdgeInsets.only(right: 4),
+                                    
                                 child: Icon(
                                   Icons.calendar_today,
                                   color: Theme.of(context).iconTheme.color,
@@ -269,6 +324,13 @@ class _ProfileDetailScreenState extends BaseRouteState {
                         ),
                         height: 55,
                         child: DropdownButtonFormField<String>(
+                          decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(35),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                        ),
                           dropdownColor: Theme.of(context).scaffoldBackgroundColor,  //Theme.of(context).primaryColorLight,
                           icon: Padding(
                             padding: g.isRTL

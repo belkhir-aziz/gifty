@@ -158,7 +158,8 @@ Future<void> _loginUser() async {
 
       // Retrieve the user's profile from the "Users" table
       final profile = await _profileHandler.getUserProfileWithEmail(email);
-      if (profile == null) {
+      //if (profile == null) {
+      if (profile != null) {
         _showNotification('For a nice experience, please feel your data', isError: true);
         // Create a profile for the user in the Users table
           final userProfile = UserProfile(

@@ -113,7 +113,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             .textTheme
                                             .labelSmall
                                             ?.copyWith(
-                                                color:Color(0xFF845EB5),
+                                                color:const Color(0xFF845EB5),
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.normal,
                                                 letterSpacing: 0),
@@ -224,7 +224,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             .textTheme
                                             .labelSmall
                                             ?.copyWith(
-                                                color:Color(0xFF845EB5),
+                                                color:const Color(0xFF845EB5),
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.normal,
                                                 letterSpacing: 0),
@@ -335,7 +335,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             .textTheme
                                             .labelSmall
                                             ?.copyWith(
-                                                color: Color(0xFF845EB5),
+                                                color: const Color(0xFF845EB5),
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.normal,
                                                 letterSpacing: 0),
@@ -445,7 +445,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             .textTheme
                                             .labelSmall
                                             ?.copyWith(
-                                                color:Color(0xFF845EB5),
+                                                color:const Color(0xFF845EB5),
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.normal,
                                                 letterSpacing: 0),
@@ -556,7 +556,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             .textTheme
                                             .labelSmall
                                             ?.copyWith(
-                                                color:Color(0xFF845EB5),
+                                                color:const Color(0xFF845EB5),
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.normal,
                                                 letterSpacing: 0),
@@ -666,7 +666,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             .textTheme
                                             .labelSmall
                                             ?.copyWith(
-                                                color: Color(0xFF845EB5),
+                                                color: const Color(0xFF845EB5),
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.normal,
                                                 letterSpacing: 0),
@@ -775,7 +775,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                               .textTheme
                                               .labelSmall
                                               ?.copyWith(
-                                                  color: Color(0xFF845EB5),
+                                                  color: const Color(0xFF845EB5),
                                                   fontSize: 13,
                                                   fontWeight: FontWeight.normal,
                                                   letterSpacing: 0),
@@ -884,7 +884,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             .textTheme
                                             .labelSmall
                                             ?.copyWith(
-                                                color: Color(0xFF845EB5),
+                                                color: const Color(0xFF845EB5),
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.normal,
                                                 letterSpacing: 0),
@@ -993,7 +993,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             .textTheme
                                             .labelSmall
                                             ?.copyWith(
-                                                color: Color(0xFF845EB5),
+                                                color: const Color(0xFF845EB5),
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.normal,
                                                 letterSpacing: 0),
@@ -1102,7 +1102,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             .textTheme
                                             .labelSmall
                                             ?.copyWith(
-                                                color: Color(0xFF845EB5),
+                                                color: const Color(0xFF845EB5),
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.normal,
                                                 letterSpacing: 0),
@@ -1212,7 +1212,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             .textTheme
                                             .labelSmall
                                             ?.copyWith(
-                                                color: Color(0xFF845EB5),
+                                                color: const Color(0xFF845EB5),
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.normal,
                                                 letterSpacing: 0),
@@ -1321,7 +1321,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             .textTheme
                                             .labelSmall
                                             ?.copyWith(
-                                                color: Color(0xFF845EB5),
+                                                color: const Color(0xFF845EB5),
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.normal,
                                                 letterSpacing: 0),

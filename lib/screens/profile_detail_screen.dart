@@ -329,7 +329,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
                             borderRadius: BorderRadius.circular(35),
                             borderSide: BorderSide.none,
                           ),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 20),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
                         ),
                           dropdownColor: Theme.of(context).scaffoldBackgroundColor,  //Theme.of(context).primaryColorLight,
                           icon: Padding(

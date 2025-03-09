@@ -1,3 +1,4 @@
+import 'package:datingapp/models/user_profile.dart';
 import 'package:datingapp/models/user_relations.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -50,4 +51,15 @@ class UserRelationsHandler {
       throw response.error!;
     }
   }
+  
+  Future<List<UserProfile>> getUserProfileRelations(String userId) async {
+  var res = await _client
+      .from('relations')
+      .select('user_id, friend_id, users!friend_id(id, first_name, last_name, email)')
+      .eq('user_id', userId);
+
+  return res.map((item) {
+    return UserProfile.fromJson(item['users']);
+  }).toList();
+}
 }

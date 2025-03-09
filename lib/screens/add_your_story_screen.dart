@@ -1,6 +1,10 @@
 import 'package:datingapp/models/add_your_story_model.dart';
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
+import 'package:datingapp/models/user_profile.dart';
+import 'package:datingapp/provider/user_profile_handler.dart';
+import 'package:datingapp/provider/user_provider.dart';
+import 'package:datingapp/provider/user_relation_handler.dart';
 import 'package:datingapp/screens/filter_options_screen.dart';
 import 'package:datingapp/screens/interest_screen.dart';
 import 'package:datingapp/screens/invitation_dialog.dart';
@@ -8,6 +12,7 @@ import 'package:datingapp/screens/invitation_dialog.dart';
 import 'package:datingapp/screens/notification_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
 
 class FriendsScreen extends BaseRoute {
   const FriendsScreen({super.key, super.a, super.o}) : super(r: 'FriendsScreen');
@@ -19,6 +24,7 @@ class FriendsScreen extends BaseRoute {
 class _FriendsScreenState extends BaseRouteState {
   int _currentIndex = 0;
   TabController? _tabController;
+  List<UserProfile> friends = [];
 
   final List<String> circleImageList = [
     'assets/images/img_circle_0.png',
@@ -35,9 +41,10 @@ class _FriendsScreenState extends BaseRouteState {
   ];
 
   _FriendsScreenState() : super();
-
+  
   @override
   Widget build(BuildContext context) {
+    
     return PopScope(
       canPop: true,
       onPopInvoked: (bool didPop) {
@@ -69,43 +76,59 @@ class _FriendsScreenState extends BaseRouteState {
                   height: 50,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: circleImageList.length,
+                    itemCount: friends.length + 1, // Adjusted item count
                     itemBuilder: (ctx, index) {
-                      return InkWell(
-                        onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return const InvitationDialog();
+                      if (index == 0) {
+                        return InkWell(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const InvitationDialog();
+                              },
+                            );
                           },
+                          child: Padding(
+                            padding: g.isRTL
+                                ? const EdgeInsets.only(left: 10)
+                                : const EdgeInsets.only(right: 10),
+                            child: const CircleAvatar(
+                              radius: 25,
+                              backgroundColor: Color(0xFFF1405B),
+                              child: Icon(
+                                Icons.add,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
                         );
-                      },
-                        child: Padding(
-                          padding: g.isRTL
-                              ? const EdgeInsets.only(left: 10)
-                              : const EdgeInsets.only(right: 10),
-                          child: index == 0
-                              ? const CircleAvatar(
-                                  radius: 25,
-                                  backgroundColor: Color(0xFFF1405B),
-                                  child: Icon(
-                                    Icons.add,
+                      } else {
+                        return InkWell(
+                          onTap: () {
+                          },
+                          child: Padding(
+                            padding: g.isRTL
+                                ? const EdgeInsets.only(left: 10)
+                                : const EdgeInsets.only(right: 10),
+                            child: CircleAvatar(
+                              radius: 26,
+                              backgroundColor: Colors.white,
+                              child: CircleAvatar(
+                                radius: 25,
+                                backgroundColor: const Color(0xFFF1405B),
+                                child: Text(
+                                  '${friends[(index - 1) % friends.length].firstName[0]}${friends[(index - 1) % friends.length].lastName[0]}',
+                                  style: TextStyle(
                                     color: Colors.white,
-                                  ),
-                                )
-                              : CircleAvatar(
-                                  radius: 26,
-                                  backgroundColor: Colors.white,
-                                  child: CircleAvatar(
-                                    radius: 25,
-                                    backgroundColor: const Color(0xFFF1405B),
-                                    backgroundImage: AssetImage(
-                                      circleImageList[index],
-                                    ),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                        ),
-                      );
+                              ),
+                            ),
+                          ),
+                        );
+                      }
                     },
                   ),
                 ),
@@ -581,10 +604,22 @@ class _FriendsScreenState extends BaseRouteState {
   @override
   void initState() {
     super.initState();
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    fetchFriends(userProvider);
     _tabController =
         TabController(length: 4, vsync: this, initialIndex: _currentIndex);
     _tabController!.addListener(_tabControllerListener);
+    
   }
+
+
+  Future<void> fetchFriends(UserProvider userProvider) async {
+    UserRelationsHandler relationHandler = UserRelationsHandler();
+    var fetchedFriends = await relationHandler.getUserProfileRelations(userProvider.userProfile!.id);
+    setState(()  {
+      friends = fetchedFriends;
+    });
+}
 
   void _tabControllerListener() {
     setState(() {

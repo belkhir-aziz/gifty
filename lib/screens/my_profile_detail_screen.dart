@@ -159,7 +159,7 @@ class _MyProfileScreenState extends BaseRouteState {
                           ),
                         ),
                         child: const CircleAvatar(
-                          //todo : edit
+                          //todo : edit on click on button, show the same as creation of account
                           backgroundColor: Colors.transparent,
                           radius: 20,
                           child: Icon(

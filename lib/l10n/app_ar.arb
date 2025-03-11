@@ -143,6 +143,10 @@
    "@lbl_hello_friends":{
       "description": "Hello Friends!"
    },
+    "lbl_add_friend" : "Add friend",
+   "@lbl_add_friend":{
+      "description": "Add friend"
+   },
    "lbl_tab_pictures" : "Pictures",
    "@lbl_tab_pictures":{
       "description": "Pictures"
@@ -173,7 +177,7 @@
    },
    "lbl_likes_intrets_subtitle" : "Share your likes & possion with others",
    "@lbl_likes_intrets_subtitle":{
-      "description": "Share your likes & possion with others"
+      "description": "Share your likes & passion with others"
    },
    "lbl_load_more" : "Load More",
    "@lbl_load_more":{

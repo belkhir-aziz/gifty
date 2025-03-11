@@ -1,10 +1,14 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
+import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/screens/setting_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+
 
 class MyProfileScreen extends BaseRoute {
   const MyProfileScreen({super.key, super.a, super.o}) : super(r: 'MyProfileScreen');
@@ -16,11 +20,13 @@ class MyProfileScreen extends BaseRoute {
 class _MyProfileScreenState extends BaseRouteState {
   int _currentIndex = 0;
   TabController? _tabController;
+  late UserProvider userProvider;
 
   _MyProfileScreenState() : super();
 
   @override
   Widget build(BuildContext context) {
+    userProvider = Provider.of<UserProvider>(context, listen: false);
     return PopScope(
       canPop: true,
       onPopInvoked: (bool didPop) {
@@ -153,6 +159,7 @@ class _MyProfileScreenState extends BaseRouteState {
                           ),
                         ),
                         child: const CircleAvatar(
+                          //todo : edit
                           backgroundColor: Colors.transparent,
                           radius: 20,
                           child: Icon(
@@ -198,7 +205,7 @@ class _MyProfileScreenState extends BaseRouteState {
                       child: Padding(
                         padding: const EdgeInsets.only(top: 20, left: 20),
                         child: Text(
-                          'Mathew Ben',
+                          '${userProvider.userProfile?.firstName} ${userProvider.userProfile?.lastName}',
                           style: Theme.of(context)
                               .primaryTextTheme
                               .displayLarge,
@@ -216,14 +223,14 @@ class _MyProfileScreenState extends BaseRouteState {
                             child: Row(
                               children: [
                                 Icon(
-                                  Icons.call,
+                                  Icons.cake,
                                   color: Theme.of(context).iconTheme.color,
                                   size: 16,
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.only(left: 4),
                                   child: Text(
-                                    '+01 331 623 8413',
+                                    DateFormat('dd-MM-yyyy').format(userProvider.userProfile?.dateOfBirth.toLocal() ?? DateTime(2000, 1, 1)),
                                     style: Theme.of(context)
                                         .primaryTextTheme
                                         .bodyLarge,
@@ -246,7 +253,7 @@ class _MyProfileScreenState extends BaseRouteState {
                                 Padding(
                                   padding: const EdgeInsets.only(left: 4),
                                   child: Text(
-                                    'mathew@gmail.com',
+                                    '${userProvider.userProfile?.email}',
                                     style: Theme.of(context)
                                         .primaryTextTheme
                                         .bodyLarge,
@@ -263,7 +270,7 @@ class _MyProfileScreenState extends BaseRouteState {
                           ? const EdgeInsets.only(right: 20, top: 30)
                           : const EdgeInsets.only(left: 20, top: 30),
                       child: Text(
-                        AppLocalizations.of(context)!.lbl_short_bio,
+                        AppLocalizations.of(context)!.lbl_likes_intrets,
                         style:
                             Theme.of(context).primaryTextTheme.displaySmall,
                       ),
@@ -273,7 +280,7 @@ class _MyProfileScreenState extends BaseRouteState {
                           ? const EdgeInsets.only(right: 20, top: 10)
                           : const EdgeInsets.only(left: 20, top: 10),
                       child: Text(
-                        'Love music, cooking, swimming, going out,\ntravelling etc. Wanna be friends??',
+                        '${userProvider.userProfile?.hobbies} etc.',
                         style:
                             Theme.of(context).primaryTextTheme.titleSmall,
                       ),

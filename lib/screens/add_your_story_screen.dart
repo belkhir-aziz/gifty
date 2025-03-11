@@ -8,7 +8,7 @@ import 'package:datingapp/provider/user_relation_handler.dart';
 import 'package:datingapp/screens/filter_options_screen.dart';
 import 'package:datingapp/screens/interest_screen.dart';
 import 'package:datingapp/screens/invitation_dialog.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:datingapp/screens/notification_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -642,7 +642,7 @@ class _FriendsScreenState extends BaseRouteState {
                     Align(
                       alignment: Alignment.bottomLeft,
                       child: Text(
-                        "Add Friend",  // TODO
+                        AppLocalizations.of(context)!.lbl_add_friend,  
                         style: Theme.of(context).primaryTextTheme.titleSmall,
                       ),
                     ),

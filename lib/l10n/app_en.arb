@@ -163,17 +163,17 @@
    "@lbl_tab_more":{
       "description": "More"
    },
-   "lbl_intrests" : "Intrests",
+   "lbl_intrests" : "Interests",
    "@lbl_intrests":{
-      "description": "Intrests"
+      "description": "Interests"
    },
    "lbl_get_started" : "Get Started",
    "@lbl_get_started":{
       "description": "Get Started"
    },
-   "lbl_likes_intrets" : "Likes, Intrests",
+   "lbl_likes_intrets" : "Likes, Interests",
    "@lbl_likes_intrets":{
-      "description": "Likes, Intrests"
+      "description": "Likes, Interests"
    },
    "lbl_likes_intrets_subtitle" : "Share your likes & possion with others",
    "@lbl_likes_intrets_subtitle":{

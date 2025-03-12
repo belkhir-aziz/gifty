@@ -133,3 +133,5 @@ build/flutter_assets/AssetManifest.json
 build/flutter_assets/shaders/ink_sparkle.frag
 ios/Runner/GeneratedPluginRegistrant.h
 ios/Runner/GeneratedPluginRegistrant.m
+build/flutter_assets/AssetManifest.bin.json
+build/flutter_assets/AssetManifest.bin

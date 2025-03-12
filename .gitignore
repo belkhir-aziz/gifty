@@ -129,3 +129,7 @@ build/cache.dill.track.dill
 build/flutter_assets/NOTICES
 .flutter-plugins
 build/flutter_assets/NOTICES
+build/flutter_assets/AssetManifest.json
+build/flutter_assets/shaders/ink_sparkle.frag
+ios/Runner/GeneratedPluginRegistrant.h
+ios/Runner/GeneratedPluginRegistrant.m

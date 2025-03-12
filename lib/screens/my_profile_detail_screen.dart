@@ -50,7 +50,7 @@ class _MyProfileScreenState extends BaseRouteState {
                       color: Color.fromRGBO(19, 1, 51, 1),
                     ),
                     child: Image.asset(
-                      'assets/images/profile.png',
+                      userProvider.userProfile?.gender == "Women" ? 'assets/images/profile_women.png' : 'assets/images/profile_men.png',
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -123,7 +123,7 @@ class _MyProfileScreenState extends BaseRouteState {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              Icons.comment_outlined,
+                              Icons.group,
                               color: g.isDarkModeEnable
                                   ? Theme.of(context).iconTheme.color
                                   : Theme.of(context).primaryColorLight,
@@ -132,7 +132,7 @@ class _MyProfileScreenState extends BaseRouteState {
                             Padding(
                               padding: const EdgeInsets.only(left: 4),
                               child: Text(
-                                '2.3k',
+                                '0',
                                 style: Theme.of(context)
                                     .primaryTextTheme
                                     .bodyLarge,
@@ -151,8 +151,8 @@ class _MyProfileScreenState extends BaseRouteState {
                           borderRadius: BorderRadius.circular(22),
                           gradient: LinearGradient(
                             colors: [
-                              Colors.blue[900]!,
-                              Colors.blueAccent[700]!
+                              Colors.purple[900]!,
+                              Colors.purple[700]!
                             ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
@@ -285,6 +285,7 @@ class _MyProfileScreenState extends BaseRouteState {
                             Theme.of(context).primaryTextTheme.titleSmall,
                       ),
                     ),
+                    /*
                     Padding(
                       padding: const EdgeInsets.only(top: 20),
                       child: TabBar(
@@ -576,6 +577,7 @@ class _MyProfileScreenState extends BaseRouteState {
                             ),
                           ],
                         ))
+                        */
                   ],
                 ),
               ),
@@ -629,7 +631,7 @@ class _MyProfileScreenState extends BaseRouteState {
             Container(
               padding: const EdgeInsets.only(left: 8),
               alignment: g.isRTL ? Alignment.centerRight : Alignment.centerLeft,
-              color: const Color(0xFFDC3664),
+              color: const Color(0xFFAD45B3),
               width: MediaQuery.of(context).size.width / 2 - 35,
               height: 65,
               child: IconButton(

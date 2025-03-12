@@ -100,6 +100,7 @@ class _SettingScreenState extends BaseRouteState {
               ),
               InkWell(
                 onTap: () {
+                  //todo : update with Likes screen
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => LikedAndLikesScreen(
                             a: widget.analytics,

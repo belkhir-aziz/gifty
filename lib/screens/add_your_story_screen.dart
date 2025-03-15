@@ -2,16 +2,13 @@ import 'package:datingapp/models/add_your_story_model.dart';
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:datingapp/models/user_profile.dart';
-import 'package:datingapp/provider/user_profile_handler.dart';
 import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/provider/user_relation_handler.dart';
-import 'package:datingapp/screens/filter_options_screen.dart';
 import 'package:datingapp/screens/interest_screen.dart';
 import 'package:datingapp/screens/invitation_dialog.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:datingapp/screens/notification_list_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 
 class FriendsScreen extends BaseRoute {

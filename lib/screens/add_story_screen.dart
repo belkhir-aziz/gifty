@@ -1,11 +1,19 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:datingapp/models/product.dart';
+import 'package:datingapp/models/user_reactions.dart';
 import 'package:datingapp/provider/products_handler.dart';
+import 'package:datingapp/provider/user_provider.dart';
+import 'package:datingapp/provider/user_reactions_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:tcard/tcard.dart';
+
+@JsonEnum(alwaysCreate: true)
+enum ReactionTypes { like, dislike, superLike }
 
 class AddStoryScreen extends BaseRoute {
   const AddStoryScreen({super.key, super.a, super.o}) : super(r: 'AddStoryScreen');
@@ -19,7 +27,10 @@ class _AddStoryScreenState extends BaseRouteState {
   int? _leftDirection;
   int? _rightDirection;
   ProductHandler productHandler = ProductHandler();
+  UserReactionsHandler userReactionsHandler = UserReactionsHandler();
+  UserProvider userProvider = UserProvider();
   List<Product> products = [];
+  int _current = 0;
   
   Future<void> _loadProducts() async {
     try {
@@ -30,19 +41,11 @@ class _AddStoryScreenState extends BaseRouteState {
     }
   }
   
-  final List<String> _imgList = [
-    'assets/images/card_new_img.jpg',
-    'assets/images/video img_light.png',
-    'assets/images/video img_dark.png',
-    'assets/images/videoCall.jpg',
-    'assets/images/sample3.png',
-  ];
-  int _current = 0;
-
   _AddStoryScreenState() : super();
 
     @override
   void initState() {
+    userProvider = Provider.of<UserProvider>(context, listen: false);
     super.initState();
     _loadProducts();
   }
@@ -221,6 +224,7 @@ class _AddStoryScreenState extends BaseRouteState {
                           onTap: () {
                             _controller.forward(
                                 direction: SwipDirection.Right);
+                            _saveReaction(products[_current].id, ReactionTypes.like);
                           },
                           child: CircleAvatar(
                             backgroundColor: const Color(0xFF34F07F),
@@ -241,29 +245,35 @@ class _AddStoryScreenState extends BaseRouteState {
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.only(left: 5, right: 5),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              colors: [
-                                Color(0xFFFFBC7D),
-                                Color(0xFFEF5533),
-                              ],
+                              padding: const EdgeInsets.only(left: 5, right: 5),
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color(0xFFFFBC7D),
+                                    Color(0xFFEF5533),
+                                  ],
+                                ),
+                              ),
+                              child: InkWell(
+                                onTap: () {
+                                  _saveReaction(products[_current].id, ReactionTypes.superLike);
+                                },
+                                child: const CircleAvatar(
+                                  radius: 24,
+                                  backgroundColor: Colors.transparent,
+                                  child: Icon(
+                                    Icons.favorite,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                          child: const CircleAvatar(
-                            radius: 24,
-                            backgroundColor: Colors.transparent,
-                            child: Icon(
-                              Icons.favorite,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
                         InkWell(
                           onTap: () {
                             _controller.forward(
                                 direction: SwipDirection.Left);
+                                _saveReaction(products[_current].id, ReactionTypes.dislike);
                           },
                           child: Padding(
                             padding: const EdgeInsets.only(left: 5),
@@ -286,7 +296,11 @@ class _AddStoryScreenState extends BaseRouteState {
                             ),
                           ),
                         ),
-                        Container(
+                        InkWell(
+                              onTap: () {
+                                _showInfoDialog(context);
+                              },
+                        child: Container(
                           margin: const EdgeInsets.only(left: 5),
                           decoration: const BoxDecoration(
                             shape: BoxShape.circle,
@@ -306,6 +320,7 @@ class _AddStoryScreenState extends BaseRouteState {
                               size: 26,
                             ),
                           ),
+                        ),
                         ),
                       ],
                     ),
@@ -365,35 +380,41 @@ class _AddStoryScreenState extends BaseRouteState {
     }
     return widgetList;
   }
+  
+  Future<void> _saveReaction(String productId, ReactionTypes reactionType) async {
+    try {
+      if (userProvider.userProfile != null){
+        final reaction = Reaction(
+        userId: userProvider.userProfile!.id,
+        productId: productId,
+        createdAt: DateTime.now(),
+        reactionType: reactionType);
 
-  PreferredSizeWidget _appBarWidget() {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(60),
-      child: SafeArea(
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Expanded(
-              child: ListTile(
-                leading: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Padding(
-                      padding: g.isRTL
-                          ? const EdgeInsets.only(right: 8)
-                          : const EdgeInsets.only(left: 8),
-                      child: Text(
-                        AppLocalizations.of(context)!.lbl_Add_Story,
-                        style: Theme.of(context).primaryTextTheme.titleSmall,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+        await userReactionsHandler.saveReaction(reaction);
+        print('Reaction saved successfully');
+      }
+    } catch (e) {
+      print('Error saving reaction: $e');
+    }
+  }
+
+  void _showInfoDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Information'),
+          content: Text('This is an empty dialog for now.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Close'),
             ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }

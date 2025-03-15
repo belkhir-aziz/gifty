@@ -1,7 +1,9 @@
 import 'package:datingapp/models/add_your_story_model.dart';
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
+import 'package:datingapp/models/product.dart';
 import 'package:datingapp/models/user_profile.dart';
+import 'package:datingapp/provider/products_handler.dart';
 import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/provider/user_relation_handler.dart';
 import 'package:datingapp/screens/interest_screen.dart';
@@ -22,7 +24,9 @@ class _FriendsScreenState extends BaseRouteState {
   int _currentIndex = 0;
   TabController? _tabController;
   List<UserProfile> friends = [];
-
+  List<Product> products = [];
+  late UserProfile currentProfile;
+  ProductHandler productHandler = ProductHandler();
   final List<String> circleImageList = [
     'assets/images/img_circle_0.png',
     'assets/images/img_circle_1.png',
@@ -102,6 +106,8 @@ class _FriendsScreenState extends BaseRouteState {
                       } else {
                         return InkWell(
                           onTap: () {
+                            currentProfile = friends[index-1];
+                            fetchProducts(currentProfile.id);
                           },
                           child: Padding(
                             padding: g.isRTL
@@ -143,8 +149,8 @@ class _FriendsScreenState extends BaseRouteState {
                     _currentIndex = index;
                     setState(() {});
                   },
-                  tabs: const [
-                    Tab(text: 'See the wished list of xxxx'), //todo
+                  tabs:  [
+                    Tab(text: 'See the wished list of ${currentProfile.firstName} ${currentProfile.lastName}'), //todo
                   ],
                 ),
               ),
@@ -158,7 +164,7 @@ class _FriendsScreenState extends BaseRouteState {
                         crossAxisCount: 2,
                         crossAxisSpacing: 15,
                       ),
-                      itemCount: _storyList.length,
+                      itemCount: products.length,
                       itemBuilder: (ctx, index) {
                         return InkWell(
                           onTap: () {
@@ -198,18 +204,6 @@ class _FriendsScreenState extends BaseRouteState {
                                   mainAxisAlignment:
                                       MainAxisAlignment.start,
                                   children: [
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        '${_storyList[index].name},${_storyList[index].age}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineMedium
-                                            ?.copyWith(
-                                                fontSize: 14,
-                                                color: Colors.white),
-                                      ),
-                                    ),
                                     Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
@@ -218,31 +212,6 @@ class _FriendsScreenState extends BaseRouteState {
                                           padding: g.isRTL
                                               ? const EdgeInsets.only(right: 6)
                                               : const EdgeInsets.all(0),
-                                          child: Text(
-                                            '${_storyList[index].km} km away',
-                                            style: Theme.of(context)
-                                                .primaryTextTheme
-                                                .titleLarge,
-                                          ),
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.camera_alt,
-                                              color: Colors.white,
-                                              size: 14,
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 4, right: 8),
-                                              child: Text(
-                                                '${_storyList[index].count}',
-                                                style: Theme.of(context)
-                                                    .primaryTextTheme
-                                                    .titleLarge,
-                                              ),
-                                            ),
-                                          ],
                                         ),
                                       ],
                                     ),
@@ -251,8 +220,8 @@ class _FriendsScreenState extends BaseRouteState {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(20),
-                                child: Image.asset(
-                                  '${_storyList[index].imgPath}',
+                                child: Image.network(
+                                  products[index].imageUrl,
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -267,7 +236,7 @@ class _FriendsScreenState extends BaseRouteState {
                         crossAxisCount: 2,
                         crossAxisSpacing: 15,
                       ),
-                      itemCount: _storyList.length,
+                      itemCount: products.length,
                       itemBuilder: (ctx, index) {
                         return InkWell(
                           onTap: () {
@@ -310,7 +279,7 @@ class _FriendsScreenState extends BaseRouteState {
                                     Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        '${_storyList[index].name},${_storyList[index].age}',
+                                        '${products[index].name},${products[index].price}',
                                         style: Theme.of(context)
                                             .textTheme
                                             .headlineMedium
@@ -602,7 +571,9 @@ class _FriendsScreenState extends BaseRouteState {
   void initState() {
     super.initState();
     final userProvider = Provider.of<UserProvider>(context, listen: false);
+    currentProfile = userProvider.userProfile ?? UserProfile(id: "", email: "");
     fetchFriends(userProvider);
+    fetchProducts(userProvider.userProfile!.id);
     _tabController =
         TabController(length: 4, vsync: this, initialIndex: _currentIndex);
     _tabController!.addListener(_tabControllerListener);
@@ -612,12 +583,19 @@ class _FriendsScreenState extends BaseRouteState {
 
   Future<void> fetchFriends(UserProvider userProvider) async {
     UserRelationsHandler relationHandler = UserRelationsHandler();
-    var fetchedFriends = await relationHandler.getUserProfileRelations(userProvider.userProfile!.id);
+    var fetchedFriends = await relationHandler.getUserProfileRelations(currentProfile.id);
     setState(()  {
       friends = fetchedFriends;
     });
 }
 
+  Future<void> fetchProducts(String id) async {
+    ProductHandler productHandler = ProductHandler();
+    var fetchedProducts  = await productHandler.getSuperLikedProductsByUser(id);
+    setState(()  {
+      products = fetchedProducts;
+    });
+}
   void _tabControllerListener() {
     setState(() {
       _currentIndex = _tabController!.index;

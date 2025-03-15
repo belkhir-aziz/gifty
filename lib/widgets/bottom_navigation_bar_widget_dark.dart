@@ -112,22 +112,6 @@ class _BottomNavigationWidgetDarkState extends BaseRouteState<BottomNavigationWi
                       },
                       child: const Icon(MdiIcons.messageReplyTextOutline),
                     )),
-              _tabController!.index == 3
-                  ? const Tab(
-                      icon: Icon(MdiIcons.account),
-                    )
-                  : Tab(
-                      icon: ShaderMask(
-                          blendMode: BlendMode.srcIn,
-                          shaderCallback: (Rect bounds) {
-                            return LinearGradient(
-                              colors: g.gradientColors,
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                            ).createShader(bounds);
-                          },
-                          child: const Icon(MdiIcons.account)),
-                    ),
             ],
           ),
         ),
@@ -158,7 +142,7 @@ class _BottomNavigationWidgetDarkState extends BaseRouteState<BottomNavigationWi
   List<Widget> _screens() => [
     AddStoryScreen(a: widget.analytics, o: widget.observer),
     FriendsScreen(a: widget.analytics, o: widget.observer),
-    AddMessageScreen(a: widget.analytics, o: widget.observer),
+
     MyProfileScreen(a: widget.analytics, o: widget.observer),
   ];
 }

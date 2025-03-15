@@ -84,22 +84,6 @@ class _BottomNavigationWidgetLightState extends BaseRouteState<BottomNavigationW
                         Icons.grid_view_rounded,
                       ),
                     )),
-              _tabController!.index == 2
-                  ? const Tab(
-                      icon: Icon(MdiIcons.messageReplyTextOutline),
-                    )
-                  : Tab(
-                      icon: ShaderMask(
-                      blendMode: BlendMode.srcIn,
-                      shaderCallback: (Rect bounds) {
-                        return LinearGradient(
-                          colors: g.gradientColors,
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ).createShader(bounds);
-                      },
-                      child: const Icon(MdiIcons.messageReplyTextOutline),
-                    )),
               _tabController!.index == 3
                   ? const Tab(
                       icon: Icon(MdiIcons.account),
@@ -146,7 +130,6 @@ class _BottomNavigationWidgetLightState extends BaseRouteState<BottomNavigationW
   List<Widget> _screens() => [
     AddStoryScreen(a: widget.analytics, o: widget.observer),
     FriendsScreen(a: widget.analytics, o: widget.observer),
-    AddMessageScreen(a: widget.analytics, o: widget.observer),
     MyProfileScreen(a: widget.analytics, o: widget.observer),
   ];
 }

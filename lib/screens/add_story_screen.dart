@@ -1,8 +1,7 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
-import 'package:datingapp/screens/filter_options_screen.dart';
-import 'package:datingapp/screens/notification_list_screen.dart';
-import 'package:dots_indicator/dots_indicator.dart';
+import 'package:datingapp/models/product.dart';
+import 'package:datingapp/provider/products_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -19,7 +18,18 @@ class _AddStoryScreenState extends BaseRouteState {
   final TCardController _controller = TCardController();
   int? _leftDirection;
   int? _rightDirection;
-
+  ProductHandler productHandler = ProductHandler();
+  List<Product> products = [];
+  
+  Future<void> _loadProducts() async {
+    try {
+      products = await productHandler.getAllProducts();
+      setState(() {}); // Update the UI after fetching products
+    } catch (e) {
+      print('Error loading products: $e');
+    }
+  }
+  
   final List<String> _imgList = [
     'assets/images/card_new_img.jpg',
     'assets/images/video img_light.png',
@@ -31,6 +41,12 @@ class _AddStoryScreenState extends BaseRouteState {
 
   _AddStoryScreenState() : super();
 
+    @override
+  void initState() {
+    super.initState();
+    _loadProducts();
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -39,7 +55,6 @@ class _AddStoryScreenState extends BaseRouteState {
         exitAppDialog();
       },
       child: Scaffold(
-        appBar: _appBarWidget(),
         backgroundColor: g.isDarkModeEnable
             ? const Color(0xFF03000C)
             : Theme.of(context).scaffoldBackgroundColor,
@@ -124,21 +139,6 @@ class _AddStoryScreenState extends BaseRouteState {
                                   ),
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(18.0),
-                                child: CircleAvatar(
-                                  backgroundColor: const Color(0xFF230f4E),
-                                  child: IconButton(
-                                    icon: const Icon(
-                                      Icons.bug_report,
-                                    ),
-                                    color: Colors.white,
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ),
-                              ),
                             ],
                           ),
                           Container(
@@ -156,8 +156,8 @@ class _AddStoryScreenState extends BaseRouteState {
                                         backgroundColor: Colors.white,
                                         radius: 35,
                                         child: CircleAvatar(
-                                          backgroundImage: AssetImage(
-                                            _imgList[_current],
+                                          backgroundImage: NetworkImage(
+                                            products[_current].imageUrl,
                                           ),
                                           radius: 32,
                                         ),
@@ -172,26 +172,30 @@ class _AddStoryScreenState extends BaseRouteState {
                                           text: TextSpan(
                                             children: [
                                               TextSpan(
-                                                text: 'Anna\nMcconaughey\n',
+                                                text: products[_current].name != null
+                                                    ? (products[_current].name!.length > 15
+                                                        ? products[_current].name!.substring(0, 15) + '...'
+                                                        : products[_current].name!)
+                                                    : 'No name',
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .displaySmall
                                                     ?.copyWith(
-                                                        fontSize: 19,
+                                                        fontSize: 10,
                                                         color: Colors.white,
                                                         fontWeight:
                                                             FontWeight
                                                                 .w400),
                                               ),
                                               TextSpan(
-                                                text: '1.5 km away',
+                                                text: products[_current].price.toString(),
                                                 style: Theme.of(context)
                                                     .textTheme
                                                     .titleMedium
                                                     ?.copyWith(
                                                         color:
                                                             Colors.white70,
-                                                        fontSize: 12),
+                                                        fontSize: 14),
                                               ),
                                             ],
                                           ),
@@ -200,51 +204,7 @@ class _AddStoryScreenState extends BaseRouteState {
                                     ],
                                   ),
                                 ),
-                                Row(
-                                  mainAxisSize: MainAxisSize.max,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Align(
-                                      child: Container(
-                                        height: 50,
-                                        padding: const EdgeInsets.only(left: 8),
-                                        child: DotsIndicator(
-                                          dotsCount: _imgList.length,
-                                          position: _current.toDouble(),
-                                          decorator: DotsDecorator(
-                                            spacing: const EdgeInsets.all(3),
-                                            color: Colors.transparent,
-                                            activeColor: Colors.white,
-                                            activeShape:
-                                                RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      5.0),
-                                              side: const BorderSide(
-                                                  color: Colors.white),
-                                            ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      5.0),
-                                              side: const BorderSide(
-                                                  color: Colors.white),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    IconButton(
-                                      icon: const Icon(
-                                          MdiIcons.messageReplyTextOutline),
-                                      color: Colors.white,
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    )
-                                  ],
-                                ),
+                                
                               ],
                             ),
                           ),
@@ -360,7 +320,7 @@ class _AddStoryScreenState extends BaseRouteState {
 
   _widgets() {
     List<Widget> widgetList = [];
-    for (int i = 0; i < _imgList.length; i++) {
+    for (int i = 0; i < products.length; i++) {
       widgetList.add(
         Stack(
           alignment: Alignment.center,
@@ -376,8 +336,8 @@ class _AddStoryScreenState extends BaseRouteState {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20),
-                child: Image.asset(
-                  _imgList[i],
+                child: Image.network(
+                  products[i].imageUrl,
                   height: MediaQuery.of(context).size.height * 0.70,
                   width: MediaQuery.of(context).size.width * 0.75,
                   fit: BoxFit.cover,
@@ -418,89 +378,6 @@ class _AddStoryScreenState extends BaseRouteState {
                 leading: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    InkWell(
-                      splashColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                      hoverColor: Colors.transparent,
-                      overlayColor: WidgetStateProperty.all(Colors.transparent),
-                      highlightColor: Colors.transparent,
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              content: Container(
-                                width: MediaQuery.of(context).size.width * 0.8,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(20),
-                                      child: Text(
-                                        'Send Invitation',
-                                        style: Theme.of(context).primaryTextTheme.displayLarge,
-                                      ),
-                                    ),
-                                    TextFormField(
-                                      controller: TextEditingController(),
-                                      keyboardType: TextInputType.emailAddress,
-                                      decoration: InputDecoration(
-                                        contentPadding: const EdgeInsets.all(20),
-                                        hintText: 'Enter recipient email',
-                                        prefixIcon: Icon(
-                                          Icons.email,
-                                          color: Theme.of(context).iconTheme.color,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 20),
-                                    Container(
-                                      height: 50,
-                                      width: 150,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(25),
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topLeft,
-                                          end: Alignment.bottomRight,
-                                          colors: g.gradientColors,
-                                        ),
-                                      ),
-                                      child: TextButton(
-                                        onPressed: () {
-                                          // Handle send invitation logic here
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Text(
-                                          'Send Invitation',
-                                          style: Theme.of(context)
-                                              .textButtonTheme
-                                              .style!
-                                              .textStyle!
-                                              .resolve({
-                                            WidgetState.pressed,
-                                          }),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                                            },
-                      child: CircleAvatar(
-                        radius: 18,
-                        backgroundColor: Theme.of(context).primaryColorLight,
-                        child: const Icon(
-                          Icons.add,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
                     Padding(
                       padding: g.isRTL
                           ? const EdgeInsets.only(right: 8)
@@ -509,40 +386,6 @@ class _AddStoryScreenState extends BaseRouteState {
                         AppLocalizations.of(context)!.lbl_Add_Story,
                         style: Theme.of(context).primaryTextTheme.titleSmall,
                       ),
-                    ),
-                  ],
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.search,
-                      color: Theme.of(context).iconTheme.color,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: IconButton(
-                        icon: const Icon(Icons.notifications_rounded),
-                        color: Theme.of(context).iconTheme.color,
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => NotificationListScreen(
-                                    a: widget.analytics,
-                                    o: widget.observer,
-                                  )));
-                        },
-                      ),
-                    ),
-                    IconButton(
-                      icon: (const Icon(MdiIcons.tuneVerticalVariant)),
-                      color: Theme.of(context).iconTheme.color,
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => FilterOptionsScreen(
-                                  a: widget.analytics,
-                                  o: widget.observer,
-                                )));
-                      },
                     ),
                   ],
                 ),

@@ -678,20 +678,6 @@ class _FriendsScreenState extends BaseRouteState {
                         },
                       ),
                     ),
-                    IconButton(
-                      padding: const EdgeInsets.all(0),
-                      icon: const Align(
-                          alignment: Alignment.bottomRight,
-                          child: (Icon(MdiIcons.tuneVerticalVariant))),
-                      color: Theme.of(context).iconTheme.color,
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => FilterOptionsScreen(
-                                  a: widget.analytics,
-                                  o: widget.observer,
-                                )));
-                      },
-                    ),
                   ],
                 ),
               ),

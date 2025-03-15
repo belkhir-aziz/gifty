@@ -197,7 +197,10 @@ Future<void> _loginUser() async {
       _showNotification('Login failed: Invalid credentials.', isError: true);
     }
   } catch (e) {
-    _showNotification('Login failed: $e', isError: true);
+    String errorMessage = e.toString();
+     String extractedMessage = extractMessage(errorMessage);
+    _showNotification('Sign-up failed: $extractedMessage', isError: true);
+    _showNotification('Login failed: $extractedMessage', isError: true);
   }
 }
 
@@ -232,10 +235,16 @@ Future<void> _signUpUser() async {
         ));
       } 
   } catch (e) {
-    _showNotification('Sign-up failed: $e', isError: true);
+     String errorMessage = e.toString();
+     String extractedMessage = extractMessage(errorMessage);
+    _showNotification('Sign-up failed: $extractedMessage', isError: true);
   }
 }
-
+String extractMessage(String errorMessage) {
+  final RegExp regex = RegExp(r'message:\s*(.*?),\s*statusCode:');
+  final Match? match = regex.firstMatch(errorMessage);
+  return match != null ? match.group(1) ?? '' : '';
+}
 void _showNotification(String message, {bool isError = false}) {
   showModalBottomSheet(
     context: context,

@@ -30,13 +30,19 @@ class _AddStoryScreenState extends BaseRouteState {
   UserProvider userProvider = UserProvider();
   List<Product> products = [];
   int _current = 0;
+  bool _isLoading = true; // Add a loading state
   
   Future<void> _loadProducts() async {
     try {
       products = await productHandler.getAllProducts();
-      setState(() {}); // Update the UI after fetching products
+      setState(() {
+        _isLoading = false; // Update the loading state
+      }); // Update the UI after fetching products
     } catch (e) {
       print('Error loading products: $e');
+      setState(() {
+        _isLoading = false; // Ensure loading state is updated even on error
+      });
     }
   }
   
@@ -51,6 +57,9 @@ class _AddStoryScreenState extends BaseRouteState {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Center(child: CircularProgressIndicator()); // Show loading indicator
+    }
     return PopScope(
       canPop: true,
       onPopInvoked: (bool didPop) {

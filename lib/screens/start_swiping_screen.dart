@@ -1,7 +1,7 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:datingapp/generated/app_localizations.dart';
 
 class StartSwipingScreen extends BaseRoute {
   const StartSwipingScreen({super.key, super.a, super.o}) : super(r: 'StartSwippingScreen');

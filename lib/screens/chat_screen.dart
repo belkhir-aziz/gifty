@@ -7,7 +7,7 @@ import 'package:datingapp/widgets/drawer_menu_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:datingapp/generated/app_localizations.dart';
 
 class ChatScreen extends BaseRoute {
   const ChatScreen({super.key, super.a, super.o}) : super(r: 'ChatScreen');

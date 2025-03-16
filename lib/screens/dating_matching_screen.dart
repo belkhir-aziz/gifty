@@ -4,7 +4,7 @@ import 'package:datingapp/models/dating_matched_model.dart';
 import 'package:datingapp/screens/setting_screen.dart';
 import 'package:datingapp/screens/view_plan_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:datingapp/generated/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class DatingMatchesScreen extends BaseRoute {

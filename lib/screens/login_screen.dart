@@ -7,7 +7,7 @@ import 'package:datingapp/screens/notification_banner_screen.dart';
 import 'package:datingapp/screens/profile_detail_screen.dart';
 import 'package:datingapp/widgets/bottom_navigation_bar_widget_light.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:datingapp/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';

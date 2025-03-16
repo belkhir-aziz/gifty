@@ -4,7 +4,7 @@ import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:datingapp/screens/chat_screen.dart';
 import 'package:datingapp/screens/start_conversion_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:datingapp/generated/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 

@@ -4,7 +4,7 @@ import 'package:datingapp/models/user_profile.dart';
 import 'package:datingapp/screens/profile_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:datingapp/generated/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class VerifyOtpScreen extends BaseRoute {

@@ -8,7 +8,7 @@ import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/provider/user_relation_handler.dart';
 import 'package:datingapp/screens/interest_screen.dart';
 import 'package:datingapp/screens/invitation_dialog.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:datingapp/generated/app_localizations.dart';
 import 'package:datingapp/screens/notification_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

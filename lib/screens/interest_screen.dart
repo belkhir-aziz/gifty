@@ -5,7 +5,7 @@ import 'package:datingapp/screens/start_swiping_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:datingapp/generated/app_localizations.dart';
 
 class InterestScreen extends BaseRoute {
   const InterestScreen({super.key, super.a, super.o}) : super(r: 'InterestScreen');

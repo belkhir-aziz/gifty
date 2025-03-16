@@ -3,7 +3,7 @@ import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:datingapp/models/user_profile.dart';
 import 'package:datingapp/screens/likes_and_interest_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:datingapp/generated/app_localizations.dart';
 import 'package:intl/intl.dart';
 
 class ProfileDetailScreen extends BaseRoute {

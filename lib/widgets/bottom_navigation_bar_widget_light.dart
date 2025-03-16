@@ -115,7 +115,7 @@ class _BottomNavigationWidgetLightState extends BaseRouteState<BottomNavigationW
       });
     }
     _tabController =
-        TabController(length: 4, vsync: this, initialIndex: _currentIndex!);
+        TabController(length: 3, vsync: this, initialIndex: _currentIndex!);
     _tabController!.addListener(_tabControllerListener);
   }
 

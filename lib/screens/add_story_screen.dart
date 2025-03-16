@@ -5,6 +5,7 @@ import 'package:datingapp/models/user_reactions.dart';
 import 'package:datingapp/provider/products_handler.dart';
 import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/provider/user_reactions_handler.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -39,7 +40,9 @@ class _AddStoryScreenState extends BaseRouteState {
         _isLoading = false; // Update the loading state
       }); // Update the UI after fetching products
     } catch (e) {
-      print('Error loading products: $e');
+      if (kDebugMode) {
+        print('Error loading products: $e');
+      }
       setState(() {
         _isLoading = false; // Ensure loading state is updated even on error
       });
@@ -58,7 +61,7 @@ class _AddStoryScreenState extends BaseRouteState {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Center(child: CircularProgressIndicator()); // Show loading indicator
+      return const Center(child: CircularProgressIndicator()); // Show loading indicator
     }
     return PopScope(
       canPop: true,
@@ -399,10 +402,14 @@ class _AddStoryScreenState extends BaseRouteState {
         reactionType: reactionType);
 
         await userReactionsHandler.saveReaction(reaction);
-        print('Reaction saved successfully');
+        if (kDebugMode) {
+          print('Reaction saved successfully');
+        }
       }
     } catch (e) {
-      print('Error saving reaction: $e');
+      if (kDebugMode) {
+        print('Error saving reaction: $e');
+      }
     }
   }
 
@@ -411,15 +418,19 @@ class _AddStoryScreenState extends BaseRouteState {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Information'),
-          content: Text('This is an empty dialog for now.'),
+          title: const Text('Information'),
+          content: const Text('This is an empty dialog for now.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Close'),
-            ),
+              child: const Text('Close',
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                              ),
+                              ),
           ],
         );
       },

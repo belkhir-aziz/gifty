@@ -1,4 +1,3 @@
-import 'package:datingapp/models/add_your_story_model.dart';
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:datingapp/models/product.dart';
@@ -30,15 +29,6 @@ class _FriendsScreenState extends BaseRouteState {
   final List<String> circleImageList = [
     'assets/images/img_circle_0.png',
     'assets/images/img_circle_1.png',
-  ];
-
-  final List<AddYourStory> _storyList = [
-    AddYourStory(
-        name: 'Belle Benson',
-        age: 28,
-        km: 1.5,
-        imgPath: 'assets/images/card_img_0.png',
-        count: 35),
   ];
 
   _FriendsScreenState() : super();
@@ -121,7 +111,7 @@ class _FriendsScreenState extends BaseRouteState {
                                 backgroundColor: const Color(0xFFF1405B),
                                 child: Text(
                                   '${friends[(index - 1) % friends.length].firstName[0]}${friends[(index - 1) % friends.length].lastName[0]}',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
@@ -185,17 +175,12 @@ class _FriendsScreenState extends BaseRouteState {
                                   : Colors.white54,
                             ),
                             child: GridTile(
-                              header: Align(
+                              header: const Align(
                                 alignment: Alignment.topRight,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: CircleAvatar(
-                                    radius: 6,
-                                    backgroundColor:
-                                        Colors.lightGreenAccent[400],
-                                  ),
-                                ),
                               ),
+                              
+
+                              
                               footer: ListTile(
                                 contentPadding:
                                     const EdgeInsets.only(left: 12, bottom: 4),
@@ -229,334 +214,7 @@ class _FriendsScreenState extends BaseRouteState {
                           ),
                         );
                       },
-                    ),
-                    GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 15,
-                      ),
-                      itemCount: products.length,
-                      itemBuilder: (ctx, index) {
-                        return InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => InterestScreen(
-                                      a: widget.analytics,
-                                      o: widget.observer,
-                                    )));
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            margin: const EdgeInsets.only(top: 20),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.white),
-                              color: g.isDarkModeEnable
-                                  ? const Color(0xFF1D0529)
-                                  : Colors.white54,
-                            ),
-                            child: GridTile(
-                              header: Align(
-                                alignment: Alignment.topRight,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: CircleAvatar(
-                                    radius: 6,
-                                    backgroundColor:
-                                        Colors.lightGreenAccent[400],
-                                  ),
-                                ),
-                              ),
-                              footer: ListTile(
-                                contentPadding:
-                                    const EdgeInsets.only(left: 12, bottom: 4),
-                                title: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.start,
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        '${products[index].name},${products[index].price}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineMedium
-                                            ?.copyWith(
-                                                fontSize: 14,
-                                                color: Colors.white),
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Padding(
-                                          padding: g.isRTL
-                                              ? const EdgeInsets.only(right: 6)
-                                              : const EdgeInsets.all(0),
-                                          child: Text(
-                                            '${_storyList[index].km} km away',
-                                            style: Theme.of(context)
-                                                .primaryTextTheme
-                                                .titleLarge,
-                                          ),
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.camera_alt,
-                                              color: Colors.white,
-                                              size: 14,
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 4, right: 8),
-                                              child: Text(
-                                                '${_storyList[index].count}',
-                                                style: Theme.of(context)
-                                                    .primaryTextTheme
-                                                    .titleLarge,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Image.asset(
-                                  '${_storyList[index].imgPath}',
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 15,
-                      ),
-                      itemCount: _storyList.length,
-                      itemBuilder: (ctx, index) {
-                        return InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => InterestScreen(
-                                      a: widget.analytics,
-                                      o: widget.observer,
-                                    )));
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            margin: const EdgeInsets.only(top: 20),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.white),
-                              color: g.isDarkModeEnable
-                                  ? const Color(0xFF1D0529)
-                                  : Colors.white54,
-                            ),
-                            child: GridTile(
-                              header: Align(
-                                alignment: Alignment.topRight,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: CircleAvatar(
-                                    radius: 6,
-                                    backgroundColor:
-                                        Colors.lightGreenAccent[400],
-                                  ),
-                                ),
-                              ),
-                              footer: ListTile(
-                                contentPadding:
-                                    const EdgeInsets.only(left: 12, bottom: 4),
-                                title: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.start,
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        '${_storyList[index].name},${_storyList[index].age}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineMedium
-                                            ?.copyWith(
-                                                fontSize: 14,
-                                                color: Colors.white),
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Padding(
-                                          padding: g.isRTL
-                                              ? const EdgeInsets.only(right: 6)
-                                              : const EdgeInsets.all(0),
-                                          child: Text(
-                                            '${_storyList[index].km} km away',
-                                            style: Theme.of(context)
-                                                .primaryTextTheme
-                                                .titleLarge,
-                                          ),
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.camera_alt,
-                                              color: Colors.white,
-                                              size: 14,
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 4, right: 8),
-                                              child: Text(
-                                                '${_storyList[index].count}',
-                                                style: Theme.of(context)
-                                                    .primaryTextTheme
-                                                    .titleLarge,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Image.asset(
-                                  '${_storyList[index].imgPath}',
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 15,
-                      ),
-                      itemCount: _storyList.length,
-                      itemBuilder: (ctx, index) {
-                        return InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => InterestScreen(
-                                      a: widget.analytics,
-                                      o: widget.observer,
-                                    )));
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            margin: const EdgeInsets.only(top: 20),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.white),
-                              color: g.isDarkModeEnable
-                                  ? const Color(0xFF1D0529)
-                                  : Colors.white54,
-                            ),
-                            child: GridTile(
-                              header: Align(
-                                alignment: Alignment.topRight,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: CircleAvatar(
-                                    radius: 6,
-                                    backgroundColor:
-                                        Colors.lightGreenAccent[400],
-                                  ),
-                                ),
-                              ),
-                              footer: ListTile(
-                                contentPadding:
-                                    const EdgeInsets.only(left: 12, bottom: 4),
-                                title: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.start,
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        '${_storyList[index].name},${_storyList[index].age}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .headlineMedium
-                                            ?.copyWith(
-                                                fontSize: 14,
-                                                color: Colors.white),
-                                      ),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Padding(
-                                          padding: g.isRTL
-                                              ? const EdgeInsets.only(right: 6)
-                                              : const EdgeInsets.all(0),
-                                          child: Text(
-                                            '${_storyList[index].km} km away',
-                                            style: Theme.of(context)
-                                                .primaryTextTheme
-                                                .titleLarge,
-                                          ),
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Icon(
-                                              Icons.camera_alt,
-                                              color: Colors.white,
-                                              size: 14,
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 4, right: 8),
-                                              child: Text(
-                                                '${_storyList[index].count}',
-                                                style: Theme.of(context)
-                                                    .primaryTextTheme
-                                                    .titleLarge,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
-                                child: Image.asset(
-                                  '${_storyList[index].imgPath}',
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                    ),  
                   ],
                 ),
               )
@@ -575,7 +233,7 @@ class _FriendsScreenState extends BaseRouteState {
     fetchFriends(userProvider);
     fetchProducts(userProvider.userProfile!.id);
     _tabController =
-        TabController(length: 4, vsync: this, initialIndex: _currentIndex);
+        TabController(length: 1, vsync: this, initialIndex: _currentIndex);
     _tabController!.addListener(_tabControllerListener);
     
   }

@@ -85,7 +85,7 @@ class _FriendsScreenState extends BaseRouteState {
                                 : const EdgeInsets.only(right: 10),
                             child: const CircleAvatar(
                               radius: 25,
-                              backgroundColor: Color(0xFFF1405B),
+                              backgroundColor: Color.fromARGB(255, 121, 8, 135),
                               child: Icon(
                                 Icons.add,
                                 color: Colors.white,
@@ -108,9 +108,9 @@ class _FriendsScreenState extends BaseRouteState {
                               backgroundColor: Colors.white,
                               child: CircleAvatar(
                                 radius: 25,
-                                backgroundColor: const Color(0xFFF1405B),
+                                backgroundColor: const Color.fromARGB(255, 203, 52, 198),
                                 child: Text(
-                                  '${friends[(index - 1) % friends.length].firstName[0]}${friends[(index - 1) % friends.length].lastName[0]}',
+                                  '${friends[(index - 1) % friends.length].firstName[0].toUpperCase()}${friends[(index - 1) % friends.length].lastName[0].toUpperCase()}',
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 20,

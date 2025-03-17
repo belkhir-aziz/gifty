@@ -20,6 +20,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
   final TextEditingController _cFirstName = TextEditingController();
   final TextEditingController _cLastName = TextEditingController();
   final TextEditingController _cBDate = TextEditingController();
+  final TextEditingController _cGender = TextEditingController();
   final FocusNode _firstNameFocusNode = FocusNode();
   final FocusNode _lastNameFocusNode = FocusNode();
   final FocusNode _bDateFocusNode = FocusNode();
@@ -34,7 +35,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
     userProfile.firstName =_cFirstName.text;
     userProfile.lastName = _cLastName.text;
     userProfile.dateOfBirth = DateFormat("dd-MM-yyyy").parse(_cBDate.text);
-    userProfile.gender = "male";
+    userProfile.gender = _cGender.text;
   }
   @override
   void initState() {
@@ -340,7 +341,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
                                 color: Theme.of(context).iconTheme.color),
                           ),
                           value: _gender,
-                          items: ['Select Gender', 'Women', 'Men']
+                          items: ['Select Gender', 'male', 'female']
                               .map((label) => DropdownMenuItem(
                                     value: label,
                                     child: Padding(
@@ -367,7 +368,12 @@ class _ProfileDetailScreenState extends BaseRouteState {
                           ),
                           onChanged: (value) {
                             setState(() {
-                              _gender = value;
+                              setState(() {
+                                
+                                  _gender = value;
+                                  _cGender.text = _gender!;
+                              });
+                              
                             });
                           },
                         ),

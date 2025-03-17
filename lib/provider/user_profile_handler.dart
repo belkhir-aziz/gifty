@@ -5,11 +5,12 @@ class UserProfileHandler {
   final SupabaseClient supabase = Supabase.instance.client;
 
   Future<void> createUserProfile(UserProfile userProfile) async {
-    final response = await supabase.from('users').insert(userProfile.toJson());
-    if (response.error != null) {
-      throw Exception('Failed to create profile: ${response.error!.message}');
-    }
+  final response = await supabase.from('users').insert(userProfile.toJson())
+      .select(); // Use .select() to get the response
+  if (response.isEmpty) {
+    throw Exception('Failed to create profile: No response received.');
   }
+}
 
   Future<UserProfile> getUserProfile(String id) async {
     final response = await supabase.from('users').select().eq('id', id).single();

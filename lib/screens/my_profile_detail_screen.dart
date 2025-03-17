@@ -49,7 +49,7 @@ class _MyProfileScreenState extends BaseRouteState {
                       color: Color.fromRGBO(19, 1, 51, 1),
                     ),
                     child: Image.asset(
-                      userProvider.userProfile?.gender == "Women" ? 'assets/images/profile_women.png' : 'assets/images/profile_men.png',
+                      userProvider.userProfile?.gender == "female" ? 'assets/images/profile_women.png' : 'assets/images/profile_men.png',
                       fit: BoxFit.cover,
                     ),
                   ),

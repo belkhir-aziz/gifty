@@ -4,9 +4,11 @@ import 'package:datingapp/models/user_profile.dart';
 import 'package:datingapp/provider/user_profile_handler.dart';
 import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/screens/likes_and_interest_screen.dart';
+import 'package:datingapp/widgets/bottom_navigation_bar_widget_dark.dart';
 import 'package:datingapp/widgets/bottom_navigation_bar_widget_light.dart';
 import 'package:flutter/material.dart';
 import 'package:datingapp/generated/app_localizations.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -103,6 +105,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         key: _scaffoldKey,
+        appBar: _appBarWidget(),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Center(
@@ -479,4 +482,40 @@ class _ProfileDetailScreenState extends BaseRouteState {
     );
   }
 
+
+PreferredSizeWidget _appBarWidget() {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(60),
+      child: SafeArea(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Expanded(
+              child: ListTile(
+                leading: IconButton(
+                  icon: const Icon(FontAwesomeIcons.longArrowAltLeft),
+                  color: Theme.of(context).iconTheme.color,
+                  onPressed: () {
+                    g.isDarkModeEnable
+                        ? Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => BottomNavigationWidgetDark(
+                                  currentIndex: 2,
+                                  a: widget.analytics,
+                                  o: widget.observer,
+                                )))
+                        : Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => BottomNavigationWidgetLight(
+                                  currentIndex: 2,
+                                  a: widget.analytics,
+                                  o: widget.observer,
+                                )));
+                  },
+                ), 
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

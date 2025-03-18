@@ -30,7 +30,9 @@ class _ProfileDetailScreenState extends BaseRouteState {
   final FocusNode _firstNameFocusNode = FocusNode();
   final FocusNode _lastNameFocusNode = FocusNode();
   final FocusNode _bDateFocusNode = FocusNode();
-  String? _gender = 'Select Gender';
+  String? _gender;
+ 
+
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   late UserProvider userProvider;
@@ -40,10 +42,27 @@ class _ProfileDetailScreenState extends BaseRouteState {
 
   void updateProfileUser() {
     // Update the profileUser object with the current input
-    userProfile.firstName =_cFirstName.text;
-    userProfile.lastName = _cLastName.text;
-    userProfile.dateOfBirth = DateFormat("dd-MM-yyyy").parse(_cBDate.text);
-    userProfile.gender = _cGender.text;
+    if (isUpdate && (_cFirstName.text.isEmpty || _cFirstName.text == '')) {
+      userProfile.firstName = userProvider.userProfile!.firstName;
+    } else {
+      userProfile.firstName = _cFirstName.text;
+    }
+    if (isUpdate && (_cLastName.text.isEmpty || _cLastName.text == '')) {
+      userProfile.lastName = userProvider.userProfile!.lastName;
+    } else {
+      userProfile.lastName = _cLastName.text;
+    }
+    if (isUpdate && (_cBDate.text.isEmpty || _cBDate.text == '')) {
+      userProfile.dateOfBirth = userProvider.userProfile!.dateOfBirth;
+    } else {
+      userProfile.dateOfBirth = DateFormat("dd-MM-yyyy").parse(_cBDate.text);
+    }
+    if (isUpdate && (_cGender.text.isEmpty || _cGender.text == '')) {
+      userProfile.gender = userProvider.userProfile!.gender;
+    } else {
+      userProfile.gender = _cGender.text;
+    }
+    
   }
   @override
   void initState() {
@@ -74,6 +93,8 @@ class _ProfileDetailScreenState extends BaseRouteState {
   @override
   Widget build(BuildContext context) {
     userProvider = Provider.of<UserProvider>(context, listen: false);
+    _gender = isUpdate? '${userProvider.userProfile?.gender}'
+                        : 'Select Gender';
     return PopScope(
       canPop: true,
       onPopInvoked: (bool didPop) {
@@ -174,11 +195,12 @@ class _ProfileDetailScreenState extends BaseRouteState {
                           controller: _cFirstName,
                           focusNode: _firstNameFocusNode,
                           decoration: InputDecoration(
-                            labelText: isUpdate
-                            ? '${userProvider.userProfile?.firstName}'
-                            : (_firstNameFocusNode.hasFocus || _cFirstName.text.isNotEmpty
+                            labelText:
+                            (_firstNameFocusNode.hasFocus || _cFirstName.text.isNotEmpty)
                                 ? null
-                                : AppLocalizations.of(context)!.lbl_first_name_hint), // Adjust the title dynamically
+                                : (isUpdate
+                                  ? '${userProvider.userProfile?.firstName}'
+                                  : AppLocalizations.of(context)!.lbl_first_name_hint), 
 
                             labelStyle:
                                 Theme.of(context).primaryTextTheme.titleSmall,
@@ -217,11 +239,11 @@ class _ProfileDetailScreenState extends BaseRouteState {
                           focusNode: _lastNameFocusNode,
                           decoration: InputDecoration(
                             labelText:
-                              isUpdate
-                            ? '${userProvider.userProfile?.lastName}'
-                            : (_lastNameFocusNode.hasFocus || _cLastName.text.isNotEmpty
+                            (_lastNameFocusNode.hasFocus || _cLastName.text.isNotEmpty)
                                 ? null
-                                : AppLocalizations.of(context)!.lbl_last_name_hint), // Adjust the title dynamically
+                                : (isUpdate
+                                  ? '${userProvider.userProfile?.lastName}'
+                                  : AppLocalizations.of(context)!.lbl_last_name_hint), // Adjust the title dynamically
 
                             labelStyle:
                                 Theme.of(context).primaryTextTheme.titleSmall,
@@ -258,20 +280,20 @@ class _ProfileDetailScreenState extends BaseRouteState {
                           focusNode: _bDateFocusNode,
                           readOnly: true, // Prevent keyboard input to allow only date selection
                           decoration: InputDecoration(
-                            labelText: 
-                              isUpdate
-                            ? '${DateFormat('yyyy-MM-dd').format(userProvider.userProfile!.dateOfBirth.toLocal())}'
-                            
-                            : (_bDateFocusNode.hasFocus || _cBDate.text.isNotEmpty
+                            labelText:
+                            (_bDateFocusNode.hasFocus || _cBDate.text.isNotEmpty)
                                 ? null
-                                : AppLocalizations.of(context)!.lbl_dob_hint), // Adjust the title dynamically
+                                : (isUpdate
+                                  ? '${DateFormat('yyyy-MM-dd').format(userProvider.userProfile!.dateOfBirth.toLocal())}'
+                                  : AppLocalizations.of(context)!.lbl_dob_hint), 
+
 
                             labelStyle: Theme.of(context).primaryTextTheme.titleSmall,
                             contentPadding: _cBDate.text.isNotEmpty
-            ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15) // Adjust padding when date is set
-            : g.isRTL
-                ? const EdgeInsets.only(right: 20)
-                : const EdgeInsets.only(left: 20),
+                            ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15) // Adjust padding when date is set
+                            : g.isRTL
+                                ? const EdgeInsets.only(right: 20)
+                                : const EdgeInsets.only(left: 20),
                             alignLabelWithHint: true, // Ensure label text aligns with hint text    
                             suffixIcon: GestureDetector(
                               onTap: () async {

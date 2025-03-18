@@ -1,22 +1,28 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:datingapp/models/user_profile.dart';
+import 'package:datingapp/provider/user_profile_handler.dart';
+import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/screens/likes_and_interest_screen.dart';
+import 'package:datingapp/widgets/bottom_navigation_bar_widget_light.dart';
 import 'package:flutter/material.dart';
 import 'package:datingapp/generated/app_localizations.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class ProfileDetailScreen extends BaseRoute {
+  final bool isUpdate;
   final UserProfile userProfile; 
-  const ProfileDetailScreen({super.key, super.a, super.o, required  this.userProfile}) : super(r: 'ProfileDetailScreen');
+  const ProfileDetailScreen({super.key, super.a, super.o, required  this.userProfile, required  this.isUpdate}) : super(r: 'ProfileDetailScreen');
 
   @override
-  BaseRouteState createState() => _ProfileDetailScreenState(userProfile);
+  BaseRouteState createState() => _ProfileDetailScreenState(userProfile,isUpdate);
 }
 
 class _ProfileDetailScreenState extends BaseRouteState {
+  final bool isUpdate; // Toggle between Edit Profile and Sign-Up modes
   final UserProfile userProfile; // Store UserProfile in state
-
+  final UserProfileHandler userProfileHandler = UserProfileHandler();
   final TextEditingController _cFirstName = TextEditingController();
   final TextEditingController _cLastName = TextEditingController();
   final TextEditingController _cBDate = TextEditingController();
@@ -27,8 +33,10 @@ class _ProfileDetailScreenState extends BaseRouteState {
   String? _gender = 'Select Gender';
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  late UserProvider userProvider;
+  _ProfileDetailScreenState(this.userProfile, this.isUpdate) : super();
+  
 
-  _ProfileDetailScreenState(this.userProfile) : super();
 
   void updateProfileUser() {
     // Update the profileUser object with the current input
@@ -65,6 +73,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
 
   @override
   Widget build(BuildContext context) {
+    userProvider = Provider.of<UserProvider>(context, listen: false);
     return PopScope(
       canPop: true,
       onPopInvoked: (bool didPop) {
@@ -165,9 +174,12 @@ class _ProfileDetailScreenState extends BaseRouteState {
                           controller: _cFirstName,
                           focusNode: _firstNameFocusNode,
                           decoration: InputDecoration(
-                            labelText: _firstNameFocusNode.hasFocus || _cFirstName.text.isNotEmpty
+                            labelText: isUpdate
+                            ? '${userProvider.userProfile?.firstName}'
+                            : (_firstNameFocusNode.hasFocus || _cFirstName.text.isNotEmpty
                                 ? null
-                                : AppLocalizations.of(context)!.lbl_first_name_hint,
+                                : AppLocalizations.of(context)!.lbl_first_name_hint), // Adjust the title dynamically
+
                             labelStyle:
                                 Theme.of(context).primaryTextTheme.titleSmall,
                             contentPadding: g.isRTL
@@ -176,6 +188,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
                           ),
                         ),
                       ),
+                      
                     ),
                     Container(
                       margin: const EdgeInsets.fromLTRB(50, 20, 50, 20),
@@ -203,9 +216,13 @@ class _ProfileDetailScreenState extends BaseRouteState {
                           controller: _cLastName,
                           focusNode: _lastNameFocusNode,
                           decoration: InputDecoration(
-                            labelText: _lastNameFocusNode.hasFocus || _cLastName.text.isNotEmpty
+                            labelText:
+                              isUpdate
+                            ? '${userProvider.userProfile?.lastName}'
+                            : (_lastNameFocusNode.hasFocus || _cLastName.text.isNotEmpty
                                 ? null
-                                : AppLocalizations.of(context)!.lbl_last_name_hint,
+                                : AppLocalizations.of(context)!.lbl_last_name_hint), // Adjust the title dynamically
+
                             labelStyle:
                                 Theme.of(context).primaryTextTheme.titleSmall,
                             contentPadding: g.isRTL
@@ -241,9 +258,14 @@ class _ProfileDetailScreenState extends BaseRouteState {
                           focusNode: _bDateFocusNode,
                           readOnly: true, // Prevent keyboard input to allow only date selection
                           decoration: InputDecoration(
-                            labelText: _bDateFocusNode.hasFocus || _cBDate.text.isNotEmpty
+                            labelText: 
+                              isUpdate
+                            ? '${DateFormat('yyyy-MM-dd').format(userProvider.userProfile!.dateOfBirth.toLocal())}'
+                            
+                            : (_bDateFocusNode.hasFocus || _cBDate.text.isNotEmpty
                                 ? null
-                                : AppLocalizations.of(context)!.lbl_dob_hint,
+                                : AppLocalizations.of(context)!.lbl_dob_hint), // Adjust the title dynamically
+
                             labelStyle: Theme.of(context).primaryTextTheme.titleSmall,
                             contentPadding: _cBDate.text.isNotEmpty
             ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15) // Adjust padding when date is set
@@ -395,8 +417,17 @@ class _ProfileDetailScreenState extends BaseRouteState {
                         ),
                         child: TextButton(
                           onPressed: () {
-                            updateProfileUser();
+                            updateProfileUser(); 
+                            isUpdate
+                            ? 
+                            (userProfileHandler.editUserProfile(userProfile),
                             Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => BottomNavigationWidgetLight(
+                                currentIndex: 2,
+                                a: widget.analytics,
+                                o: widget.observer,
+                              ))))
+                            : Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => LikesInterestScreen(
                                       a: widget.analytics,
                                       o: widget.observer,

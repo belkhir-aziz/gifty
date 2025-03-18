@@ -31,5 +31,17 @@ class UserProfileHandler {
   }
 }
 
+Future<void> editUserProfile(UserProfile userProfile) async {
+  final response = await supabase
+      .from('users')
+      .update(userProfile.toJson())
+      .eq('id', userProfile.id)
+      .select();
+
+  if (response.isEmpty) {
+    throw Exception('Failed to update profile: No response received.');
+  }
+}
+
 
 }

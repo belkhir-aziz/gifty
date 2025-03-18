@@ -180,7 +180,8 @@ Future<void> _loginUser() async {
           builder: (context) => ProfileDetailScreen(
             a: widget.analytics,
             o: widget.observer,
-            userProfile: userProfile
+            userProfile: userProfile,
+            isUpdate: false,
           ),
         ));
       } else {

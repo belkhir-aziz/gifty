@@ -1,9 +1,9 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:datingapp/provider/user_provider.dart';
+import 'package:datingapp/screens/profile_detail_screen.dart';
 import 'package:datingapp/screens/setting_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:datingapp/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -157,14 +157,34 @@ class _MyProfileScreenState extends BaseRouteState {
                             end: Alignment.bottomRight,
                           ),
                         ),
-                        child: const CircleAvatar(
+                        child: 
+                          CircleAvatar(
                           //todo : edit on click on button, show the same as creation of account
                           backgroundColor: Colors.transparent,
                           radius: 20,
-                          child: Icon(
-                            Icons.border_color_outlined,
-                            size: 18,
+                          
+                          child: IconButton(
+                            icon: const Icon(Icons.border_color_outlined, 
+                            size: 18.0,),
                             color: Colors.white,
+                            onPressed: () {
+                              if (userProvider.userProfile != null) {
+                                
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => ProfileDetailScreen(
+                                    a: widget.analytics,
+                                    o: widget.observer,
+                                    userProfile: userProvider.userProfile!,
+                                    isUpdate: true,
+                                  ),
+                                ));
+                                
+                              } else {                         
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(content: Text('User profile is not available')),
+                                );
+                              }
+                            },
                           ),
                         ),
                       ),
@@ -284,299 +304,6 @@ class _MyProfileScreenState extends BaseRouteState {
                             Theme.of(context).primaryTextTheme.titleSmall,
                       ),
                     ),
-                    /*
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: TabBar(
-                        controller: _tabController,
-                        indicatorColor: Theme.of(context).iconTheme.color,
-                        onTap: (int index) async {
-                          _currentIndex = index;
-                          setState(() {});
-                        },
-                        tabs: [
-                          _tabController!.index == 0
-                              ? Tab(
-                                  child: ShaderMask(
-                                    blendMode: BlendMode.srcIn,
-                                    shaderCallback: (Rect bounds) {
-                                      return LinearGradient(
-                                        colors: g.gradientColors,
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                      ).createShader(bounds);
-                                    },
-                                    child: Text(
-                                      AppLocalizations.of(context)!
-                                          .lbl_tab_pictures,
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                )
-                              : Text(
-                                  AppLocalizations.of(context)!
-                                      .lbl_tab_pictures,
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                          _tabController!.index == 1
-                              ? Tab(
-                                  child: ShaderMask(
-                                    blendMode: BlendMode.srcIn,
-                                    shaderCallback: (Rect bounds) {
-                                      return LinearGradient(
-                                        colors: g.gradientColors,
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                      ).createShader(bounds);
-                                    },
-                                    child: Text(
-                                      AppLocalizations.of(context)!
-                                          .lbl_tab_videos,
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                )
-                              : Text(
-                                  AppLocalizations.of(context)!
-                                      .lbl_tab_videos,
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                          _tabController!.index == 2
-                              ? Tab(
-                                  child: ShaderMask(
-                                    blendMode: BlendMode.srcIn,
-                                    shaderCallback: (Rect bounds) {
-                                      return LinearGradient(
-                                        colors: g.gradientColors,
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                      ).createShader(bounds);
-                                    },
-                                    child: Text(
-                                      AppLocalizations.of(context)!
-                                          .lbl_tab_mybio,
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                )
-                              : Text(
-                                  AppLocalizations.of(context)!
-                                      .lbl_tab_mybio,
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                          _tabController!.index == 3
-                              ? Tab(
-                                  child: ShaderMask(
-                                    blendMode: BlendMode.srcIn,
-                                    shaderCallback: (Rect bounds) {
-                                      return LinearGradient(
-                                        colors: g.gradientColors,
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                      ).createShader(bounds);
-                                    },
-                                    child: Text(
-                                      AppLocalizations.of(context)!
-                                          .lbl_tab_more,
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                  ),
-                                )
-                              : Text(
-                                  AppLocalizations.of(context)!
-                                      .lbl_tab_more,
-                                  style: const TextStyle(fontSize: 16),
-                                ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: (MediaQuery.of(context).size.height * 0.12),
-                      width: MediaQuery.of(context).size.width,
-                      child: TabBarView(
-                        controller: _tabController,
-                        children: [
-                          GridView.builder(
-                            scrollDirection: Axis.horizontal,
-                            gridDelegate:
-                                SliverGridDelegateWithMaxCrossAxisExtent(
-                              maxCrossAxisExtent:
-                                  MediaQuery.of(context).size.width,
-                              mainAxisSpacing: 2.0,
-                              crossAxisSpacing: 2.0,
-                            ),
-                            itemCount: 5,
-                            itemBuilder: (ctx, index) {
-                              return Container(
-                                alignment: Alignment.center,
-                                margin: const EdgeInsets.only(top: 20, left: 20),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: Colors.white),
-                                  color: g.isDarkModeEnable
-                                      ? const Color(0xFF1D0529)
-                                      : Colors.white54,
-                                ),
-                                height:
-                                    (MediaQuery.of(context).size.height *
-                                        0.12),
-                                width: MediaQuery.of(context).size.width,
-                                child: GridTile(
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(19),
-                                    child: Image.asset(
-                                      'assets/images/sample1.jpg',
-                                      height: (MediaQuery.of(context)
-                                              .size
-                                              .height *
-                                          0.12),
-                                      width:
-                                          MediaQuery.of(context).size.width,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                          Container(),
-                          Container(),
-                          Container()
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: g.isRTL
-                          ? const EdgeInsets.only(right: 20, top: 30)
-                          : const EdgeInsets.only(left: 20, top: 30),
-                      child: Text(
-                        AppLocalizations.of(context)!.lbl_intrests,
-                        style:
-                            Theme.of(context).primaryTextTheme.displaySmall,
-                      ),
-                    ),
-                    Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: g.isRTL
-                                    ? const EdgeInsets.only(right: 20, top: 20)
-                                    : const EdgeInsets.only(left: 20, top: 20),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      MdiIcons.music,
-                                      color: Color(0xFFB783EB),
-                                      size: 20,
-                                    ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 4),
-                                      child: Text(
-                                        'Music',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleSmall
-                                            ?.copyWith(
-                                                color: const Color(0xFFB783EB),
-                                                fontSize: 12),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 20),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      MdiIcons.cookie,
-                                      color: Color(0xFFB783EB),
-                                      size: 20,
-                                    ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 4),
-                                      child: Text(
-                                        'Cooking',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleSmall
-                                            ?.copyWith(
-                                                color: const Color(0xFFB783EB),
-                                                fontSize: 12),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 20),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      MdiIcons.swim,
-                                      color: Color(0xFFB783EB),
-                                      size: 20,
-                                    ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 4),
-                                      child: Text(
-                                        'Swimming',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleSmall
-                                            ?.copyWith(
-                                                color: const Color(0xFFB783EB),
-                                                fontSize: 12),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 20),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      Icons.travel_explore,
-                                      color: Color(0xFFB783EB),
-                                      size: 20,
-                                    ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(left: 4),
-                                      child: Text(
-                                        'Travelling',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleSmall
-                                            ?.copyWith(
-                                                color: const Color(0xFFB783EB),
-                                                fontSize: 12),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ))
-                        */
                   ],
                 ),
               ),
@@ -633,13 +360,6 @@ class _MyProfileScreenState extends BaseRouteState {
               color: const Color(0xFFAD45B3),
               width: MediaQuery.of(context).size.width / 2 - 35,
               height: 65,
-              child: IconButton(
-                icon: const Icon(FontAwesomeIcons.longArrowAltLeft),
-                color: Colors.white,
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
             ),
           ],
         ),

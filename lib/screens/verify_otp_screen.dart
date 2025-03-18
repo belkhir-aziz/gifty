@@ -246,6 +246,7 @@ class _VerifyOtpScreenState extends BaseRouteState {
                               a: widget.analytics,
                               o: widget.observer,
                               userProfile: new UserProfile(id: "", email: "", firstName: "", lastName: "", gender: "", dateOfBirth: DateTime.now(), hobbies: ""),
+                              isUpdate: false,
                             )));
                   },
                   child: Text(

@@ -54,13 +54,13 @@ class _SettingScreenState extends BaseRouteState {
                   g.isDarkModeEnable
                       ? Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => BottomNavigationWidgetDark(
-                                currentIndex: 3,
+                                currentIndex: 2,
                                 a: widget.analytics,
                                 o: widget.observer,
                               )))
                       : Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => BottomNavigationWidgetLight(
-                                currentIndex: 3,
+                                currentIndex: 2,
                                 a: widget.analytics,
                                 o: widget.observer,
                               )));
@@ -138,285 +138,6 @@ class _SettingScreenState extends BaseRouteState {
                       )
                     ],
                   ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => NotificationListScreen(
-                            a: widget.analytics,
-                            o: widget.observer,
-                          )));
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.notifications,
-                        color: Theme.of(context).iconTheme.color,
-                        size: 18,
-                      ),
-                      ShaderMask(
-                        blendMode: BlendMode.srcIn,
-                        shaderCallback: (Rect bounds) {
-                          return LinearGradient(
-                            colors: g.gradientColors,
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ).createShader(bounds);
-                        },
-                        child: Padding(
-                          padding: g.isRTL
-                              ? const EdgeInsets.only(right: 10)
-                              : const EdgeInsets.only(left: 10),
-                          child: Text(
-                            AppLocalizations.of(context)!.lbl_notifications,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => SelectPlanScreen(
-                            a: widget.analytics,
-                            o: widget.observer,
-                          )));
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        FontAwesomeIcons.vial,
-                        color: Theme.of(context).iconTheme.color,
-                        size: 18,
-                      ),
-                      ShaderMask(
-                        blendMode: BlendMode.srcIn,
-                        shaderCallback: (Rect bounds) {
-                          return LinearGradient(
-                            colors: g.gradientColors,
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ).createShader(bounds);
-                        },
-                        child: Padding(
-                          padding: g.isRTL
-                              ? const EdgeInsets.only(right: 10)
-                              : const EdgeInsets.only(left: 10),
-                          child: Text(
-                            AppLocalizations.of(context)!.lbl_subscription,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => RewardScreen(
-                            a: widget.analytics,
-                            o: widget.observer,
-                          )));
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        FontAwesomeIcons.bootstrap,
-                        color: Theme.of(context).iconTheme.color,
-                        size: 18,
-                      ),
-                      ShaderMask(
-                        blendMode: BlendMode.srcIn,
-                        shaderCallback: (Rect bounds) {
-                          return LinearGradient(
-                            colors: g.gradientColors,
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ).createShader(bounds);
-                        },
-                        child: Padding(
-                          padding: g.isRTL
-                              ? const EdgeInsets.only(right: 10)
-                              : const EdgeInsets.only(left: 10),
-                          child: Text(
-                            AppLocalizations.of(context)!
-                                .lbl_dating_rewards,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.account_balance_wallet_outlined,
-                      color: Theme.of(context).iconTheme.color,
-                      size: 18,
-                    ),
-                    ShaderMask(
-                      blendMode: BlendMode.srcIn,
-                      shaderCallback: (Rect bounds) {
-                        return LinearGradient(
-                          colors: g.gradientColors,
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ).createShader(bounds);
-                      },
-                      child: Padding(
-                        padding: g.isRTL
-                            ? const EdgeInsets.only(right: 10)
-                            : const EdgeInsets.only(left: 10),
-                        child: Text(
-                          AppLocalizations.of(context)!.lbl_payment,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  g.isDarkModeEnable
-                      ? Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => BottomNavigationWidgetDark(
-                                currentIndex: 2,
-                                a: widget.analytics,
-                                o: widget.observer,
-                              )))
-                      : Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => BottomNavigationWidgetLight(
-                                currentIndex: 2,
-                                a: widget.analytics,
-                                o: widget.observer,
-                              )));
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.sms,
-                        color: Theme.of(context).iconTheme.color,
-                        size: 18,
-                      ),
-                      ShaderMask(
-                        blendMode: BlendMode.srcIn,
-                        shaderCallback: (Rect bounds) {
-                          return LinearGradient(
-                            colors: g.gradientColors,
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ).createShader(bounds);
-                        },
-                        child: Padding(
-                          padding: g.isRTL
-                              ? const EdgeInsets.only(right: 10)
-                              : const EdgeInsets.only(left: 10),
-                          child: Text(
-                            AppLocalizations.of(context)!.lbl_msg_options,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  Navigator.of(context).pushReplacement(MaterialPageRoute(
-                      builder: (context) => DatingMatchesScreen(
-                            a: widget.analytics,
-                            o: widget.observer,
-                          )));
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(
-                        Icons.group,
-                        color: Theme.of(context).iconTheme.color,
-                        size: 18,
-                      ),
-                      ShaderMask(
-                        blendMode: BlendMode.srcIn,
-                        shaderCallback: (Rect bounds) {
-                          return LinearGradient(
-                            colors: g.gradientColors,
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ).createShader(bounds);
-                        },
-                        child: Padding(
-                          padding: g.isRTL
-                              ? const EdgeInsets.only(right: 10)
-                              : const EdgeInsets.only(left: 10),
-                          child: Text(
-                            AppLocalizations.of(context)!
-                                .lbl_manage_matches,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.lock,
-                      color: Theme.of(context).iconTheme.color,
-                      size: 18,
-                    ),
-                    ShaderMask(
-                      blendMode: BlendMode.srcIn,
-                      shaderCallback: (Rect bounds) {
-                        return LinearGradient(
-                          colors: g.gradientColors,
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ).createShader(bounds);
-                      },
-                      child: Padding(
-                        padding: g.isRTL
-                            ? const EdgeInsets.only(right: 10)
-                            : const EdgeInsets.only(left: 10),
-                        child: Text(
-                          AppLocalizations.of(context)!.lbl_privacy_options,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    )
-                  ],
                 ),
               ),
               Padding(
@@ -537,7 +258,7 @@ class _SettingScreenState extends BaseRouteState {
                               ? const EdgeInsets.only(right: 10)
                               : const EdgeInsets.only(left: 10),
                           child: const Text(
-                            'Lang',
+                            'Language',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -546,38 +267,7 @@ class _SettingScreenState extends BaseRouteState {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.health_and_safety,
-                      color: Theme.of(context).iconTheme.color,
-                      size: 18,
-                    ),
-                    ShaderMask(
-                      blendMode: BlendMode.srcIn,
-                      shaderCallback: (Rect bounds) {
-                        return LinearGradient(
-                          colors: g.gradientColors,
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ).createShader(bounds);
-                      },
-                      child: Padding(
-                        padding: g.isRTL
-                            ? const EdgeInsets.only(right: 10)
-                            : const EdgeInsets.only(left: 10),
-                        child: Text(
-                          AppLocalizations.of(context)!.lbl_safety,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
+              
               Padding(
                 padding: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
                 child: Row(
@@ -609,39 +299,7 @@ class _SettingScreenState extends BaseRouteState {
                     )
                   ],
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Icon(
-                      Icons.pages,
-                      color: Theme.of(context).iconTheme.color,
-                      size: 18,
-                    ),
-                    ShaderMask(
-                      blendMode: BlendMode.srcIn,
-                      shaderCallback: (Rect bounds) {
-                        return LinearGradient(
-                          colors: g.gradientColors,
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ).createShader(bounds);
-                      },
-                      child: Padding(
-                        padding: g.isRTL
-                            ? const EdgeInsets.only(right: 10)
-                            : const EdgeInsets.only(left: 10),
-                        child: Text(
-                          AppLocalizations.of(context)!.lbl_terms_cond,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
+              ), 
               Padding(
                 padding: const EdgeInsets.only(right: 8, top: 8, bottom: 8),
                 child: Row(
@@ -697,23 +355,18 @@ class _SettingScreenState extends BaseRouteState {
                     g.isDarkModeEnable
                         ? Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => BottomNavigationWidgetDark(
-                                  currentIndex: 3,
+                                  currentIndex: 2,
                                   a: widget.analytics,
                                   o: widget.observer,
                                 )))
                         : Navigator.of(context).push(MaterialPageRoute(
                             builder: (context) => BottomNavigationWidgetLight(
-                                  currentIndex: 3,
+                                  currentIndex: 2,
                                   a: widget.analytics,
                                   o: widget.observer,
                                 )));
                   },
-                ),
-                trailing: IconButton(
-                  icon: const Icon(Icons.drive_file_move),
-                  color: Theme.of(context).iconTheme.color,
-                  onPressed: () {},
-                ),
+                ), 
               ),
             ),
           ],

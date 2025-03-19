@@ -1,5 +1,6 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
+import 'package:datingapp/provider/user_profile_handler.dart';
 import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/screens/profile_detail_screen.dart';
 import 'package:datingapp/screens/setting_screen.dart';
@@ -20,6 +21,7 @@ class _MyProfileScreenState extends BaseRouteState {
   int _currentIndex = 0;
   TabController? _tabController;
   late UserProvider userProvider;
+  final UserProfileHandler userProfileHandler = UserProfileHandler();
 
   _MyProfileScreenState() : super();
 
@@ -74,12 +76,29 @@ class _MyProfileScreenState extends BaseRouteState {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 4),
-                              child: Text(
-                                '2.7k',
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .bodyLarge,
-                              ),
+                              //String nbSuperLikes = await userProfileHandler.getItemCountForUser('relations', 'user_id', userProvider.userProfile!.id).toString();
+                              child: 
+                                FutureBuilder<int>(
+                                  future: userProfileHandler.getReactionCountForUser('reactions', 'superLike', 'user_id', userProvider.userProfile!.id),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return Text(
+                                        '..',
+                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return Text(
+                                        'Error: ${snapshot.error}',
+                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
+                                      );
+                                    } else {
+                                      return Text(
+                                        '${snapshot.data ?? 0}',
+                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
+                                      );
+                                    }
+                                  },
+                                ),
                             ),
                           ],
                         ),
@@ -102,12 +121,28 @@ class _MyProfileScreenState extends BaseRouteState {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 4),
-                              child: Text(
-                                '3.5k',
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .bodyLarge,
-                              ),
+                              child: 
+                                  FutureBuilder<int>(
+                                  future: userProfileHandler.getReactionCountForUser('reactions', 'like', 'user_id', userProvider.userProfile!.id),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return Text(
+                                        '..',
+                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return Text(
+                                        'Error: ${snapshot.error}',
+                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
+                                      );
+                                    } else {
+                                      return Text(
+                                        '${snapshot.data ?? 0}',
+                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
+                                      );
+                                    }
+                                  },
+                                ),
                             ),
                           ],
                         ),
@@ -130,12 +165,28 @@ class _MyProfileScreenState extends BaseRouteState {
                             ),
                             Padding(
                               padding: const EdgeInsets.only(left: 4),
-                              child: Text(
-                                '0',
-                                style: Theme.of(context)
-                                    .primaryTextTheme
-                                    .bodyLarge,
-                              ),
+                              child: 
+                                FutureBuilder<int>(
+                                  future: userProfileHandler.getItemCountForUser('relations', 'user_id', userProvider.userProfile!.id),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return Text(
+                                        '..',
+                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return Text(
+                                        'Error: ${snapshot.error}',
+                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
+                                      );
+                                    } else {
+                                      return Text(
+                                        '${snapshot.data ?? 0}',
+                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
+                                      );
+                                    }
+                                  },
+                                ),
                             ),
                           ],
                         ),

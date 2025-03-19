@@ -10,7 +10,7 @@ class UserProfileHandler {
   if (response.isEmpty) {
     throw Exception('Failed to create profile: No response received.');
   }
-}
+  }
 
   Future<UserProfile> getUserProfile(String id) async {
     final response = await supabase.from('users').select().eq('id', id).single();
@@ -29,9 +29,9 @@ class UserProfileHandler {
   } catch (e) {
     return null;
   }
-}
+  }
 
-Future<void> editUserProfile(UserProfile userProfile) async {
+ Future<void> editUserProfile(UserProfile userProfile) async {
   final response = await supabase
       .from('users')
       .update(userProfile.toJson())
@@ -41,7 +41,35 @@ Future<void> editUserProfile(UserProfile userProfile) async {
   if (response.isEmpty) {
     throw Exception('Failed to update profile: No response received.');
   }
+  }
+
+ Future<int> getItemCountForUser(String tableName, String userIdColumn, String userId) async {
+  final response = await supabase
+      .from(tableName)
+      //.select('id', count: CountOption.exact)
+      .select('*') .eq(userIdColumn, userId).count(CountOption.exact);
+
+  /*if (response.isEmpty) {
+    throw Exception('Failed to get item count.');
+  } */
+  if (response.data.isEmpty) {
+    return 0;
+  }
+  return response.count;
+
+ }
+
+ Future<int> getReactionCountForUser(String tableName, String reaction, String userIdColumn, String userId) async {
+  final response = await supabase
+      .from(tableName)
+      .select('*')
+      .eq(userIdColumn, userId)
+      .eq('reaction_type', reaction)
+      .count(CountOption.exact);
+
+  if (response.data.isEmpty) {
+    return 0;
+  }
+  return response.count;
 }
-
-
 }

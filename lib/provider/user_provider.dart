@@ -1,10 +1,13 @@
 import 'package:datingapp/models/user_profile.dart';
 import 'package:flutter/material.dart';
+import '../models/product.dart';
 
 class UserProvider with ChangeNotifier {
   UserProfile? _userProfile;
+  List<Product>? _cachedProducts;
 
   UserProfile? get userProfile => _userProfile;
+  List<Product>? get cachedProducts => _cachedProducts;
 
   void setUserProfile(UserProfile userProfile) {
     _userProfile = userProfile;
@@ -34,6 +37,19 @@ class UserProvider with ChangeNotifier {
 
   void clearUserProfile() {
     _userProfile = null;
+    _cachedProducts = null;
     notifyListeners();
+  }
+
+  void setCachedProducts(List<Product> products) {
+    _cachedProducts = products;
+    notifyListeners();
+  }
+
+  void removeInteractedProduct(String productId) {
+    if (_cachedProducts != null) {
+      _cachedProducts = _cachedProducts!.where((product) => product.id != productId).toList();
+      notifyListeners();
+    }
   }
 }

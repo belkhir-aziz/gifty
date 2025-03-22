@@ -35,7 +35,7 @@ class _AddStoryScreenState extends BaseRouteState {
   
   Future<void> _loadProducts() async {
     try {
-      products = await productHandler.getAllProducts();
+      products = await productHandler.fetchProducts(userProvider);
       setState(() {
         _isLoading = false; // Update the loading state
       }); // Update the UI after fetching products
@@ -268,7 +268,9 @@ class _AddStoryScreenState extends BaseRouteState {
                               ),
                               child: InkWell(
                                 onTap: () {
-                                  _saveReaction(products[_current].id, ReactionTypes.superLike);
+                                  _controller.forward(
+                                direction: SwipDirection.Right);
+                                _saveReaction(products[_current].id, ReactionTypes.superLike);
                                 },
                                 child: const CircleAvatar(
                                   radius: 24,
@@ -400,10 +402,10 @@ class _AddStoryScreenState extends BaseRouteState {
         productId: productId,
         createdAt: DateTime.now(),
         reactionType: reactionType);
-
-        await userReactionsHandler.saveReaction(reaction);
+        userProvider.removeInteractedProduct(productId);
+        // await userReactionsHandler.saveReaction(reaction);
         if (kDebugMode) {
-          print('Reaction saved successfully');
+          print(reaction.reactionType.toString());
         }
       }
     } catch (e) {

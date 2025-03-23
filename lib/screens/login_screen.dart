@@ -172,7 +172,7 @@ Future<void> _loginUser() async {
           lastName: '',  // Placeholder - collect later
           gender: '',    // Placeholder - collect later
           dateOfBirth: DateTime.now(), // Placeholder or null
-          hobbies: '',   // Placeholder - collect later
+          hobbies: [],   // Placeholder - collect later
         );
 
         // Navigate to the next screen and pass the UID and email to other components
@@ -185,8 +185,8 @@ Future<void> _loginUser() async {
           ),
         ));
       } else {
-        userProvider.setUserProfile(profile);
-        Navigator.of(context).push(MaterialPageRoute(
+          userProvider.setUserProfile(profile);
+          Navigator.of(context).push(MaterialPageRoute(
                               builder: (context) =>
                                   BottomNavigationWidgetLight(
                                     currentIndex: 0,

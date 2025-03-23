@@ -403,7 +403,7 @@ class _AddStoryScreenState extends BaseRouteState {
         createdAt: DateTime.now(),
         reactionType: reactionType);
         userProvider.removeInteractedProduct(productId);
-        // await userReactionsHandler.saveReaction(reaction);
+        await userReactionsHandler.saveReaction(reaction);
         if (kDebugMode) {
           print(reaction.reactionType.toString());
         }

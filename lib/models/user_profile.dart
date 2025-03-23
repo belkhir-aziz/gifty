@@ -5,7 +5,8 @@ class UserProfile {
   late String lastName;
   late String gender;
   late DateTime dateOfBirth;
-  late String hobbies;
+  late List<String> hobbies;
+  late String merchantCountry;
 
   UserProfile({
     required this.id,
@@ -14,8 +15,10 @@ class UserProfile {
     this.lastName = '',
     this.gender = '',
     DateTime? dateOfBirth,
-    this.hobbies = '',
-  }) : dateOfBirth = dateOfBirth ?? DateTime(1970, 1, 1);
+    List<String>? hobbies,
+    this.merchantCountry = '',
+  }) : dateOfBirth = dateOfBirth ?? DateTime(1970, 1, 1),
+       hobbies = hobbies ?? [];
 
   // Convert a JSON response from Supabase into a UserProfile object
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -28,7 +31,10 @@ class UserProfile {
       dateOfBirth: json['date_of_birth'] != null
           ? DateTime.parse(json['date_of_birth'])
           : DateTime(1970, 1, 1),
-      hobbies: json['hobbies'] ?? '',
+      hobbies: json['hobbies'] != null
+          ? (json['hobbies'] as String).split(', ')
+          : [],
+      merchantCountry: json['merchant_country'] ?? '',
     );
   }
 
@@ -41,7 +47,8 @@ class UserProfile {
       'last_name': lastName,
       'gender': gender,
       'date_of_birth': dateOfBirth.toIso8601String(),
-      'hobbies': hobbies,
+      'hobbies': hobbies.join(', '),
+      'merchant_country': merchantCountry,
     };
   }
 }

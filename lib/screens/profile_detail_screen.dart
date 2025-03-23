@@ -4,6 +4,7 @@ import 'package:datingapp/models/user_profile.dart';
 import 'package:datingapp/provider/user_profile_handler.dart';
 import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/screens/likes_and_interest_screen.dart';
+import 'package:datingapp/screens/notification_banner_screen.dart';
 import 'package:datingapp/widgets/bottom_navigation_bar_widget_dark.dart';
 import 'package:datingapp/widgets/bottom_navigation_bar_widget_light.dart';
 import 'package:flutter/material.dart';
@@ -27,12 +28,14 @@ class _ProfileDetailScreenState extends BaseRouteState {
   final UserProfileHandler userProfileHandler = UserProfileHandler();
   final TextEditingController _cFirstName = TextEditingController();
   final TextEditingController _cLastName = TextEditingController();
+  final TextEditingController _cCountry = TextEditingController();
   final TextEditingController _cBDate = TextEditingController();
   final TextEditingController _cGender = TextEditingController();
   final FocusNode _firstNameFocusNode = FocusNode();
   final FocusNode _lastNameFocusNode = FocusNode();
   final FocusNode _bDateFocusNode = FocusNode();
   String? _gender;
+  String? _country;
  
 
 
@@ -41,36 +44,81 @@ class _ProfileDetailScreenState extends BaseRouteState {
   _ProfileDetailScreenState(this.userProfile, this.isUpdate) : super();
   
 
+void _showNotification(String message, {bool isError = false}) {
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    builder: (context) {
+      return FancyNotificationBanner(
+        message: message,
+        isError: isError,
+        icon: isError ? Icons.error_outline : Icons.check_circle_outline,
+      );
+    },
+  );}
+bool updateProfileUser() {
+  bool hasError = false;
+  String errorMessage = 'Please fill in all required fields.';
 
-  void updateProfileUser() {
-    // Update the profileUser object with the current input
-    if (isUpdate && (_cFirstName.text.isEmpty || _cFirstName.text == '')) {
-      userProfile.firstName = userProvider.userProfile!.firstName;
-    } else {
-      userProfile.firstName = _cFirstName.text;
-    }
-    if (isUpdate && (_cLastName.text.isEmpty || _cLastName.text == '')) {
-      userProfile.lastName = userProvider.userProfile!.lastName;
-    } else {
-      userProfile.lastName = _cLastName.text;
-    }
-    if (isUpdate && (_cBDate.text.isEmpty || _cBDate.text == '')) {
-      userProfile.dateOfBirth = userProvider.userProfile!.dateOfBirth;
-    } else {
-      userProfile.dateOfBirth = DateFormat("dd-MM-yyyy").parse(_cBDate.text);
-    }
-    if (isUpdate && (_cGender.text.isEmpty || _cGender.text == '')) {
-      userProfile.gender = userProvider.userProfile!.gender;
-    } else {
-      userProfile.gender = _cGender.text;
-    }
-    
+
+
+  // Check if gender and country are set to their default values
+  if (_cGender.text == 'Select Gender' || _cCountry.text == 'Merchant Country') {
+    hasError = true;
   }
+
+
+  // Update the profileUser object with the current input
+  if (isUpdate && (_cFirstName.text.isEmpty || _cFirstName.text == '')) {
+    userProfile.firstName = userProvider.userProfile!.firstName;
+  } else {
+    userProfile.firstName = _cFirstName.text;
+  }
+
+  if (isUpdate && (_cLastName.text.isEmpty || _cLastName.text == '')) {
+    userProfile.lastName = userProvider.userProfile!.lastName;
+  } else {
+    userProfile.lastName = _cLastName.text;
+  }
+
+  if (isUpdate && (_cBDate.text.isEmpty || _cBDate.text == '')) {
+    userProfile.dateOfBirth = userProvider.userProfile!.dateOfBirth;
+  } else {
+    userProfile.dateOfBirth = DateFormat("dd-MM-yyyy").parse(_cBDate.text);
+  }
+
+  if (isUpdate && (_cGender.text.isEmpty || _cGender.text == '' || _cGender.text == 'Select Gender')) {
+    userProfile.gender = userProvider.userProfile!.gender;
+  } else {
+    userProfile.gender = _cGender.text;
+  }
+
+  if (isUpdate && (_cCountry.text.isEmpty || _cCountry.text == '' || _cCountry.text == 'Merchant Country')) {
+    userProfile.merchantCountry = userProvider.userProfile!.merchantCountry;
+  } else {
+    userProfile.merchantCountry = _cCountry.text;
+  }
+
+    // Check if any required fields are missing
+  if (userProfile.firstName.isEmpty || userProfile.lastName.isEmpty || userProfile.gender.isEmpty|| userProfile.merchantCountry.isEmpty) {
+    hasError = true;
+
+  }
+      
+  if (hasError) {
+    _showNotification(errorMessage, isError: true);
+    return false;
+  }
+  // Show success notification
+  _showNotification('Profile updated successfully!', isError: false);
+  return true;
+}
   @override
   void initState() {
     super.initState();
     _cFirstName.addListener(_updateState);
     _cLastName.addListener(_updateState);
+    _cCountry.addListener(_updateState);
     _cBDate.addListener(_updateState);
     _firstNameFocusNode.addListener(_updateState);
     _lastNameFocusNode.addListener(_updateState);
@@ -97,6 +145,8 @@ class _ProfileDetailScreenState extends BaseRouteState {
     userProvider = Provider.of<UserProvider>(context, listen: false);
     _gender = isUpdate? '${userProvider.userProfile?.gender}'
                         : 'Select Gender';
+    _country = isUpdate? '${userProvider.userProfile?.merchantCountry}'
+                        : 'Merchant Country';
     return PopScope(
       canPop: true,
       onPopInvoked: (bool didPop) {
@@ -126,52 +176,6 @@ class _ProfileDetailScreenState extends BaseRouteState {
                         style: Theme.of(context).primaryTextTheme.titleSmall,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Stack(
-                        alignment: Alignment.bottomRight,
-                        children: [
-                          const CircleAvatar(
-                            radius: 63,
-                            backgroundColor: Colors.white,
-                            child: CircleAvatar(
-                              backgroundImage:
-                                  AssetImage('assets/images/sample4.png'),
-                              radius: 60,
-                              backgroundColor: Color(0xFF33196B),
-                            ),
-                          ),
-                          Positioned(
-                            top: 96,
-                            left: 96,
-                            child: Container(
-                              height: 30,
-                              width: 30,
-                              decoration: BoxDecoration(
-                                border: g.isDarkModeEnable
-                                    ? Border.all(color: Colors.black)
-                                    : null,
-                                borderRadius: BorderRadius.circular(20),
-                                gradient: LinearGradient(
-                                  colors: g.gradientColors,
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                              ),
-                              child: const CircleAvatar(
-                                backgroundColor: Colors.transparent,
-                                radius: 20,
-                                child: Icon(
-                                  Icons.photo_camera,
-                                  size: 18,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                     Container(
                       margin: const EdgeInsets.fromLTRB(50, 20, 50, 20),
                       padding: const EdgeInsets.all(1.5),
@@ -191,7 +195,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
                               : Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(35),
                         ),
-                        height: 55,
+                        height: 20,
                         child: TextFormField(
                           style:
                               Theme.of(context).primaryTextTheme.titleSmall,
@@ -257,6 +261,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
                         ),
                       ),
                     ),
+                    
                     Container(
                       margin: const EdgeInsets.fromLTRB(50, 20, 50, 20),
                       padding: const EdgeInsets.all(1.5),
@@ -388,7 +393,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
                                 color: Theme.of(context).iconTheme.color),
                           ),
                           value: _gender,
-                          items: ['Select Gender', 'male', 'female']
+                          items: ['Select Gender', 'male', 'female', 'other']
                               .map((label) => DropdownMenuItem(
                                     value: label,
                                     child: Padding(
@@ -415,12 +420,84 @@ class _ProfileDetailScreenState extends BaseRouteState {
                           ),
                           onChanged: (value) {
                             setState(() {
-                              setState(() {
-                                
+                              setState(() {                               
                                   _gender = value;
                                   _cGender.text = _gender!;
                               });
                               
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.fromLTRB(50, 20, 50, 20),
+                      padding: const EdgeInsets.all(1.5),
+                      height: 55,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: g.gradientColors,
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(35),
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: g.isDarkModeEnable
+                              ? Colors.black
+                              : Theme.of(context).scaffoldBackgroundColor,
+                          borderRadius: BorderRadius.circular(35),
+                        ),
+                        height: 55,
+                        child: DropdownButtonFormField<String>(
+                          decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(35),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+                        ),
+                          dropdownColor: Theme.of(context).scaffoldBackgroundColor,  //Theme.of(context).primaryColorLight,
+                          icon: Padding(
+                            padding: g.isRTL
+                                ? const EdgeInsets.only(left: 20)
+                                : const EdgeInsets.only(right: 20),
+                            child: Icon(Icons.expand_more,
+                                color: Theme.of(context).iconTheme.color),
+                          ),
+                          value: _country,
+                          items: ['Merchant Country', 'DE', 'US', 'BE', 'FR', 'IT', 'ES']
+                              .map((label) => DropdownMenuItem(
+                                    value: label,
+                                    child: Padding(
+                                      padding: g.isRTL
+                                          ? const EdgeInsets.only(right: 20)
+                                          : const EdgeInsets.only(left: 20),
+                                      child: Text(
+                                        label.toString(),
+                                        style: Theme.of(context)
+                                            .primaryTextTheme
+                                            .titleSmall,
+                                      ),
+                                    ),
+                                  ))
+                              .toList(),
+                          hint: Padding(
+                            padding: g.isRTL
+                                ? const EdgeInsets.only(right: 20)
+                                : const EdgeInsets.only(left: 20),
+                            child: Text(_country!.isEmpty
+                                ? AppLocalizations.of(context)!
+                                    .lbl_gender_hint
+                                : _country!),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              setState(() {                               
+                                  _country = value;
+                                  _cCountry.text = _country!;
+                              });                             
                             });
                           },
                         ),
@@ -442,16 +519,16 @@ class _ProfileDetailScreenState extends BaseRouteState {
                         ),
                         child: TextButton(
                           onPressed: () {
-                            updateProfileUser(); 
-                            isUpdate
+                            if (updateProfileUser()){
+                              isUpdate
                             ? 
                             (userProfileHandler.editUserProfile(userProfile),
                             Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => BottomNavigationWidgetLight(
-                                currentIndex: 2,
-                                a: widget.analytics,
-                                o: widget.observer,
-                              ))))
+                                                        builder: (context) => BottomNavigationWidgetLight(
+                                                              currentIndex: 2,
+                                                              a: widget.analytics,
+                                                              o: widget.observer,
+                                                            ))))
                             : Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => LikesInterestScreen(
                                       a: widget.analytics,
@@ -459,6 +536,7 @@ class _ProfileDetailScreenState extends BaseRouteState {
                                       userProfile: userProfile,
                                       isEditHobbies: false
                                     )));
+                            }                            
                           },
                           child: Text(
                             AppLocalizations.of(context)!.btn_continue,

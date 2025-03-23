@@ -19,7 +19,7 @@ class UserProvider with ChangeNotifier {
     String? lastName,
     String? gender,
     DateTime? dateOfBirth,
-    String? hobbies,
+    List<String>? hobbies,
   }) {
     if (_userProfile != null) {
       _userProfile = UserProfile(

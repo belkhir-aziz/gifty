@@ -29,13 +29,13 @@ class _LikesInterestScreenState extends BaseRouteState {
   _LikesInterestScreenState(this.userProfile, this.isEditHobbies);
   
   void updateProfileUser() {
-    userProfile.hobbies = _list.join(", ");
+    userProfile.hobbies = _list;
     userProvider.setUserProfile(userProfile);
     userProfileHandler.createUserProfile(userProfile);
   }
 
   void editProfileUser() {
-    userProfile.hobbies = _list.join(", ");
+    userProfile.hobbies = _list;
     userProfileHandler.editUserProfile(userProfile);
   }
 
@@ -45,7 +45,7 @@ class _LikesInterestScreenState extends BaseRouteState {
     // Initialize the list only once
     userProvider = Provider.of<UserProvider>(context, listen: false);
     if (isEditHobbies) {
-      _list = userProvider.userProfile!.hobbies.split(', ');
+      _list = userProvider.userProfile!.hobbies;
     }
   }
 

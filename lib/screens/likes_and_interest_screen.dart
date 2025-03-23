@@ -32,11 +32,13 @@ class _LikesInterestScreenState extends BaseRouteState {
     userProfile.hobbies = _list;
     userProvider.setUserProfile(userProfile);
     userProfileHandler.createUserProfile(userProfile);
+    userProvider.clearCachedProducts();
   }
 
   void editProfileUser() {
     userProfile.hobbies = _list;
     userProfileHandler.editUserProfile(userProfile);
+    userProvider.clearCachedProducts();
   }
 
   @override

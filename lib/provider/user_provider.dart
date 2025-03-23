@@ -41,13 +41,18 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void clearCachedProducts() {
+    _cachedProducts = [];
+    notifyListeners();
+  }
+
   void setCachedProducts(List<Product> products) {
     _cachedProducts = products;
     notifyListeners();
   }
 
   void removeInteractedProduct(String productId) {
-    if (_cachedProducts != null) {
+    if (_cachedProducts != null && _cachedProducts!.isNotEmpty) {
       _cachedProducts = _cachedProducts!.where((product) => product.id != productId).toList();
       notifyListeners();
     }

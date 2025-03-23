@@ -9,7 +9,7 @@ class ProductHandler {
   Future<List<Product>> fetchProducts(UserProvider userProvider, {int? limit}) async {
     // Fetch reacted product IDs
     // Fetch reacted product IDs
-    if (userProvider.cachedProducts != null) {
+    if (userProvider.cachedProducts != null && userProvider.cachedProducts!.isNotEmpty) {
       return userProvider.cachedProducts  ?? [];
     }
 

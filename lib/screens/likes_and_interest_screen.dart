@@ -12,25 +12,43 @@ import 'package:provider/provider.dart';
 
 class LikesInterestScreen extends BaseRoute {
   final UserProfile userProfile; 
-  const LikesInterestScreen({super.key, super.a, super.o, required this.userProfile}) : super(r: 'LikesIntrestScreen');
+  final bool isEditHobbies;
+  const LikesInterestScreen({super.key, super.a, super.o, required this.userProfile, required this.isEditHobbies}) : super(r: 'LikesIntrestScreen');
 
   @override
-  BaseRouteState createState() => _LikesInterestScreenState(userProfile);
+  BaseRouteState createState() => _LikesInterestScreenState(userProfile,isEditHobbies);
 }
 
 class _LikesInterestScreenState extends BaseRouteState {
   final UserProfile userProfile;
   final UserProfileHandler userProfileHandler = UserProfileHandler();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  final List<String> _list = [];
+  List<String> _list = [];
   late UserProvider userProvider;
-
-  _LikesInterestScreenState(this.userProfile);
+  bool isEditHobbies = false;
+  _LikesInterestScreenState(this.userProfile, this.isEditHobbies);
+  
   void updateProfileUser() {
     userProfile.hobbies = _list.join(", ");
     userProvider.setUserProfile(userProfile);
     userProfileHandler.createUserProfile(userProfile);
   }
+
+  void editProfileUser() {
+    userProfile.hobbies = _list.join(", ");
+    userProfileHandler.editUserProfile(userProfile);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the list only once
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    if (isEditHobbies) {
+      _list = userProvider.userProfile!.hobbies.split(', ');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     userProvider = Provider.of<UserProvider>(context);
@@ -70,14 +88,14 @@ class _LikesInterestScreenState extends BaseRouteState {
                         onTap: () {
                           
                           setState(() {
-                            _list.contains('Photography')
-                                ? _list.removeWhere((e) => e == 'Photography')
-                                : _list.add('Photography');
+                            _list.contains('readers')
+                                ? _list.removeWhere((e) => e == 'readers')
+                                : _list.add('readers');
                           });
                         },
                         hoverColor: Colors.transparent, // Set hover color to transparent
                        
-                        child: !_list.contains('Photography')
+                        child: !_list.contains('readers')
                             ? Container(
                                 padding: g.isRTL
                                     ? const EdgeInsets.only(right: 10)
@@ -99,7 +117,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     const Icon(
-                                      MdiIcons.camera,
+                                      MdiIcons.book,
                                       color: Color(0xFF845EB5),
                                       size: 20,
                                     ),
@@ -108,7 +126,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                           ? const EdgeInsets.only(right: 6)
                                           : const EdgeInsets.only(left: 6),
                                       child: Text(
-                                        'Photography',
+                                        'readers',
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelSmall
@@ -153,7 +171,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(
-                                        MdiIcons.camera,
+                                        MdiIcons.book,
                                         color: g.isDarkModeEnable
                                             ? Colors.white
                                             : Theme.of(context)
@@ -165,7 +183,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             ? const EdgeInsets.only(right: 6)
                                             : const EdgeInsets.only(left: 6),
                                         child: Text(
-                                          'Photography',
+                                          'readers',
                                           style: Theme.of(context)
                                               .primaryTextTheme
                                               .titleSmall,
@@ -181,14 +199,14 @@ class _LikesInterestScreenState extends BaseRouteState {
                       InkWell(
                         onTap: () {
                           setState(() {
-                            _list.contains('Cooking')
-                                ? _list.removeWhere((e) => e == 'Cooking')
-                                : _list.add('Cooking');
+                            _list.contains('pet lovers')
+                                ? _list.removeWhere((e) => e == 'pet lovers')
+                                : _list.add('pet lovers');
                           });
                         },
                         hoverColor: Colors.transparent, // Set hover color to transparent
                        
-                        child: !_list.contains('Cooking')
+                        child: !_list.contains('pet lovers')
                             ? Container(
                                 padding: g.isRTL
                                     ? const EdgeInsets.only(right: 10)
@@ -210,7 +228,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     const Icon(
-                                      MdiIcons.cookie,
+                                      MdiIcons.paw,
                                       color: Color(0xFF845EB5),
                                       size: 20,
                                     ),
@@ -219,7 +237,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                           ? const EdgeInsets.only(right: 6)
                                           : const EdgeInsets.only(left: 6),
                                       child: Text(
-                                        'Cooking',
+                                        'pet lovers',
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelSmall
@@ -264,7 +282,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(
-                                        MdiIcons.cookie,
+                                        MdiIcons.paw,
                                         color: g.isDarkModeEnable
                                             ? Colors.white
                                             : Theme.of(context)
@@ -276,7 +294,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             ? const EdgeInsets.only(right: 6)
                                             : const EdgeInsets.only(left: 6),
                                         child: Text(
-                                          'Cooking',
+                                          'pet lovers',
                                           style: Theme.of(context)
                                               .primaryTextTheme
                                               .titleSmall,
@@ -292,14 +310,14 @@ class _LikesInterestScreenState extends BaseRouteState {
                       InkWell(
                         onTap: () {
                           setState(() {
-                            _list.contains('Video Games')
-                                ? _list.removeWhere((e) => e == 'Video Games')
-                                : _list.add('Video Games');
+                            _list.contains('gamers')
+                                ? _list.removeWhere((e) => e == 'gamers')
+                                : _list.add('gamers');
                           });
                         },
                         hoverColor: Colors.transparent, // Set hover color to transparent
                        
-                        child: !_list.contains('Video Games')
+                        child: !_list.contains('gamers')
                             ? Container(
                                 padding: g.isRTL
                                     ? const EdgeInsets.only(right: 10)
@@ -330,7 +348,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                           ? const EdgeInsets.only(right: 6)
                                           : const EdgeInsets.only(left: 6),
                                       child: Text(
-                                        'Video Games',
+                                        'gamers',
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelSmall
@@ -387,7 +405,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             ? const EdgeInsets.only(right: 6)
                                             : const EdgeInsets.only(left: 6),
                                         child: Text(
-                                          'Video Games',
+                                          'gamers',
                                           style: Theme.of(context)
                                               .primaryTextTheme
                                               .titleSmall,
@@ -402,14 +420,14 @@ class _LikesInterestScreenState extends BaseRouteState {
                       InkWell(
                         onTap: () {
                           setState(() {
-                            _list.contains('Music')
-                                ? _list.removeWhere((e) => e == 'Music')
-                                : _list.add('Music');
+                            _list.contains('musicians')
+                                ? _list.removeWhere((e) => e == 'musicians')
+                                : _list.add('musicians');
                           });
                         },
                         hoverColor: Colors.transparent, // Set hover color to transparent
                        
-                        child: !_list.contains('Music')
+                        child: !_list.contains('musicians')
                             ? Container(
                                 padding: g.isRTL
                                     ? const EdgeInsets.only(right: 10)
@@ -440,7 +458,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                           ? const EdgeInsets.only(right: 6)
                                           : const EdgeInsets.only(left: 6),
                                       child: Text(
-                                        'Music',
+                                        'musicians',
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelSmall
@@ -497,7 +515,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             ? const EdgeInsets.only(right: 6)
                                             : const EdgeInsets.only(left: 6),
                                         child: Text(
-                                          'Music',
+                                          'musicians',
                                           style: Theme.of(context)
                                               .primaryTextTheme
                                               .titleSmall,
@@ -510,17 +528,17 @@ class _LikesInterestScreenState extends BaseRouteState {
                       ),
 
 
-                      InkWell(			
+                      InkWell(	
+                        		
                         onTap: () {
-                          setState(() {
-                            _list.contains('Travelling')
-                                ? _list.removeWhere((e) => e == 'Travelling')
-                                : _list.add('Travelling');
+                          setState(() {  
+                            _list.contains('travelers')
+                                ? _list.removeWhere((e) => e == 'travelers')
+                                : _list.add('travelers');
                           });
                         },
                         hoverColor: Colors.transparent, // Set hover color to transparent
-                       
-                        child: !_list.contains('Travelling')
+                        child: !_list.contains('travelers')
                             ? Container(
                                 padding: g.isRTL
                                     ? const EdgeInsets.only(right: 10)
@@ -551,7 +569,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                           ? const EdgeInsets.only(right: 6)
                                           : const EdgeInsets.only(left: 6),
                                       child: Text(
-                                        'Travelling',
+                                        'travelers',
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelSmall
@@ -608,7 +626,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             ? const EdgeInsets.only(right: 6)
                                             : const EdgeInsets.only(left: 6),
                                         child: Text(
-                                          'Travelling',
+                                          'travelers',
                                           style: Theme.of(context)
                                               .primaryTextTheme
                                               .titleSmall,
@@ -619,7 +637,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                 ),
                               ),
                       ),
-
+                      /*
                       InkWell(
                         onTap: () {
                           setState(() {
@@ -837,18 +855,19 @@ class _LikesInterestScreenState extends BaseRouteState {
                                     ),
                                   ),
                                 )),
+                      */
                       InkWell(
                         onTap: () {
                           setState(() {
-                            _list.contains('Art & Crafts')
+                            _list.contains('artists')
                                 ? _list
-                                    .removeWhere((e) => e == 'Art & Crafts')
-                                : _list.add('Art & Crafts');
+                                    .removeWhere((e) => e == 'artists')
+                                : _list.add('artists');
                           });
                         },
                         hoverColor: Colors.transparent, // Set hover color to transparent
                        
-                        child: !_list.contains('Art & Crafts')
+                        child: !_list.contains('artists')
                             ? Container(
                                 padding: g.isRTL
                                     ? const EdgeInsets.only(right: 10)
@@ -879,7 +898,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                           ? const EdgeInsets.only(right: 6)
                                           : const EdgeInsets.only(left: 6),
                                       child: Text(
-                                        'Art & Crafts',
+                                        'artists',
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelSmall
@@ -936,7 +955,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             ? const EdgeInsets.only(right: 6)
                                             : const EdgeInsets.only(left: 6),
                                         child: Text(
-                                          'Art & Crafts',
+                                          'artists',
                                           style: Theme.of(context)
                                               .primaryTextTheme
                                               .titleSmall,
@@ -947,6 +966,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                 ),
                               ),
                       ),
+                      /*
                       InkWell(
                         onTap: () {
                           setState(() {
@@ -1165,18 +1185,19 @@ class _LikesInterestScreenState extends BaseRouteState {
                                 ),
                               ),
                       ),
+                      */
                       InkWell(
                         onTap: () {
                           setState(() {
-                            _list.contains('Extreme Sports')
+                            _list.contains('chefs')
                                 ? _list.removeWhere(
-                                    (e) => e == 'Extreme Sports')
-                                : _list.add('Extreme Sports');
+                                    (e) => e == 'chefs')
+                                : _list.add('chefs');
                           });
                         },
                         hoverColor: Colors.transparent, // Set hover color to transparent
                        
-                        child: !_list.contains('Extreme Sports')
+                        child: !_list.contains('chefs')
                             ? Container(
                                 padding: g.isRTL
                                     ? const EdgeInsets.only(right: 10)
@@ -1198,7 +1219,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     const Icon(
-                                      Icons.sports_rounded,
+                                      MdiIcons.chefHat,
                                       color: Color(0xFF845EB5),
                                       size: 20,
                                     ),
@@ -1207,7 +1228,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                           ? const EdgeInsets.only(right: 6)
                                           : const EdgeInsets.only(left: 6),
                                       child: Text(
-                                        'Extreme Sports',
+                                        'chefs',
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelSmall
@@ -1252,7 +1273,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Icon(
-                                        Icons.sports_rounded,
+                                        MdiIcons.chefHat,
                                         color: g.isDarkModeEnable
                                             ? Colors.white
                                             : Theme.of(context)
@@ -1264,7 +1285,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             ? const EdgeInsets.only(right: 6)
                                             : const EdgeInsets.only(left: 6),
                                         child: Text(
-                                          'Extreme Sports',
+                                          'chefs',
                                           style: Theme.of(context)
                                               .primaryTextTheme
                                               .titleSmall,
@@ -1278,14 +1299,14 @@ class _LikesInterestScreenState extends BaseRouteState {
                       InkWell(
                         onTap: () {
                           setState(() {
-                            _list.contains('Fitness')
-                                ? _list.removeWhere((e) => e == 'Fitness')
-                                : _list.add('Fitness');
+                            _list.contains('fitness enthusiasts')
+                                ? _list.removeWhere((e) => e == 'fitness enthusiasts')
+                                : _list.add('fitness enthusiasts');
                           });
                         },
                         hoverColor: Colors.transparent, // Set hover color to transparent
                        
-                        child: !_list.contains('Fitness')
+                        child: !_list.contains('fitness enthusiasts')
                             ? Container(
                                 padding: g.isRTL
                                     ? const EdgeInsets.only(right: 10)
@@ -1316,7 +1337,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                           ? const EdgeInsets.only(right: 6)
                                           : const EdgeInsets.only(left: 6),
                                       child: Text(
-                                        'Fitness',
+                                        'fitness enthusiasts',
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelSmall
@@ -1373,7 +1394,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                                             ? const EdgeInsets.only(right: 6)
                                             : const EdgeInsets.only(left: 6),
                                         child: Text(
-                                          'Fitness',
+                                          'fitness enthusiasts',
                                           style: Theme.of(context)
                                               .primaryTextTheme
                                               .titleSmall,
@@ -1419,14 +1440,32 @@ class _LikesInterestScreenState extends BaseRouteState {
                       ),
                       child: TextButton(
                         onPressed: () {
-                          updateProfileUser();
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  BottomNavigationWidgetLight(
+                          isEditHobbies
+                          ? () {
+                              editProfileUser();
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => BottomNavigationWidgetLight(
+                                currentIndex: 2,
+                                a: widget.analytics,
+                                o: widget.observer,
+                                ),
+                              ));
+                              isEditHobbies = false;
+                            }()
+                          : () {
+                              updateProfileUser();
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => BottomNavigationWidgetLight(
                                     currentIndex: 0,
                                     a: widget.analytics,
                                     o: widget.observer,
-                                  )));
+                                ),
+                              )); 
+                            }();
+                          
+                          
+                          
+                          
                         },
                         child: Text(
                             AppLocalizations.of(context)!.btn_continue,

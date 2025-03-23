@@ -456,7 +456,8 @@ class _ProfileDetailScreenState extends BaseRouteState {
                                 builder: (context) => LikesInterestScreen(
                                       a: widget.analytics,
                                       o: widget.observer,
-                                      userProfile: userProfile
+                                      userProfile: userProfile,
+                                      isEditHobbies: false
                                     )));
                           },
                           child: Text(

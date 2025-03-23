@@ -1,13 +1,15 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
+import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/screens/change_language_screen.dart';
-import 'package:datingapp/screens/liked_and_likes_screen.dart';
+import 'package:datingapp/screens/likes_and_interest_screen.dart';
 import 'package:datingapp/widgets/bottom_navigation_bar_widget_dark.dart';
 import 'package:datingapp/widgets/bottom_navigation_bar_widget_light.dart';
 import 'package:flutter/material.dart';
 import 'package:datingapp/generated/app_localizations.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
 class SettingScreen extends BaseRoute {
   const SettingScreen({super.key, super.a, super.o}) : super(r: 'SettingScreen');
@@ -18,11 +20,13 @@ class SettingScreen extends BaseRoute {
 
 class _SettingScreenState extends BaseRouteState {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  late UserProvider userProvider;
+  
   _SettingScreenState() : super();
 
   @override
   Widget build(BuildContext context) {
+    userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
       key: _scaffoldKey,
       appBar: _appBarWidget(),
@@ -96,11 +100,12 @@ class _SettingScreenState extends BaseRouteState {
               ),
               InkWell(
                 onTap: () {
-                  //todo : update with Likes screen
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => LikedAndLikesScreen(
-                            a: widget.analytics,
-                            o: widget.observer,
+                      builder: (context) => LikesInterestScreen(
+                                      a: widget.analytics,
+                                      o: widget.observer,
+                                      userProfile: userProvider.userProfile!,
+                                      isEditHobbies: true
                           )));
                 },
                 child: Padding(

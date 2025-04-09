@@ -3,7 +3,6 @@ import 'package:datingapp/models/product.dart';
 import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/recommendation_models/base_model.dart';
 import 'package:datingapp/recommendation_models/filter_model.dart';
-import 'package:datingapp/recommendation_models/trivial_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ReactionBasedModel implements BaseModel {

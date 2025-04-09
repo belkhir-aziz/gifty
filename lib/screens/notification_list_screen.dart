@@ -1,21 +1,40 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
+import 'package:datingapp/models/user_profile.dart';
+import 'package:datingapp/provider/user_provider.dart';
+import 'package:datingapp/provider/user_relation_handler.dart';
 import 'package:flutter/material.dart';
-import 'package:datingapp/generated/app_localizations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
 
-class NotificationListScreen extends BaseRoute {
-  const NotificationListScreen({super.key, super.a, super.o})
-      : super(r: 'NotificationListScreen');
+class InvitationListScreen extends BaseRoute {
+  const InvitationListScreen({super.key, super.a, super.o})
+      : super(r: 'InvitationListScreen');
 
   @override
-  BaseRouteState createState() => _NotificationListScreenState();
+  BaseRouteState createState() => _InvitationListScreenState();
 }
 
-class _NotificationListScreenState extends BaseRouteState {
+class _InvitationListScreenState extends BaseRouteState {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  late UserProfile currentProfile;
+  late List<UserProfile> invitations = [];
+  _InvitationListScreenState() : super();
 
-  _NotificationListScreenState() : super();
+  @override
+  void initState() {
+    super.initState();
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    currentProfile = userProvider.userProfile ?? UserProfile(id: "", email: "");
+    fetchFriends();
+  }
+
+  Future<void> fetchFriends() async {
+    var fetchedInvitations = await UserRelationsHandler().getUserInvitations(currentProfile.id);
+    setState(() {
+      invitations = fetchedInvitations;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,21 +67,12 @@ class _NotificationListScreenState extends BaseRouteState {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  AppLocalizations.of(context)!.lbl_notifications,
-                  style: Theme.of(context).primaryTextTheme.displayLarge,
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 4, bottom: 20),
-                  child: Text(
-                    AppLocalizations.of(context)!.lbl_notifications_subtitle,
-                    style: Theme.of(context).primaryTextTheme.titleSmall,
-                  ),
-                ),
                 Expanded(
                   child: ListView.builder(
-                    itemCount: 6,
+                    itemCount: invitations.length,
                     itemBuilder: (ctx, index) {
+                      var invitation = invitations[index];
+                      var initials = invitation.firstName[0] + invitation.lastName[0];
                       return Column(
                         children: [
                           SizedBox(
@@ -70,15 +80,19 @@ class _NotificationListScreenState extends BaseRouteState {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const CircleAvatar(
+                                CircleAvatar(
                                   backgroundColor: Colors.white,
                                   radius: 31,
                                   child: CircleAvatar(
-                                    backgroundImage: AssetImage(
-                                      'assets/images/sample2.png',
-                                    ),
-                                    backgroundColor: Colors.transparent,
+                                    backgroundColor: Colors.blue,
                                     radius: 30,
+                                    child: Text(
+                                      initials,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 24,
+                                      ),
+                                    ),
                                   ),
                                 ),
                                 Padding(
@@ -91,7 +105,7 @@ class _NotificationListScreenState extends BaseRouteState {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Myley Corbyn liked you',
+                                        'Invitation from ${invitation.firstName} ${invitation.lastName}',
                                         style: Theme.of(context)
                                             .primaryTextTheme
                                             .titleMedium,
@@ -100,18 +114,29 @@ class _NotificationListScreenState extends BaseRouteState {
                                         padding: const EdgeInsets.only(
                                             top: 4, bottom: 4),
                                         child: Text(
-                                          'Hi Mathew, Myley here.\nWould you like to chat? waiting..',
+                                          'Would you like to connect?',
                                           style: Theme.of(context)
                                               .primaryTextTheme
                                               .bodyLarge,
                                         ),
                                       ),
-                                      Text(
-                                        '12:20 AM | 29.04.2022',
-                                        style: Theme.of(context)
-                                            .primaryTextTheme
-                                            .titleSmall,
-                                      )
+                                      Row(
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              // Handle accept invitation
+                                            },
+                                            child: Text("accept"), // todo
+                                          ),
+                                          SizedBox(width: 8),
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              // Handle decline invitation
+                                            },
+                                            child: Text("reject"), // todo
+                                          ),
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 )
@@ -142,5 +167,4 @@ class _NotificationListScreenState extends BaseRouteState {
       ),
     );
   }
-
 }

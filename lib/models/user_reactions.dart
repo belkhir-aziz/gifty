@@ -1,4 +1,4 @@
-import 'package:datingapp/screens/add_story_screen.dart';
+import 'package:datingapp/utils/data_types/reaction_types.dart';
 
 class Reaction {
   final String userId;

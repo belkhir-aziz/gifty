@@ -304,7 +304,7 @@ class _FriendsScreenState extends BaseRouteState {
                         color: Theme.of(context).iconTheme.color,
                         onPressed: () {
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => NotificationListScreen(
+                              builder: (context) => InvitationListScreen(
                                     a: widget.analytics,
                                     o: widget.observer,
                                   )));

@@ -5,15 +5,12 @@ import 'package:datingapp/models/user_reactions.dart';
 import 'package:datingapp/provider/products_handler.dart';
 import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/provider/user_reactions_handler.dart';
+import 'package:datingapp/utils/data_types/reaction_types.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tcard/tcard.dart';
-
-@JsonEnum(alwaysCreate: true)
-enum ReactionTypes { like, dislike, superLike }
 
 class AddStoryScreen extends BaseRoute {
   const AddStoryScreen({super.key, super.a, super.o}) : super(r: 'AddStoryScreen');

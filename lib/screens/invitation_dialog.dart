@@ -2,6 +2,7 @@ import 'package:datingapp/models/user_relations.dart';
 import 'package:datingapp/provider/user_profile_handler.dart';
 import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/provider/user_relation_handler.dart';
+import 'package:datingapp/utils/data_types/invitation_status.dart';
 import 'package:flutter/material.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:provider/provider.dart';
@@ -37,6 +38,7 @@ class _InvitationDialogState extends State<InvitationDialog> {
         userId: userProvider.userProfile?.id ?? "",
         friendId: user.id,
         createdAt: DateTime.now(),
+        status: InvitationStatus.pending
       );
       userRelationsHandler.addUserRelations(relation);
       Navigator.of(context).pop();

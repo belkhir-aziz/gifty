@@ -32,4 +32,6 @@ class UserRelations {
       'status': status.toString().split('.').last,
     };
   }
+
+  
 }

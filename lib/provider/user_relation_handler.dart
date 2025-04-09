@@ -30,15 +30,9 @@ class UserRelationsHandler {
   }
 
   Future<void> updateUserRelations(UserRelations userRelations) async {
-    final response = await _client
+    await _client
         .from('relations')
-        .update(userRelations.toJson())
-        .eq('user_id', userRelations.userId)
-        .eq('friend_id', userRelations.friendId);
-
-    if (response.error != null) {
-      throw response.error!;
-    }
+        .upsert(userRelations.toJson());
   }
 
   Future<void> deleteUserRelations(String userId, String friendId) async {

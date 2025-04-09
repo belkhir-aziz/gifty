@@ -1,8 +1,10 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:datingapp/models/user_profile.dart';
+import 'package:datingapp/models/user_relations.dart';
 import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/provider/user_relation_handler.dart';
+import 'package:datingapp/utils/data_types/invitation_status.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -34,6 +36,17 @@ class _InvitationListScreenState extends BaseRouteState {
     setState(() {
       invitations = fetchedInvitations;
     });
+  }
+
+  Future<void> _updateInvitationStatus(UserProfile invitation, InvitationStatus status) async {
+    var userRelations = UserRelations(
+      userId: currentProfile.id,
+      friendId: invitation.id,
+      createdAt: DateTime.now(),
+      status: status,
+    );
+    await UserRelationsHandler().updateUserRelations(userRelations);
+    fetchFriends(); // Refresh the list
   }
 
   @override
@@ -124,16 +137,16 @@ class _InvitationListScreenState extends BaseRouteState {
                                         children: [
                                           ElevatedButton(
                                             onPressed: () {
-                                              // Handle accept invitation
+                                              _updateInvitationStatus(invitation, InvitationStatus.accepted);
                                             },
-                                            child: Text("accept"), // todo
+                                            child: Text("accept"),
                                           ),
                                           SizedBox(width: 8),
                                           ElevatedButton(
                                             onPressed: () {
-                                              // Handle decline invitation
+                                              _updateInvitationStatus(invitation, InvitationStatus.rejected);
                                             },
-                                            child: Text("reject"), // todo
+                                            child: Text("reject"),
                                           ),
                                         ],
                                       ),
@@ -168,3 +181,4 @@ class _InvitationListScreenState extends BaseRouteState {
     );
   }
 }
+

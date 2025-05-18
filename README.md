@@ -1,1 +1,1 @@
-# Dating App Flutter Template
+# Gifty App Flutter Project

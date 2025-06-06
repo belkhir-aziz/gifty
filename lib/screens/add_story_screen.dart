@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tcard/tcard.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AddStoryScreen extends BaseRoute {
   const AddStoryScreen({super.key, super.a, super.o}) : super(r: 'AddStoryScreen');
@@ -21,34 +22,32 @@ class AddStoryScreen extends BaseRoute {
 
 class _AddStoryScreenState extends BaseRouteState {
   final TCardController _controller = TCardController();
-  int? _leftDirection;
-  int? _rightDirection;
   ProductHandler productHandler = ProductHandler();
   UserReactionsHandler userReactionsHandler = UserReactionsHandler();
   UserProvider userProvider = UserProvider();
   List<Product> products = [];
   int _current = 0;
-  bool _isLoading = true; // Add a loading state
+  bool _isLoading = true;
   
   Future<void> _loadProducts() async {
     try {
       products = await productHandler.fetchProducts(userProvider);
       setState(() {
-        _isLoading = false; // Update the loading state
-      }); // Update the UI after fetching products
+        _isLoading = false;
+      });
     } catch (e) {
       if (kDebugMode) {
         print('Error loading products: $e');
       }
       setState(() {
-        _isLoading = false; // Ensure loading state is updated even on error
+        _isLoading = false;
       });
     }
   }
   
   _AddStoryScreenState() : super();
 
-    @override
+  @override
   void initState() {
     userProvider = Provider.of<UserProvider>(context, listen: false);
     super.initState();
@@ -58,7 +57,7 @@ class _AddStoryScreenState extends BaseRouteState {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator()); // Show loading indicator
+      return const Center(child: CircularProgressIndicator());
     }
     return PopScope(
       canPop: true,
@@ -66,339 +65,391 @@ class _AddStoryScreenState extends BaseRouteState {
         exitAppDialog();
       },
       child: Scaffold(
-        backgroundColor: g.isDarkModeEnable
-            ? const Color(0xFF03000C)
-            : Theme.of(context).scaffoldBackgroundColor,
-        body: Center(
-          child: Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20),
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: Stack(
-                        alignment: Alignment.bottomCenter,
-                        children: [
-                          Container(
-                            margin: const EdgeInsets.only(
-                                bottom: 18, left: 10, right: 10),
-                            height:
-                                MediaQuery.of(context).size.height * 0.53,
-                            //MediaQuery.of(context).size.height * 0.54,
-                            width: MediaQuery.of(context).size.width * 0.80,
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage(g.isDarkModeEnable
-                                    ? 'assets/images/cards_dark.png'
-                                    : 'assets/images/cards_light.png'),
-                              ),
-                            ),
-                          ),
-                          Stack(
-                            alignment: Alignment.topRight,
-                            children: [
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    0.70,
-                                width: MediaQuery.of(context).size.width *
-                                    0.75,
-                                child: Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: Listener(
-                                    onPointerMove:
-                                        (PointerMoveEvent event) {
-                                      if (event.delta.dy > 0) {
-                                        setState(() {
-                                          _leftDirection = 1;
-                                          _rightDirection = null;
-                                        });
-                                      }
-                                      if (event.delta.dx > 0) {
-                                        setState(() {
-                                          _rightDirection = 2;
-                                          _leftDirection = null;
-                                        });
-                                      }
-                                    },
-                                    child: TCard(
-                                      cards: _widgets(),
-                                      controller: _controller,
-                                      onForward: (index, info) {
-                                        if (info.direction ==
-                                            SwipDirection.Left) {
-                                          setState(() {
-                                            _current = index;
-                                            _leftDirection = 0;
-                                            _rightDirection = 0;
-                                          });
-                                        }
-                                        if (info.direction ==
-                                            SwipDirection.Right) {
-                                          setState(() {
-                                            _current = index;
-                                            _leftDirection = 0;
-                                            _rightDirection = 0;
-                                          });
-                                        }
-                                      },
-                                      onEnd: () {
-                                        _controller.reset();
-                                        _current = 0;
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 30),
-                            alignment: Alignment.bottomLeft,
-                            width: MediaQuery.of(context).size.width * 0.6,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 8),
-                                  child: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        backgroundColor: Colors.white,
-                                        radius: 35,
-                                        child: CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                            products[_current].imageUrl,
-                                          ),
-                                          radius: 32,
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: g.isRTL
-                                            ? const EdgeInsets.only(
-                                                right: 6)
-                                            : const EdgeInsets.only(
-                                                left: 6),
-                                        child: RichText(
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: products[_current].name != null
-                                                    ? (products[_current].name!.length > 15
-                                                        ? products[_current].name!.substring(0, 15) + '...'
-                                                        : products[_current].name!)
-                                                    : 'No name',
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .displaySmall
-                                                    ?.copyWith(
-                                                        fontSize: 10,
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight
-                                                                .w400),
-                                              ),
-                                              TextSpan(
-                                                text: products[_current].price.toString(),
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .titleMedium
-                                                    ?.copyWith(
-                                                        color:
-                                                            Colors.white70,
-                                                        fontSize: 14),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                
-                              ],
-                            ),
-                          ),
-                        ],
+        backgroundColor: g.isDarkModeEnable ? g.AppColors.darkBackground : Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Header
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Discover Gifts',
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        color: g.isDarkModeEnable ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 30, bottom: 30),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            _controller.forward(
-                                direction: SwipDirection.Right);
-                            _saveReaction(products[_current].id, ReactionTypes.like);
-                          },
-                          child: CircleAvatar(
-                            backgroundColor: const Color(0xFF34F07F),
-                            radius: 24,
-                            child: CircleAvatar(
-                              radius: 22,
-                              backgroundColor: _leftDirection == 1
-                                  ? const Color(0xFF34F07F)
-                                  : Colors.white,
-                              child: Icon(
-                                Icons.thumb_up,
-                                color: _leftDirection == 1
-                                    ? Colors.white
-                                    : const Color(0xFF34F07F),
-                                size: 22,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Container(
-                              padding: const EdgeInsets.only(left: 5, right: 5),
-                              decoration: const BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Color(0xFFFFBC7D),
-                                    Color(0xFFEF5533),
-                                  ],
-                                ),
-                              ),
-                              child: InkWell(
-                                onTap: () {
-                                  _controller.forward(
-                                direction: SwipDirection.Right);
-                                _saveReaction(products[_current].id, ReactionTypes.superLike);
-                                },
-                                child: const CircleAvatar(
-                                  radius: 24,
-                                  backgroundColor: Colors.transparent,
-                                  child: Icon(
-                                    Icons.favorite,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        InkWell(
-                          onTap: () {
-                            _controller.forward(
-                                direction: SwipDirection.Left);
-                                _saveReaction(products[_current].id, ReactionTypes.dislike);
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 5),
-                            child: CircleAvatar(
-                              backgroundColor: const Color(0xFFF0384F),
-                              radius: 24,
-                              child: CircleAvatar(
-                                radius: 22,
-                                backgroundColor: _rightDirection == 2
-                                    ? const Color(0xFFF0384F)
-                                    : Colors.white,
-                                child: Icon(
-                                  Icons.thumb_down,
-                                  color: _rightDirection == 2
-                                      ? Colors.white
-                                      : const Color(0xFFF0384F),
-                                  size: 22,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        InkWell(
-                              onTap: () {
-                                _showInfoDialog(context);
-                              },
-                        child: Container(
-                          margin: const EdgeInsets.only(left: 5),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            gradient: LinearGradient(
-                              colors: [
-                                Color(0xFF2285FA),
-                                Color(0xFF1B40C1),
-                              ],
-                            ),
-                          ),
-                          child: const CircleAvatar(
-                            radius: 24,
-                            backgroundColor: Colors.transparent,
-                            child: Icon(
-                              MdiIcons.informationVariant,
-                              color: Colors.white,
-                              size: 26,
-                            ),
-                          ),
-                        ),
-                        ),
-                      ],
+                    IconButton(
+                      icon: Icon(
+                        Icons.info_outline,
+                        color: g.AppColors.primary,
+                      ),
+                      onPressed: () => _showInfoDialog(context),
                     ),
-                  )
-                ],
-              )),
+                  ],
+                ),
+              ),
+              // Main content
+              Expanded(
+                child: Stack(
+                  children: [
+                    // Cards
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: TCard(
+                          cards: _widgets(),
+                          controller: _controller,
+                          onForward: (index, info) {
+                            setState(() {
+                              _current = index;
+                            });
+                          },
+                          onEnd: () {
+                            _controller.reset();
+                            _current = 0;
+                          },
+                          onBack: (index, info) {
+                            setState(() {
+                              _current = index;
+                            });
+                          },
+                          size: Size(
+                            MediaQuery.of(context).size.width * 0.9,
+                            MediaQuery.of(context).size.height * 0.75,
+                          ),
+                        ),
+                      ),
+                    ),
+                    // Like/Dislike indicators
+                    Positioned(
+                      top: MediaQuery.of(context).size.height * 0.1,
+                      left: 20,
+                      child: Transform.rotate(
+                        angle: -0.5,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: g.AppColors.error, width: 3),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            'NOPE',
+                            style: TextStyle(
+                              color: g.AppColors.error,
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      top: MediaQuery.of(context).size.height * 0.1,
+                      right: 20,
+                      child: Transform.rotate(
+                        angle: 0.5,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: g.AppColors.success, width: 3),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            'LIKE',
+                            style: TextStyle(
+                              color: g.AppColors.success,
+                              fontSize: 32,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
+  Widget _buildActionButton({
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+    required double size,
+  }) {
+    return Container(
+      width: 56,
+      height: 56,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: color.withOpacity(0.1),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.2),
+            blurRadius: 8,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        shape: const CircleBorder(),
+        child: InkWell(
+          onTap: onTap,
+          customBorder: const CircleBorder(),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            child: Icon(
+              icon,
+              color: color,
+              size: size,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   _widgets() {
     List<Widget> widgetList = [];
     for (int i = 0; i < products.length; i++) {
       widgetList.add(
-        Stack(
-          alignment: Alignment.center,
-          children: [
-            Container(
-              alignment: Alignment.bottomCenter,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: Colors.white,
-                ),
-                color: Colors.black,
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 10,
+                spreadRadius: 2,
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.network(
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.network(
                   products[i].imageUrl,
-                  height: MediaQuery.of(context).size.height * 0.70,
-                  width: MediaQuery.of(context).size.width * 0.75,
                   fit: BoxFit.cover,
                 ),
-              ),
-            ),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.70 - 1.5,
-              width: MediaQuery.of(context).size.width * 0.75 - 1.5,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Colors.black, Colors.transparent],
-                  begin: Alignment.bottomCenter,
-                  end: Alignment.center,
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.7),
+                      ],
+                    ),
+                  ),
                 ),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: Colors.transparent,
+                // Action buttons overlay
+                Positioned(
+                  right: 16,
+                  top: 16,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: g.isDarkModeEnable ? Colors.black26 : Colors.white24,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: IconButton(
+                      icon: const Icon(Icons.info_outline),
+                      color: Colors.white,
+                      onPressed: () => _showInfoDialog(context),
+                    ),
+                  ),
                 ),
-              ),
+                // Action buttons at the bottom
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 16,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // Dislike button
+                      Container(
+                        decoration: BoxDecoration(
+                          color: g.AppColors.error.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: [
+                            BoxShadow(
+                              color: g.AppColors.error.withOpacity(0.3),
+                              blurRadius: 8,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.close),
+                          color: Colors.white,
+                          iconSize: 32,
+                          onPressed: () {
+                            _controller.forward(direction: SwipDirection.Left);
+                            _saveReaction(products[_current].id, ReactionTypes.dislike);
+                          },
+                        ),
+                      ),
+                      // Like button
+                      Container(
+                        decoration: BoxDecoration(
+                          color: g.AppColors.success.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: [
+                            BoxShadow(
+                              color: g.AppColors.success.withOpacity(0.3),
+                              blurRadius: 8,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.favorite),
+                          color: Colors.white,
+                          iconSize: 32,
+                          onPressed: () {
+                            _controller.forward(direction: SwipDirection.Right);
+                            _saveReaction(products[_current].id, ReactionTypes.like);
+                          },
+                        ),
+                      ),
+                      // Save to wishlist button
+                      Container(
+                        decoration: BoxDecoration(
+                          color: g.AppColors.warning.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: [
+                            BoxShadow(
+                              color: g.AppColors.warning.withOpacity(0.3),
+                              blurRadius: 8,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.bookmark),
+                          color: Colors.white,
+                          iconSize: 32,
+                          onPressed: () {
+                            _controller.forward(direction: SwipDirection.Right);
+                            _saveReaction(products[_current].id, ReactionTypes.superLike);
+                            _showSaveConfirmation(context);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // Product info overlay
+                Positioned(
+                  left: 16,
+                  right: 16,
+                  bottom: 100,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        products[i].name ?? 'No name',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: g.AppColors.primary.withOpacity(0.9),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.shopping_bag,
+                                  color: Colors.white,
+                                  size: 14,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  '\$${products[i].price?.toStringAsFixed(2) ?? '0.00'}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (products[i].rating != null) ...[
+                            const SizedBox(width: 6),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.amber.withOpacity(0.9),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.star,
+                                    color: Colors.white,
+                                    size: 14,
+                                  ),
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    products[i].rating!.toStringAsFixed(1),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       );
     }
     return widgetList;
   }
-  
+
   Future<void> _saveReaction(String productId, ReactionTypes reactionType) async {
     try {
-      if (userProvider.userProfile != null){
+      if (userProvider.userProfile != null) {
         final reaction = Reaction(
-        userId: userProvider.userProfile!.id,
-        productId: productId,
-        createdAt: DateTime.now(),
-        reactionType: reactionType);
+          userId: userProvider.userProfile!.id,
+          productId: productId,
+          createdAt: DateTime.now(),
+          reactionType: reactionType,
+        );
         userProvider.removeInteractedProduct(productId);
         await userReactionsHandler.saveReaction(reaction);
         if (kDebugMode) {
@@ -417,22 +468,164 @@ class _AddStoryScreenState extends BaseRouteState {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Information'),
-          content: const Text('This is an empty dialog for now.'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(
+            products[_current].name ?? 'No name',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 200,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12),
+                  image: DecorationImage(
+                    image: NetworkImage(products[_current].imageUrl),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: g.AppColors.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.local_offer,
+                          color: g.AppColors.primary,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '\$${products[_current].price?.toStringAsFixed(2) ?? '0.00'}',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: g.AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              if (products[_current].affiliateLink != null && products[_current].affiliateLink!.isNotEmpty)
+                InkWell(
+                  onTap: () async {
+                    final Uri url = Uri.parse(products[_current].affiliateLink!);
+                    if (await canLaunchUrl(url)) {
+                      await launchUrl(url, mode: LaunchMode.externalApplication);
+                    } else {
+                      if (kDebugMode) {
+                        print('Could not launch ${products[_current].affiliateLink}');
+                      }
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Could not open the product link'),
+                          backgroundColor: g.AppColors.error,
+                        ),
+                      );
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: g.AppColors.primary.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.link,
+                          color: g.AppColors.primary,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'View Product',
+                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              color: g.AppColors.primary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          color: g.AppColors.primary,
+                          size: 16,
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                Text(
+                  'No affiliate link available',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey,
+                  ),
+                ),
+            ],
+          ),
           actions: [
             TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Close',
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
-                              ),
-                              ),
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Close',
+                style: TextStyle(
+                  color: g.AppColors.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
           ],
         );
       },
+    );
+  }
+
+  void _showSaveConfirmation(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              Icons.check_circle,
+              color: Colors.white,
+              size: 24,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Saved to your wish list!',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: g.AppColors.warning,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: const EdgeInsets.all(16),
+        duration: const Duration(seconds: 2),
+      ),
     );
   }
 }

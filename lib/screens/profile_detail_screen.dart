@@ -60,13 +60,10 @@ bool updateProfileUser() {
   bool hasError = false;
   String errorMessage = 'Please fill in all required fields.';
 
-
-
   // Check if gender and country are set to their default values
   if (_cGender.text == 'Select Gender' || _cCountry.text == 'Merchant Country') {
     hasError = true;
   }
-
 
   // Update the profileUser object with the current input
   if (isUpdate && (_cFirstName.text.isEmpty || _cFirstName.text == '')) {
@@ -99,16 +96,16 @@ bool updateProfileUser() {
     userProfile.merchantCountry = _cCountry.text;
   }
 
-    // Check if any required fields are missing
-  if (userProfile.firstName.isEmpty || userProfile.lastName.isEmpty || userProfile.gender.isEmpty|| userProfile.merchantCountry.isEmpty) {
+  // Check if any required fields are missing
+  if (userProfile.firstName.isEmpty || userProfile.lastName.isEmpty || userProfile.gender.isEmpty || userProfile.merchantCountry.isEmpty) {
     hasError = true;
-
   }
       
   if (hasError) {
     _showNotification(errorMessage, isError: true);
     return false;
   }
+
   // Show success notification
   _showNotification('Profile updated successfully!', isError: false);
   return true;
@@ -142,457 +139,303 @@ bool updateProfileUser() {
 
   @override
   Widget build(BuildContext context) {
-    userProvider = Provider.of<UserProvider>(context, listen: false);
-    _gender = isUpdate? '${userProvider.userProfile?.gender}'
-                        : 'Select Gender';
-    _country = isUpdate? '${userProvider.userProfile?.merchantCountry}'
-                        : 'Merchant Country';
-    return PopScope(
-      canPop: true,
-      onPopInvoked: (bool didPop) {
-        exitAppDialog();
-      },
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        key: _scaffoldKey,
-        appBar: _appBarWidget(),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20, top: 30),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.lbl_profile_details,
-                      style: Theme.of(context).primaryTextTheme.displayLarge,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Text(
-                        AppLocalizations.of(context)!
-                            .lbl_profile_details_subtitle,
-                        style: Theme.of(context).primaryTextTheme.titleSmall,
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(50, 20, 50, 20),
-                      padding: const EdgeInsets.all(1.5),
-                      height: 55,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: g.gradientColors,
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(35),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: g.isDarkModeEnable
-                              ? Colors.black
-                              : Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(35),
-                        ),
-                        height: 20,
-                        child: TextFormField(
-                          style:
-                              Theme.of(context).primaryTextTheme.titleSmall,
-                          controller: _cFirstName,
-                          focusNode: _firstNameFocusNode,
-                          decoration: InputDecoration(
-                            labelText:
-                            (_firstNameFocusNode.hasFocus || _cFirstName.text.isNotEmpty)
-                                ? null
-                                : (isUpdate
-                                  ? '${userProvider.userProfile?.firstName}'
-                                  : AppLocalizations.of(context)!.lbl_first_name_hint), 
-
-                            labelStyle:
-                                Theme.of(context).primaryTextTheme.titleSmall,
-                            contentPadding: g.isRTL
-                                ? const EdgeInsets.only(right: 20)
-                                : const EdgeInsets.only(left: 20),
-                          ),
-                        ),
-                      ),
-                      
-                    ),
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(50, 20, 50, 20),
-                      padding: const EdgeInsets.all(1.5),
-                      height: 55,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: g.gradientColors,
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(35),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: g.isDarkModeEnable
-                              ? Colors.black
-                              : Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(35),
-                        ),
-                        height: 55,
-                        child: TextFormField(
-                          style:
-                              Theme.of(context).primaryTextTheme.titleSmall,
-                          controller: _cLastName,
-                          focusNode: _lastNameFocusNode,
-                          decoration: InputDecoration(
-                            labelText:
-                            (_lastNameFocusNode.hasFocus || _cLastName.text.isNotEmpty)
-                                ? null
-                                : (isUpdate
-                                  ? '${userProvider.userProfile?.lastName}'
-                                  : AppLocalizations.of(context)!.lbl_last_name_hint), // Adjust the title dynamically
-
-                            labelStyle:
-                                Theme.of(context).primaryTextTheme.titleSmall,
-                            contentPadding: g.isRTL
-                                ? const EdgeInsets.only(right: 20)
-                                : const EdgeInsets.only(left: 20),
-                          ),
-                        ),
-                      ),
-                    ),
-                    
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(50, 20, 50, 20),
-                      padding: const EdgeInsets.all(1.5),
-                      height: 55,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: g.gradientColors,
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(35),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: g.isDarkModeEnable
-                              ? Colors.black
-                              : Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(35),
-                        ),
-                        height: 55,
-                        child: TextFormField(
-                          style: Theme.of(context).primaryTextTheme.titleSmall,
-                          controller: _cBDate,
-                          focusNode: _bDateFocusNode,
-                          readOnly: true, // Prevent keyboard input to allow only date selection
-                          decoration: InputDecoration(
-                            labelText:
-                            (_bDateFocusNode.hasFocus || _cBDate.text.isNotEmpty)
-                                ? null
-                                : (isUpdate
-                                  ? '${DateFormat('yyyy-MM-dd').format(userProvider.userProfile!.dateOfBirth.toLocal())}'
-                                  : AppLocalizations.of(context)!.lbl_dob_hint), 
-
-
-                            labelStyle: Theme.of(context).primaryTextTheme.titleSmall,
-                            contentPadding: _cBDate.text.isNotEmpty
-                            ? const EdgeInsets.symmetric(horizontal: 20, vertical: 15) // Adjust padding when date is set
-                            : g.isRTL
-                                ? const EdgeInsets.only(right: 20)
-                                : const EdgeInsets.only(left: 20),
-                            alignLabelWithHint: true, // Ensure label text aligns with hint text    
-                            suffixIcon: GestureDetector(
-                              onTap: () async {
-                                // Open date picker
-                                DateTime? pickedDate = await showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(), // Current date
-                                  firstDate: DateTime(1900),   // Earliest selectable date
-                                  lastDate: DateTime.now(),   // Latest selectable date
-                                  builder: (BuildContext context, Widget? child) {
-                                    return Theme(
-                                      data: Theme.of(context).copyWith(   
-                                        inputDecorationTheme: Theme.of(context).inputDecorationTheme.copyWith(
-                                          labelStyle: TextStyle(color: Theme.of(context).colorScheme.secondary), // "Enter Date" label color
-                                          hintStyle: TextStyle(color: Theme.of(context).colorScheme.secondary), // Hint text color
-                                        ),
-                                    textButtonTheme: TextButtonThemeData(
-                                      style: TextButton.styleFrom(
-                                        foregroundColor: Colors.white, // Text color of the buttons
-                                        backgroundColor: Colors.purple, // Background color of the buttons
-                                      ),
-                                    ),
-                                  ),
-                                      child: child!,                                    
-                                    );
-                                  },
-                                );                   
-                                if (pickedDate != null) {
-                                  // Format the selected date
-                                  String formattedDate =
-                                      "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
-
-                                  // Update the TextEditingController with the selected date
-                                  setState(() {
-                                    _cBDate.text = formattedDate;
-                                  });
-                                }
-                              },
-                              child: Padding(
-                                padding: g.isRTL
-                                    ? const EdgeInsets.only(left: 4)
-                                    : const EdgeInsets.only(right: 4),
-                                    
-                                child: Icon(
-                                  Icons.calendar_today,
-                                  color: Theme.of(context).iconTheme.color,
-                                  size: 20,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(50, 20, 50, 20),
-                      padding: const EdgeInsets.all(1.5),
-                      height: 55,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: g.gradientColors,
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(35),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: g.isDarkModeEnable
-                              ? Colors.black
-                              : Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(35),
-                        ),
-                        height: 55,
-                        child: DropdownButtonFormField<String>(
-                          decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(35),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                        ),
-                          dropdownColor: Theme.of(context).scaffoldBackgroundColor,  //Theme.of(context).primaryColorLight,
-                          icon: Padding(
-                            padding: g.isRTL
-                                ? const EdgeInsets.only(left: 20)
-                                : const EdgeInsets.only(right: 20),
-                            child: Icon(Icons.expand_more,
-                                color: Theme.of(context).iconTheme.color),
-                          ),
-                          value: _gender,
-                          items: ['Select Gender', 'male', 'female', 'other']
-                              .map((label) => DropdownMenuItem(
-                                    value: label,
-                                    child: Padding(
-                                      padding: g.isRTL
-                                          ? const EdgeInsets.only(right: 20)
-                                          : const EdgeInsets.only(left: 20),
-                                      child: Text(
-                                        label.toString(),
-                                        style: Theme.of(context)
-                                            .primaryTextTheme
-                                            .titleSmall,
-                                      ),
-                                    ),
-                                  ))
-                              .toList(),
-                          hint: Padding(
-                            padding: g.isRTL
-                                ? const EdgeInsets.only(right: 20)
-                                : const EdgeInsets.only(left: 20),
-                            child: Text(_gender!.isEmpty
-                                ? AppLocalizations.of(context)!
-                                    .lbl_gender_hint
-                                : _gender!),
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              setState(() {                               
-                                  _gender = value;
-                                  _cGender.text = _gender!;
-                              });
-                              
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                    Container(
-                      margin: const EdgeInsets.fromLTRB(50, 20, 50, 20),
-                      padding: const EdgeInsets.all(1.5),
-                      height: 55,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: g.gradientColors,
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(35),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: g.isDarkModeEnable
-                              ? Colors.black
-                              : Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(35),
-                        ),
-                        height: 55,
-                        child: DropdownButtonFormField<String>(
-                          decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(35),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
-                        ),
-                          dropdownColor: Theme.of(context).scaffoldBackgroundColor,  //Theme.of(context).primaryColorLight,
-                          icon: Padding(
-                            padding: g.isRTL
-                                ? const EdgeInsets.only(left: 20)
-                                : const EdgeInsets.only(right: 20),
-                            child: Icon(Icons.expand_more,
-                                color: Theme.of(context).iconTheme.color),
-                          ),
-                          value: _country,
-                          items: ['Merchant Country', 'DE', 'US', 'BE', 'FR', 'IT', 'ES']
-                              .map((label) => DropdownMenuItem(
-                                    value: label,
-                                    child: Padding(
-                                      padding: g.isRTL
-                                          ? const EdgeInsets.only(right: 20)
-                                          : const EdgeInsets.only(left: 20),
-                                      child: Text(
-                                        label.toString(),
-                                        style: Theme.of(context)
-                                            .primaryTextTheme
-                                            .titleSmall,
-                                      ),
-                                    ),
-                                  ))
-                              .toList(),
-                          hint: Padding(
-                            padding: g.isRTL
-                                ? const EdgeInsets.only(right: 20)
-                                : const EdgeInsets.only(left: 20),
-                            child: Text(_country!.isEmpty
-                                ? AppLocalizations.of(context)!
-                                    .lbl_gender_hint
-                                : _country!),
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              setState(() {                               
-                                  _country = value;
-                                  _cCountry.text = _country!;
-                              });                             
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 20),
-                        height: 50,
-                        width: 180,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25),
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: g.gradientColors,
-                          ),
-                        ),
-                        child: TextButton(
-                          onPressed: () {
-                            if (updateProfileUser()){
-                              isUpdate
-                            ? 
-                            (userProfileHandler.editUserProfile(userProfile),
-                            Navigator.of(context).push(MaterialPageRoute(
-                                                        builder: (context) => BottomNavigationWidgetLight(
-                                                              currentIndex: 2,
-                                                              a: widget.analytics,
-                                                              o: widget.observer,
-                                                            ))))
-                            : Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => LikesInterestScreen(
-                                      a: widget.analytics,
-                                      o: widget.observer,
-                                      userProfile: userProfile,
-                                      isEditHobbies: false
-                                    )));
-                            }                            
-                          },
-                          child: Text(
-                            AppLocalizations.of(context)!.btn_continue,
-                            style: Theme.of(context)
-                                .textButtonTheme
-                                .style!
-                                .textStyle!
-                                .resolve({
-                              WidgetState.pressed,
-                            }),
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
+    userProvider = Provider.of<UserProvider>(context);
+    return Scaffold(
+      key: _scaffoldKey,
+      backgroundColor: g.isDarkModeEnable ? g.AppColors.darkBackground : Colors.white,
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: g.isDarkModeEnable ? Colors.white : Colors.black,
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+        title: Text(
+          isUpdate ? 'Edit Profile' : 'Complete Your Profile',
+          style: TextStyle(
+            color: g.isDarkModeEnable ? Colors.white : Colors.black,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),
-    );
-  }
-
-
-PreferredSizeWidget _appBarWidget() {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(60),
-      child: SafeArea(
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Expanded(
-              child: ListTile(
-                leading: IconButton(
-                  icon: const Icon(FontAwesomeIcons.longArrowAltLeft),
-                  color: Theme.of(context).iconTheme.color,
-                  onPressed: () {
-                    g.isDarkModeEnable
-                        ? Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => BottomNavigationWidgetDark(
-                                  currentIndex: 2,
-                                  a: widget.analytics,
-                                  o: widget.observer,
-                                )))
-                        : Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => BottomNavigationWidgetLight(
-                                  currentIndex: 2,
-                                  a: widget.analytics,
-                                  o: widget.observer,
-                                )));
-                  },
-                ), 
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                isUpdate ? 'Update your basic profile information' : 'Let\'s get to know you better',
+                style: TextStyle(
+                  color: g.isDarkModeEnable ? Colors.white70 : Colors.black54,
+                  fontSize: 16,
+                ),
               ),
-            ),
-          ],
+              const SizedBox(height: 32),
+              // First Name Field
+              Text(
+                'First Name',
+                style: TextStyle(
+                  color: g.isDarkModeEnable ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _cFirstName,
+                focusNode: _firstNameFocusNode,
+                style: TextStyle(
+                  color: g.isDarkModeEnable ? Colors.white : Colors.black,
+                ),
+                decoration: InputDecoration(
+                  hintText: isUpdate ? userProvider.userProfile?.firstName : 'Enter your first name',
+                  hintStyle: TextStyle(
+                    color: g.isDarkModeEnable ? Colors.white54 : Colors.black54,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: g.isDarkModeEnable ? Colors.white24 : Colors.black12,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: g.isDarkModeEnable ? Colors.white24 : Colors.black12,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: g.AppColors.primary,
+                      width: 2,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: g.isDarkModeEnable ? Colors.white10 : Colors.grey[50],
+                ),
+              ),
+              const SizedBox(height: 24),
+              // Last Name Field
+              Text(
+                'Last Name',
+                style: TextStyle(
+                  color: g.isDarkModeEnable ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _cLastName,
+                focusNode: _lastNameFocusNode,
+                style: TextStyle(
+                  color: g.isDarkModeEnable ? Colors.white : Colors.black,
+                ),
+                decoration: InputDecoration(
+                  hintText: isUpdate ? userProvider.userProfile?.lastName : 'Enter your last name',
+                  hintStyle: TextStyle(
+                    color: g.isDarkModeEnable ? Colors.white54 : Colors.black54,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: g.isDarkModeEnable ? Colors.white24 : Colors.black12,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: g.isDarkModeEnable ? Colors.white24 : Colors.black12,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: g.AppColors.primary,
+                      width: 2,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: g.isDarkModeEnable ? Colors.white10 : Colors.grey[50],
+                ),
+              ),
+              const SizedBox(height: 24),
+              // Gender Selection
+              Text(
+                'Gender',
+                style: TextStyle(
+                  color: g.isDarkModeEnable ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              DropdownButtonFormField<String>(
+                value: _gender,
+                style: TextStyle(
+                  color: g.isDarkModeEnable ? Colors.white : Colors.black,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Select your gender',
+                  hintStyle: TextStyle(
+                    color: g.isDarkModeEnable ? Colors.white54 : Colors.black54,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: g.isDarkModeEnable ? Colors.white24 : Colors.black12,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: g.isDarkModeEnable ? Colors.white24 : Colors.black12,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: g.AppColors.primary,
+                      width: 2,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: g.isDarkModeEnable ? Colors.white10 : Colors.grey[50],
+                ),
+                items: ['Male', 'Female', 'Other'].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _gender = newValue;
+                    _cGender.text = newValue ?? '';
+                  });
+                },
+              ),
+              const SizedBox(height: 24),
+              // Date of Birth
+              Text(
+                'Date of Birth',
+                style: TextStyle(
+                  color: g.isDarkModeEnable ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _cBDate,
+                focusNode: _bDateFocusNode,
+                readOnly: true,
+                style: TextStyle(
+                  color: g.isDarkModeEnable ? Colors.white : Colors.black,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Select your date of birth',
+                  hintStyle: TextStyle(
+                    color: g.isDarkModeEnable ? Colors.white54 : Colors.black54,
+                  ),
+                  suffixIcon: Icon(
+                    Icons.calendar_today,
+                    color: g.isDarkModeEnable ? Colors.white70 : Colors.black54,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: g.isDarkModeEnable ? Colors.white24 : Colors.black12,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: g.isDarkModeEnable ? Colors.white24 : Colors.black12,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: g.AppColors.primary,
+                      width: 2,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: g.isDarkModeEnable ? Colors.white10 : Colors.grey[50],
+                ),
+                onTap: () async {
+                  final DateTime? picked = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime.now(),
+                  );
+                  if (picked != null) {
+                    setState(() {
+                      _cBDate.text = DateFormat("dd-MM-yyyy").format(picked);
+                    });
+                  }
+                },
+              ),
+              const SizedBox(height: 40),
+              // Save Button
+              Container(
+                height: 56,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(28),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      g.AppColors.primary,
+                      g.AppColors.secondary,
+                    ],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: g.AppColors.primary.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: TextButton(
+                  onPressed: () {
+                    if (updateProfileUser()) {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) => BottomNavigationWidgetLight(
+                            currentIndex: 0,
+                            a: widget.analytics,
+                            o: widget.observer,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(28),
+                    ),
+                  ),
+                  child: Text(
+                    isUpdate ? 'Update Profile' : 'Complete Profile',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -2,13 +2,9 @@ import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:datingapp/provider/user_profile_handler.dart';
 import 'package:datingapp/provider/user_provider.dart';
-import 'package:datingapp/screens/profile_detail_screen.dart';
-import 'package:datingapp/screens/setting_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:datingapp/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
-
 
 class MyProfileScreen extends BaseRoute {
   const MyProfileScreen({super.key, super.a, super.o}) : super(r: 'MyProfileScreen');
@@ -18,8 +14,6 @@ class MyProfileScreen extends BaseRoute {
 }
 
 class _MyProfileScreenState extends BaseRouteState {
-  int _currentIndex = 0;
-  TabController? _tabController;
   late UserProvider userProvider;
   final UserProfileHandler userProfileHandler = UserProfileHandler();
 
@@ -34,332 +28,590 @@ class _MyProfileScreenState extends BaseRouteState {
         exitAppDialog();
       },
       child: Scaffold(
-        appBar: _appBarWidget(),
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              exitAppDialog();
+            },
+          ),
+        ),
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Profile Header with Gradient Background
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [g.AppColors.primary, g.AppColors.secondary],
+                  ),
+                ),
+                child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.30,
-                  width: MediaQuery.of(context).size.width * 0.75,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: Color.fromRGBO(19, 1, 51, 1),
-                    ),
-                    child: Image.asset(
-                      userProvider.userProfile?.gender == "female" ? 'assets/images/profile_women.png' : 'assets/images/profile_men.png',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                Container(
-                  color:
-                      g.isDarkModeEnable ? const Color(0xFF130032) : Colors.white,
-                  height: MediaQuery.of(context).size.height * 0.30,
-                  width: MediaQuery.of(context).size.width * 0.25,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.favorite_border,
-                              color: g.isDarkModeEnable
-                                  ? Theme.of(context).iconTheme.color
-                                  : Theme.of(context).primaryColorLight,
-                              size: 18,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 4),
-                              //String nbSuperLikes = await userProfileHandler.getItemCountForUser('relations', 'user_id', userProvider.userProfile!.id).toString();
-                              child: 
-                                FutureBuilder<int>(
-                                  future: userProfileHandler.getReactionCountForUser('reactions', 'superLike', 'user_id', userProvider.userProfile!.id),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                      return Text(
-                                        '..',
-                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
-                                      );
-                                    } else if (snapshot.hasError) {
-                                      return Text(
-                                        'Error: ${snapshot.error}',
-                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
-                                      );
-                                    } else {
-                                      return Text(
-                                        '${snapshot.data ?? 0}',
-                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
-                                      );
-                                    }
-                                  },
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${userProvider.userProfile?.firstName} ${userProvider.userProfile?.lastName}',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                userProvider.userProfile?.email ?? '',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14,
                                 ),
                             ),
                           ],
                         ),
                       ),
-                      Divider(
-                        color: g.isDarkModeEnable
-                            ? const Color(0xFF230f4E)
-                            : Colors.purple[100],
-                      ),
-                      Expanded(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.thumb_up,
-                              color: g.isDarkModeEnable
-                                  ? Theme.of(context).iconTheme.color
-                                  : Theme.of(context).primaryColorLight,
-                              size: 18,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 4),
-                              child: 
-                                  FutureBuilder<int>(
-                                  future: userProfileHandler.getReactionCountForUser('reactions', 'like', 'user_id', userProvider.userProfile!.id),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                      return Text(
-                                        '..',
-                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
-                                      );
-                                    } else if (snapshot.hasError) {
-                                      return Text(
-                                        'Error: ${snapshot.error}',
-                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
-                                      );
-                                    } else {
-                                      return Text(
-                                        '${snapshot.data ?? 0}',
-                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
-                                      );
-                                    }
-                                  },
-                                ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        color: g.isDarkModeEnable
-                            ? const Color(0xFF230f4E)
-                            : Colors.purple[100],
-                      ),
-                      Expanded(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.group,
-                              color: g.isDarkModeEnable
-                                  ? Theme.of(context).iconTheme.color
-                                  : Theme.of(context).primaryColorLight,
-                              size: 18,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 4),
-                              child: 
-                                FutureBuilder<int>(
-                                  future: userProfileHandler.getItemCountForUser('relations', 'user_id', userProvider.userProfile!.id),
-                                  builder: (context, snapshot) {
-                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                      return Text(
-                                        '..',
-                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
-                                      );
-                                    } else if (snapshot.hasError) {
-                                      return Text(
-                                        'Error: ${snapshot.error}',
-                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
-                                      );
-                                    } else {
-                                      return Text(
-                                        '${snapshot.data ?? 0}',
-                                        style: Theme.of(context).primaryTextTheme.bodyLarge,
-                                      );
-                                    }
-                                  },
-                                ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        color: g.isDarkModeEnable
-                            ? const Color(0xFF230f4E)
-                            : Colors.purple[100],
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(22),
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.purple[900]!,
-                              Colors.purple[700]!
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                        ),
-                        child: 
-                          CircleAvatar(
-                          //todo : edit on click on button, show the same as creation of account
-                          backgroundColor: Colors.transparent,
-                          radius: 20,
-                          
-                          child: IconButton(
-                            icon: const Icon(Icons.border_color_outlined, 
-                            size: 18.0,),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.edit_outlined,
                             color: Colors.white,
-                            onPressed: () {
-                              if (userProvider.userProfile != null) {
-                                
-                                Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => ProfileDetailScreen(
-                                    a: widget.analytics,
-                                    o: widget.observer,
-                                    userProfile: userProvider.userProfile!,
-                                    isUpdate: true,
-                                  ),
-                                ));
-                                
-                              } else {                         
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(content: Text('User profile is not available')),
-                                );
-                              }
-                            },
+                            size: 24,
                           ),
+                          onPressed: () {
+                            _showEditProfileDialog();
+                          },
                         ),
-                      ),
-                    ],
-                  ),
-                )
-              ],
-            ),
-            Stack(
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(right: 8),
-                  alignment: Alignment.centerRight,
-                  width: MediaQuery.of(context).size.width,
-                  color: g.isDarkModeEnable
-                      ? const Color(0xFF130032)
-                      : Theme.of(context).scaffoldBackgroundColor,
-                  height: 15,
+                      ],
+                    ),
+                  ],
                 ),
-                Container(
-                  padding: const EdgeInsets.only(left: 8),
-                  alignment: Alignment.centerLeft,
-                  color: const Color(0xFFAD45B3),
-                  width: MediaQuery.of(context).size.width / 2 - 35,
-                  height: 15,
-                ),
-              ],
-            ),
-            Expanded(
-              child: SingleChildScrollView(
+              ),
+              // Content Section
+              Padding(
+                padding: const EdgeInsets.all(20),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 20, left: 20),
-                        child: Text(
-                          '${userProvider.userProfile?.firstName} ${userProvider.userProfile?.lastName}',
-                          style: Theme.of(context)
-                              .primaryTextTheme
-                              .displayLarge,
+                    // Personal Information Section
+                    const Text(
+                      'Personal Information',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildInfoCard(
+                      title: 'Date of Birth',
+                      value: DateFormat('dd-MM-yyyy').format(userProvider.userProfile?.dateOfBirth.toLocal() ?? DateTime(2000, 1, 1)),
+                      icon: Icons.cake,
+                      onTap: () {
+                        _showEditDateOfBirthDialog();
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    _buildInfoCard(
+                      title: 'Email',
+                      value: userProvider.userProfile?.email ?? '',
+                      icon: Icons.email,
+                      onTap: () {
+                        _showEditEmailDialog();
+                      },
+                    ),
+                    const SizedBox(height: 24),
+                    // Interests Section
+                    const Text(
+                      'Interests',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                          children: [
+                        'Fashion',
+                        'Electronics',
+                        'Home & Living',
+                        'Beauty',
+                        'Sports',
+                        'Books',
+                        'Toys',
+                      ].map((interest) {
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: g.AppColors.primary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: g.AppColors.primary.withOpacity(0.3),
+                            ),
+                          ),
+                          child: Text(
+                            interest,
+                            style: TextStyle(
+                              color: g.AppColors.primary,
+                              fontSize: 14,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 24),
+                    // Edit Interests Button
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          _showEditInterestsDialog();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: g.AppColors.primary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: g.isRTL
-                          ? const EdgeInsets.only(right: 20)
-                          : const EdgeInsets.only(left: 20),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            height: 30,
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.cake,
-                                  color: Theme.of(context).iconTheme.color,
-                                  size: 16,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 4),
-                                  child: Text(
-                                    DateFormat('dd-MM-yyyy').format(userProvider.userProfile?.dateOfBirth.toLocal() ?? DateTime(2000, 1, 1)),
-                                    style: Theme.of(context)
-                                        .primaryTextTheme
-                                        .bodyLarge,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            margin: const EdgeInsets.only(left: 20),
-                            height: 30,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.mail,
-                                  color: Theme.of(context).iconTheme.color,
-                                  size: 16,
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 4),
-                                  child: Text(
-                                    '${userProvider.userProfile?.email}',
-                                    style: Theme.of(context)
-                                        .primaryTextTheme
-                                        .bodyLarge,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: g.isRTL
-                          ? const EdgeInsets.only(right: 20, top: 30)
-                          : const EdgeInsets.only(left: 20, top: 30),
-                      child: Text(
-                        AppLocalizations.of(context)!.lbl_likes_intrets,
-                        style:
-                            Theme.of(context).primaryTextTheme.displaySmall,
-                      ),
-                    ),
-                    Padding(
-                      padding: g.isRTL
-                          ? const EdgeInsets.only(right: 20, top: 10)
-                          : const EdgeInsets.only(left: 20, top: 10),
-                      child: Text(
-                        '${userProvider.userProfile?.hobbies} etc.',
-                        style:
-                            Theme.of(context).primaryTextTheme.titleSmall,
+                        child: const Text('Edit Interests'),
                       ),
                     ),
                   ],
                 ),
               ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoCard({
+    required String title,
+    required String value,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: g.AppColors.primary.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
+          border: Border.all(
+            color: g.AppColors.primary.withOpacity(0.2),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: g.AppColors.primary.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: g.AppColors.primary,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: g.AppColors.primary,
+                      fontSize: 14,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                                ),
+                            ),
+                          ],
+                        ),
+                      ),
+            const Icon(
+              Icons.chevron_right,
+              color: g.AppColors.primary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showEditDateOfBirthDialog() {
+    DateTime selectedDate = userProvider.userProfile?.dateOfBirth ?? DateTime(2000, 1, 1);
+    
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Select Date of Birth',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                height: 200,
+                child: CalendarDatePicker(
+                  initialDate: selectedDate,
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime.now(),
+                  onDateChanged: (date) {
+                    selectedDate = date;
+                            },
+                          ),
+                        ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: g.AppColors.primary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Update date of birth
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: g.AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text('Save'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showEditEmailDialog() {
+    final TextEditingController emailController = TextEditingController(text: userProvider.userProfile?.email);
+    
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+              const Text(
+                'Edit Email',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: emailController,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  labelStyle: const TextStyle(color: g.AppColors.primary),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: g.AppColors.primary),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: g.AppColors.primary),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: g.AppColors.primary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Update email
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: g.AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text('Save'),
+                  ),
+                ],
+                ),
+              ],
+            ),
+        ),
+      ),
+    );
+  }
+
+  void _showEditInterestsDialog() {
+    final List<String> interests = [
+      'Fashion',
+      'Electronics',
+      'Home & Living',
+      'Beauty',
+      'Sports',
+      'Books',
+      'Toys',
+    ];
+    final List<String> selectedInterests = ['Fashion', 'Electronics']; // Example selected interests
+
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+                child: Column(
+            mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+              const Text(
+                'Edit Interests',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: interests.map((interest) {
+                  final isSelected = selectedInterests.contains(interest);
+                  return FilterChip(
+                    label: Text(interest),
+                    selected: isSelected,
+                    onSelected: (bool selected) {
+                      // Handle interest selection
+                    },
+                    backgroundColor: g.AppColors.primary.withOpacity(0.1),
+                    selectedColor: g.AppColors.primary.withOpacity(0.2),
+                    checkmarkColor: g.AppColors.primary,
+                    labelStyle: TextStyle(
+                      color: isSelected ? g.AppColors.primary : Colors.black,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: g.AppColors.primary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Save interests
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: g.AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text('Save Changes'),
+                  ),
+                ],
+                                ),
+                              ],
+                            ),
+                          ),
+      ),
+    );
+  }
+
+  void _showEditProfileDialog() {
+    final TextEditingController firstNameController = TextEditingController(text: userProvider.userProfile?.firstName);
+    final TextEditingController lastNameController = TextEditingController(text: userProvider.userProfile?.lastName);
+    
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+                              mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Edit Profile',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                              children: [
+                  Expanded(
+                    child: TextField(
+                      controller: firstNameController,
+                      decoration: InputDecoration(
+                        labelText: 'First Name',
+                        labelStyle: const TextStyle(color: g.AppColors.primary),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: g.AppColors.primary),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: g.AppColors.primary),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: TextField(
+                      controller: lastNameController,
+                      decoration: InputDecoration(
+                        labelText: 'Last Name',
+                        labelStyle: const TextStyle(color: g.AppColors.primary),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: g.AppColors.primary),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: g.AppColors.primary),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: g.AppColors.primary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Save profile changes
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: g.AppColors.primary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: const Text('Save Changes'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -368,53 +620,5 @@ class _MyProfileScreenState extends BaseRouteState {
   @override
   void initState() {
     super.initState();
-    _tabController =
-        TabController(length: 4, vsync: this, initialIndex: _currentIndex);
-    _tabController!.addListener(_tabControllerListener);
-  }
-
-  void _tabControllerListener() {
-    setState(() {
-      _currentIndex = _tabController!.index;
-    });
-  }
-
-  PreferredSizeWidget _appBarWidget() {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(65),
-      child: SafeArea(
-        child: Stack(
-          children: [
-            Container(
-              padding: const EdgeInsets.only(right: 8),
-              alignment: g.isRTL ? Alignment.centerLeft : Alignment.centerRight,
-              width: MediaQuery.of(context).size.width,
-              color: g.isDarkModeEnable
-                  ? const Color(0xFF130032)
-                  : Theme.of(context).scaffoldBackgroundColor,
-              height: 65,
-              child: IconButton(
-                icon: const Icon(Icons.settings_outlined),
-                color: Theme.of(context).iconTheme.color,
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => SettingScreen(
-                            a: widget.analytics,
-                            o: widget.observer,
-                          )));
-                },
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.only(left: 8),
-              alignment: g.isRTL ? Alignment.centerRight : Alignment.centerLeft,
-              color: const Color(0xFFAD45B3),
-              width: MediaQuery.of(context).size.width / 2 - 35,
-              height: 65,
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

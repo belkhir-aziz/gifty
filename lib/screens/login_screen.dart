@@ -37,102 +37,224 @@ class _LoginScreenState extends BaseRouteState {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Text(
-                  isLogin
-                      ? AppLocalizations.of(context)!.lbl_login
-                      : "Sign Up", // Adjust the title dynamically
-                  style: Theme.of(context).primaryTextTheme.displayLarge,
+      backgroundColor: g.isDarkModeEnable ? g.AppColors.darkBackground : Colors.white,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Logo and Title
+                Image.asset(
+                  g.isDarkModeEnable
+                      ? 'assets/images/splash_new_dark.png'
+                      : 'assets/images/splash_new_light.png',
+                  height: 120,
+                  fit: BoxFit.contain,
                 ),
-              ),
-              TextFormField(
-                controller: _cEmail,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.all(20),
-                  hintText: 'Enter your email',
-                  prefixIcon: Icon(
-                    Icons.email,
-                    color: Theme.of(context).iconTheme.color,
+                const SizedBox(height: 40),
+                Text(
+                  isLogin ? 'Welcome Back!' : 'Create Account',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: g.isDarkModeEnable ? Colors.white : Colors.black,
                   ),
                 ),
-              ),
-              const SizedBox(height: 15),
-              TextFormField(
-                controller: _cPassword,
-                obscureText: true,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.all(20),
-                  hintText: 'Enter your password',
-                  prefixIcon: Icon(
-                    Icons.lock,
-                    color: Theme.of(context).iconTheme.color,
+                const SizedBox(height: 8),
+                Text(
+                  isLogin ? 'Sign in to continue' : 'Sign up to get started',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: g.isDarkModeEnable ? Colors.white70 : Colors.black54,
                   ),
                 ),
-              ),
-              if (!isLogin) // Show confirm password only for Sign-Up
-                const SizedBox(height: 15),
-              if (!isLogin)
+                const SizedBox(height: 40),
+                // Email Field
                 TextFormField(
-                  controller: _cConfirmPassword,
-                  obscureText: true,
+                  controller: _cEmail,
+                  keyboardType: TextInputType.emailAddress,
+                  style: TextStyle(
+                    color: g.isDarkModeEnable ? Colors.white : Colors.black,
+                  ),
                   decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.all(20),
-                    hintText: 'Confirm your password',
+                    contentPadding: const EdgeInsets.all(16),
+                    hintText: 'Enter your email',
+                    hintStyle: TextStyle(
+                      color: g.isDarkModeEnable ? Colors.white54 : Colors.black54,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.email,
+                      color: g.isDarkModeEnable ? Colors.white70 : Colors.black54,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: g.isDarkModeEnable ? Colors.white24 : Colors.black12,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: g.isDarkModeEnable ? Colors.white24 : Colors.black12,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: g.AppColors.primary,
+                        width: 2,
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: g.isDarkModeEnable ? Colors.white10 : Colors.grey[50],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                // Password Field
+                TextFormField(
+                  controller: _cPassword,
+                  obscureText: true,
+                  style: TextStyle(
+                    color: g.isDarkModeEnable ? Colors.white : Colors.black,
+                  ),
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.all(16),
+                    hintText: 'Enter your password',
+                    hintStyle: TextStyle(
+                      color: g.isDarkModeEnable ? Colors.white54 : Colors.black54,
+                    ),
                     prefixIcon: Icon(
                       Icons.lock,
-                      color: Theme.of(context).iconTheme.color,
+                      color: g.isDarkModeEnable ? Colors.white70 : Colors.black54,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: g.isDarkModeEnable ? Colors.white24 : Colors.black12,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: g.isDarkModeEnable ? Colors.white24 : Colors.black12,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                        color: g.AppColors.primary,
+                        width: 2,
+                      ),
+                    ),
+                    filled: true,
+                    fillColor: g.isDarkModeEnable ? Colors.white10 : Colors.grey[50],
+                  ),
+                ),
+                if (!isLogin) ...[
+                  const SizedBox(height: 16),
+                  // Confirm Password Field
+                  TextFormField(
+                    controller: _cConfirmPassword,
+                    obscureText: true,
+                    style: TextStyle(
+                      color: g.isDarkModeEnable ? Colors.white : Colors.black,
+                    ),
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.all(16),
+                      hintText: 'Confirm your password',
+                      hintStyle: TextStyle(
+                        color: g.isDarkModeEnable ? Colors.white54 : Colors.black54,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.lock,
+                        color: g.isDarkModeEnable ? Colors.white70 : Colors.black54,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: g.isDarkModeEnable ? Colors.white24 : Colors.black12,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: g.isDarkModeEnable ? Colors.white24 : Colors.black12,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: g.AppColors.primary,
+                          width: 2,
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: g.isDarkModeEnable ? Colors.white10 : Colors.grey[50],
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 24),
+                // Login/Sign Up Button
+                Container(
+                  height: 56,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(28),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        g.AppColors.primary,
+                        g.AppColors.secondary,
+                      ],
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: g.AppColors.primary.withOpacity(0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: TextButton(
+                    onPressed: isLogin ? _loginUser : _signUpUser,
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28),
+                      ),
+                    ),
+                    child: Text(
+                      isLogin ? 'Sign In' : 'Create Account',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
-              const SizedBox(height: 20),
-              Container(
-                height: 50,
-                width: 150,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(25),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: g.gradientColors,
-                  ),
-                ),
-                child: TextButton(
-                  onPressed: isLogin ? _loginUser : _signUpUser,
+                const SizedBox(height: 24),
+                // Toggle between Login and Sign Up
+                TextButton(
+                  onPressed: () {
+                    setState(() {
+                      isLogin = !isLogin;
+                    });
+                  },
                   child: Text(
-                    isLogin ? 'Login' : 'Sign Up',
-                    style: Theme.of(context)
-                        .textButtonTheme
-                        .style!
-                        .textStyle!
-                        .resolve({
-                      WidgetState.pressed,
-                    }),
+                    isLogin
+                        ? "Don't have an account? Sign Up"
+                        : "Already have an account? Sign In",
+                    style: TextStyle(
+                      color: g.AppColors.primary,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
-              ),
-              TextButton(
-                onPressed: () {
-                  setState(() {
-                    isLogin = !isLogin;
-                  });
-                },
-                child: Text(
-                  isLogin
-                      ? "Don’t have an account? Sign Up"
-                      : "Already have an account? Login",
-                  style: Theme.of(context).primaryTextTheme.bodyMedium,
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

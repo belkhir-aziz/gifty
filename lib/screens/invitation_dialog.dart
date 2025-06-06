@@ -19,6 +19,7 @@ class _InvitationDialogState extends State<InvitationDialog> {
   final UserProfileHandler userProfileHandler = UserProfileHandler();
   final UserRelationsHandler userRelationsHandler = UserRelationsHandler();
   late UserProvider userProvider;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -29,22 +30,78 @@ class _InvitationDialogState extends State<InvitationDialog> {
   Future<void> _sendInvitation() async {
     final email = _emailController.text;
     if (_isValidEmail(email)) {
-      var user = await userProfileHandler.getUserProfileWithEmail(email);
-      if (user == null || userProvider.userProfile == null) {
-        print('User not found or user profile is null');
-        return;
+      setState(() {
+        _isLoading = true;
+      });
+      try {
+        var user = await userProfileHandler.getUserProfileWithEmail(email);
+        if (user == null || userProvider.userProfile == null) {
+          _showError('User not found. Please make sure your friend has registered with this email.');
+          return;
+        }
+        var relation = UserRelations(
+          userId: userProvider.userProfile?.id ?? "",
+          friendId: user.id,
+          createdAt: DateTime.now(),
+          status: InvitationStatus.pending
+        );
+        await userRelationsHandler.addUserRelations(relation);
+        _showSuccess();
+        Navigator.of(context).pop();
+      } catch (e) {
+        _showError('Failed to send invitation. Please try again.');
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
       }
-      var relation = UserRelations(
-        userId: userProvider.userProfile?.id ?? "",
-        friendId: user.id,
-        createdAt: DateTime.now(),
-        status: InvitationStatus.pending
-      );
-      userRelationsHandler.addUserRelations(relation);
-      Navigator.of(context).pop();
     } else {
-      print('Invalid email');
+      _showError('Please enter a valid email address');
     }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: g.AppColors.error,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: const EdgeInsets.all(16),
+      ),
+    );
+  }
+
+  void _showSuccess() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              Icons.check_circle,
+              color: Colors.white,
+              size: 24,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              'Invitation sent successfully!',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: g.AppColors.success,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: const EdgeInsets.all(16),
+      ),
+    );
   }
 
   bool _isValidEmail(String email) {
@@ -59,34 +116,62 @@ class _InvitationDialogState extends State<InvitationDialog> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
+      title: Row(
+        children: [
+          Icon(
+            Icons.person_add,
+            color: g.AppColors.primary,
+            size: 28,
+          ),
+          const SizedBox(width: 12),
+          Text(
+            'Invite a Friend',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
       content: Container(
         width: MediaQuery.of(context).size.width * 0.8,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Text(
-                'Send Invitation',
-                style: Theme.of(context).primaryTextTheme.displayLarge,
+            Text(
+              'Enter your friend\'s email address to send them an invitation to join your wish list network.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey[600],
               ),
             ),
+            const SizedBox(height: 24),
             TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
-                contentPadding: const EdgeInsets.all(20),
-                hintText: 'Enter recipient email',
+                contentPadding: const EdgeInsets.all(16),
+                hintText: 'friend@example.com',
                 prefixIcon: Icon(
                   Icons.email,
-                  color: Theme.of(context).iconTheme.color,
+                  color: g.AppColors.primary,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: g.AppColors.primary.withOpacity(0.3)),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: g.AppColors.primary.withOpacity(0.3)),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: g.AppColors.primary),
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             Container(
               height: 50,
-              width: 150,
+              width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25),
                 gradient: LinearGradient(
@@ -96,27 +181,34 @@ class _InvitationDialogState extends State<InvitationDialog> {
                 ),
               ),
               child: TextButton(
-                onPressed: _sendInvitation,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.send,
-                      color: Colors.white,
-                    ),
-                    SizedBox(width: 8),
-                    Text(
-                      'Send Invitation',
-                      style: Theme.of(context)
-                          .textButtonTheme
-                          .style!
-                          .textStyle!
-                          .resolve({
-                        WidgetState.pressed,
-                      }),
-                    ),
-                  ],
-                ),
+                onPressed: _isLoading ? null : _sendInvitation,
+                child: _isLoading
+                    ? const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.send,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Send Invitation',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
               ),
             ),
           ],

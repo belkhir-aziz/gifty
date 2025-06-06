@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
 export "FLUTTER_ROOT=C:\Users\user\dev\flutter"
-export "FLUTTER_APPLICATION_PATH=C:\dev\codecanyon-bluje5wO-modern-dating-flutter-app-template-flutter-20\modern-dating-flutter-app-template-flutter-3_22\dating_app_template\dating_app_template"
+export "FLUTTER_APPLICATION_PATH=C:\dev\dating_app_template"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_TARGET=lib\main.dart"
 export "FLUTTER_BUILD_DIR=build"

@@ -19,115 +19,86 @@ class BottomNavigationWidgetLight extends BaseRoute {
 
 class _BottomNavigationWidgetLightState extends BaseRouteState<BottomNavigationWidgetLight> {
   int? _currentIndex = 0;
-  TabController? _tabController;
-
-  _BottomNavigationWidgetLightState();
+  late TabController _tabController;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.transparent,
-        elevation: 0,
-        child: Container(
-          height: 65,
-          decoration: const BoxDecoration(color: Colors.white),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: SafeArea(
           child: TabBar(
             controller: _tabController,
-            indicatorWeight: 3,
-            indicatorColor: Theme.of(context).primaryColorLight,
-            indicatorSize: TabBarIndicatorSize.label,
-            indicatorPadding: const EdgeInsets.only(bottom: 56),
             onTap: (int index) async {
               _currentIndex = index;
               setState(() {});
             },
             tabs: [
-              _tabController!.index == 0
-                  ? const Tab(
-                      icon: Icon(
-                        MdiIcons.cards,
-                      ),
-                    )
-                  : Tab(
-                      icon: ShaderMask(
-                          blendMode: BlendMode.srcIn,
-                          shaderCallback: (Rect bounds) {
-                            return LinearGradient(
-                              colors: g.gradientColors,
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                            ).createShader(bounds);
-                          },
-                          child: const Icon(MdiIcons.cards)),
-                    ),
-              _tabController!.index == 1
-                  ? const Tab(
-                      icon: Icon(
-                        Icons.grid_view_rounded,
-                      ),
-                    )
-                  : Tab(
-                      icon: ShaderMask(
-                      blendMode: BlendMode.srcIn,
-                      shaderCallback: (Rect bounds) {
-                        return LinearGradient(
-                          colors: g.gradientColors,
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ).createShader(bounds);
-                      },
-                      child: const Icon(
-                        Icons.grid_view_rounded,
-                      ),
-                    )),
-              _tabController!.index == 2
-                  ? const Tab(
-                      icon: Icon(MdiIcons.account),
-                    )
-                  : Tab(
-                      icon: ShaderMask(
-                          blendMode: BlendMode.srcIn,
-                          shaderCallback: (Rect bounds) {
-                            return LinearGradient(
-                              colors: g.gradientColors,
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                            ).createShader(bounds);
-                          },
-                          child: const Icon(MdiIcons.account)),
-                    ),
+              Tab(
+                icon: Icon(
+                  MdiIcons.home,
+                  color: _currentIndex == 0 ? g.AppColors.primary : g.AppColors.lightTextSecondary,
+                  size: 28,
+                ),
+              ),
+              Tab(
+                icon: Icon(
+                  MdiIcons.heart,
+                  color: _currentIndex == 1 ? g.AppColors.primary : g.AppColors.lightTextSecondary,
+                  size: 28,
+                ),
+              ),
+              Tab(
+                icon: Icon(
+                  MdiIcons.account,
+                  color: _currentIndex == 2 ? g.AppColors.primary : g.AppColors.lightTextSecondary,
+                  size: 28,
+                ),
+              ),
             ],
+            indicatorColor: g.AppColors.primary,
+            indicatorWeight: 3,
+            indicatorSize: TabBarIndicatorSize.label,
+            labelColor: g.AppColors.primary,
+            unselectedLabelColor: g.AppColors.lightTextSecondary,
           ),
         ),
       ),
-      body: _screens().elementAt(_currentIndex!),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          AddStoryScreen(a: widget.analytics, o: widget.observer),
+          FriendsScreen(a: widget.analytics, o: widget.observer),
+          MyProfileScreen(a: widget.analytics, o: widget.observer),
+        ],
+      ),
     );
   }
 
   @override
   void initState() {
     super.initState();
-    if (widget.currentIndex != null) {
-      setState(() {
-        _currentIndex = widget.currentIndex;
-      });
-    }
-    _tabController =
-        TabController(length: 3, vsync: this, initialIndex: _currentIndex!);
-    _tabController!.addListener(_tabControllerListener);
+    _tabController = TabController(
+      length: 3,
+      vsync: this,
+      initialIndex: widget.currentIndex ?? 0,
+    );
+    _currentIndex = widget.currentIndex ?? 0;
   }
 
-  void _tabControllerListener() {
-    setState(() {
-      _currentIndex = _tabController!.index;
-    });
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
-
-  List<Widget> _screens() => [
-    AddStoryScreen(a: widget.analytics, o: widget.observer),
-    FriendsScreen(a: widget.analytics, o: widget.observer),
-    MyProfileScreen(a: widget.analytics, o: widget.observer),
-  ];
 }

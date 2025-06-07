@@ -51,22 +51,48 @@ class UserRelationsHandler {
   var res = await _client
       .from('relations')
       .select('user_id, friend_id, users!friend_id(id, first_name, last_name, email)')
-      .eq('user_id', userId);
+      .eq('user_id', userId)
+      .eq('status', InvitationStatus.accepted.toString().split('.').last);
 
   return res.map((item) {
     return UserProfile.fromJson(item['users']);
   }).toList();
 }
 
-Future<List<UserProfile>> getUserInvitations(String userId) async {
-  var res = await _client
-      .from('relations')
-      .select('user_id, friend_id, status, users(id, first_name, last_name, email)')
-      .eq('friend_id', userId)
-      .eq('status', InvitationStatus.pending.toString().split('.').last);
+Future<List<Map<String, dynamic>>> getUserInvitations(String userId) async {
+  try {
+    // First get the relations with pending invitations
+    var relationsRes = await _client
+        .from('relations')
+        .select('user_id, created_at')
+        .eq('friend_id', userId)
+        .eq('status', InvitationStatus.pending.toString().split('.').last)
+        .order('created_at', ascending: false);
 
-  return res.map((item) {
-    return UserProfile.fromJson(item['users']);
-  }).toList();
+    if (relationsRes.isEmpty) {
+      return [];
+    }
+
+    // Extract user IDs and creation dates from relations
+    var userIds = relationsRes.map((r) => r['user_id'] as String).toList();
+
+    // Get user profiles for those IDs
+    var usersRes = await _client
+        .from('users')
+        .select('id, first_name, last_name, email')
+        .inFilter('id', userIds);
+
+    // Combine user data with invitation creation date
+    return usersRes.map((userData) {
+      var relation = relationsRes.firstWhere((r) => r['user_id'] == userData['id']);
+      return {
+        'user': UserProfile.fromJson(userData),
+        'created_at': DateTime.parse(relation['created_at']),
+      };
+    }).toList();
+  } catch (e) {
+    print('Error in getUserInvitations: $e');
+    return [];
+  }
 }
 }

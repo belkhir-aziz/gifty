@@ -71,23 +71,17 @@ class _AddStoryScreenState extends BaseRouteState {
             children: [
               // Header
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       'Discover Gifts',
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: g.isDarkModeEnable ? Colors.white : Colors.black,
-                        fontWeight: FontWeight.bold,
+                        color: g.isDarkModeEnable ? Colors.white : g.AppColors.primary,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 24,
                       ),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.info_outline,
-                        color: g.AppColors.primary,
-                      ),
-                      onPressed: () => _showInfoDialog(context),
                     ),
                   ],
                 ),
@@ -120,51 +114,6 @@ class _AddStoryScreenState extends BaseRouteState {
                           size: Size(
                             MediaQuery.of(context).size.width * 0.9,
                             MediaQuery.of(context).size.height * 0.75,
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Like/Dislike indicators
-                    Positioned(
-                      top: MediaQuery.of(context).size.height * 0.1,
-                      left: 20,
-                      child: Transform.rotate(
-                        angle: -0.5,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: g.AppColors.error, width: 3),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            'NOPE',
-                            style: TextStyle(
-                              color: g.AppColors.error,
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      top: MediaQuery.of(context).size.height * 0.1,
-                      right: 20,
-                      child: Transform.rotate(
-                        angle: 0.5,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: g.AppColors.success, width: 3),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Text(
-                            'LIKE',
-                            style: TextStyle(
-                              color: g.AppColors.success,
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                            ),
                           ),
                         ),
                       ),
@@ -322,6 +271,26 @@ class _AddStoryScreenState extends BaseRouteState {
                             _controller.forward(direction: SwipDirection.Right);
                             _saveReaction(products[_current].id, ReactionTypes.like);
                           },
+                        ),
+                      ),
+                      // Buy Gift button
+                      Container(
+                        decoration: BoxDecoration(
+                          color: g.AppColors.primary.withOpacity(0.9),
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: [
+                            BoxShadow(
+                              color: g.AppColors.primary.withOpacity(0.3),
+                              blurRadius: 8,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          icon: const Icon(Icons.shopping_cart),
+                          color: Colors.white,
+                          iconSize: 32,
+                          onPressed: () => _showInfoDialog(context),
                         ),
                       ),
                       // Save to wishlist button
@@ -535,7 +504,7 @@ class _AddStoryScreenState extends BaseRouteState {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Could not open the product link'),
-                          backgroundColor: g.AppColors.error,
+                          backgroundColor: g.AppColors.primary,
                         ),
                       );
                     }

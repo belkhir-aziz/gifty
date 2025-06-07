@@ -8,8 +8,8 @@ String languageCode = 'en';
 
 // Primary gradient colors
 List<Color> gradientColors = [
-  isDarkModeEnable ? const Color(0xFFDD3663) : const Color(0xFFDD3663),
-  isDarkModeEnable ? const Color(0xFF483585) : const Color(0xFF483585),
+  const Color(0xFF9C27B0), // Purple
+  const Color(0xFFE91E63), // Pink
 ];
 
 // Background gradient colors
@@ -20,8 +20,8 @@ List<Color> scaffoldBackgroundGradientColors = [
 
 // Theme colors
 class AppColors {
-  static const Color primary = Color(0xFF6B7FD7);     // Subtle blue for general UI
-  static const Color secondary = Color(0xFF8B96DB);   // Light blue for general UI
+  static const Color primary = Color(0xFF9C27B0);     // Purple
+  static const Color secondary = Color(0xFFE91E63);   // Pink
   static const Color error = Color(0xFFF0384F);       // Red for product screen
   static const Color success = Color(0xFF34F07F);     // Green for product screen
   static const Color warning = Color(0xFFFFBC7D);     // Orange for product screen

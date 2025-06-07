@@ -28,40 +28,109 @@ class _MyProfileScreenState extends BaseRouteState {
         exitAppDialog();
       },
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              exitAppDialog();
-            },
-          ),
-        ),
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Profile Header with Gradient Background
+              // Profile Header with modern design
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.fromLTRB(20, 60, 20, 30),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [g.AppColors.primary, g.AppColors.secondary],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      const Color(0xFF9C27B0), // Purple
+                      const Color(0xFFE91E63), // Pink
+                    ],
                   ),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(40),
+                    bottomRight: Radius.circular(40),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF9C27B0).withOpacity(0.3),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
                 ),
                 child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.arrow_back,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              exitAppDialog();
+                            },
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.edit_outlined,
+                              color: Colors.white,
+                              size: 24,
+                            ),
+                            onPressed: () {
+                              _showEditProfileDialog();
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.white,
+                                Colors.white.withOpacity(0.8),
+                              ],
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: CircleAvatar(
+                            radius: 40,
+                            backgroundColor: const Color(0xFF9C27B0),
+                            child: Text(
+                              '${userProvider.userProfile?.firstName[0].toUpperCase()}${userProvider.userProfile?.lastName[0].toUpperCase()}',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 20),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,52 +139,58 @@ class _MyProfileScreenState extends BaseRouteState {
                                 '${userProvider.userProfile?.firstName} ${userProvider.userProfile?.lastName}',
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 24,
+                                  fontSize: 28,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
                                 userProvider.userProfile?.email ?? '',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.9),
+                                  fontSize: 16,
                                 ),
-                            ),
-                          ],
-                        ),
-                      ),
-                        IconButton(
-                          icon: const Icon(
-                            Icons.edit_outlined,
-                            color: Colors.white,
-                            size: 24,
+                              ),
+                            ],
                           ),
-                          onPressed: () {
-                            _showEditProfileDialog();
-                          },
                         ),
                       ],
                     ),
                   ],
                 ),
               ),
-              // Content Section
+              // Content Section with modern design
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Personal Information Section
-                    const Text(
-                      'Personal Information',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF9C27B0).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.person_outline,
+                            color: const Color(0xFF9C27B0),
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Personal Information',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
                     _buildInfoCard(
                       title: 'Date of Birth',
                       value: DateFormat('dd-MM-yyyy').format(userProvider.userProfile?.dateOfBirth.toLocal() ?? DateTime(2000, 1, 1)),
@@ -124,7 +199,7 @@ class _MyProfileScreenState extends BaseRouteState {
                         _showEditDateOfBirthDialog();
                       },
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 16),
                     _buildInfoCard(
                       title: 'Email',
                       value: userProvider.userProfile?.email ?? '',
@@ -133,21 +208,37 @@ class _MyProfileScreenState extends BaseRouteState {
                         _showEditEmailDialog();
                       },
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 32),
                     // Interests Section
-                    const Text(
-                      'Interests',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF9C27B0).withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Icon(
+                            Icons.favorite_outline,
+                            color: const Color(0xFF9C27B0),
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          'Interests',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
                     Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                          children: [
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: [
                         'Fashion',
                         'Electronics',
                         'Home & Living',
@@ -157,39 +248,48 @@ class _MyProfileScreenState extends BaseRouteState {
                         'Toys',
                       ].map((interest) {
                         return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
-                            color: g.AppColors.primary.withOpacity(0.1),
+                            gradient: LinearGradient(
+                              colors: [
+                                const Color(0xFF9C27B0).withOpacity(0.1),
+                                const Color(0xFFE91E63).withOpacity(0.1),
+                              ],
+                            ),
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
-                              color: g.AppColors.primary.withOpacity(0.3),
+                              color: const Color(0xFF9C27B0).withOpacity(0.2),
                             ),
                           ),
                           child: Text(
                             interest,
                             style: TextStyle(
-                              color: g.AppColors.primary,
+                              color: const Color(0xFF9C27B0),
                               fontSize: 14,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         );
                       }).toList(),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 32),
                     // Edit Interests Button
                     Center(
-                      child: ElevatedButton(
+                      child: ElevatedButton.icon(
                         onPressed: () {
                           _showEditInterestsDialog();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: g.AppColors.primary,
+                          backgroundColor: const Color(0xFF9C27B0),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(16),
                           ),
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          elevation: 4,
                         ),
-                        child: const Text('Edit Interests'),
+                        icon: const Icon(Icons.edit),
+                        label: const Text('Edit Interests'),
                       ),
                     ),
                   ],
@@ -211,32 +311,37 @@ class _MyProfileScreenState extends BaseRouteState {
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: g.AppColors.primary.withOpacity(0.1),
+              color: const Color(0xFF9C27B0).withOpacity(0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
           ],
           border: Border.all(
-            color: g.AppColors.primary.withOpacity(0.2),
+            color: const Color(0xFF9C27B0).withOpacity(0.2),
           ),
         ),
         child: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: g.AppColors.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
+                gradient: LinearGradient(
+                  colors: [
+                    const Color(0xFF9C27B0).withOpacity(0.1),
+                    const Color(0xFFE91E63).withOpacity(0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 icon,
-                color: g.AppColors.primary,
+                color: const Color(0xFF9C27B0),
                 size: 24,
               ),
             ),
@@ -248,8 +353,9 @@ class _MyProfileScreenState extends BaseRouteState {
                   Text(
                     title,
                     style: TextStyle(
-                      color: g.AppColors.primary,
+                      color: const Color(0xFF9C27B0),
                       fontSize: 14,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -258,15 +364,23 @@ class _MyProfileScreenState extends BaseRouteState {
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                                ),
-                            ),
-                          ],
-                        ),
-                      ),
-            const Icon(
-              Icons.chevron_right,
-              color: g.AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF9C27B0).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(
+                Icons.chevron_right,
+                color: const Color(0xFF9C27B0),
+                size: 20,
+              ),
             ),
           ],
         ),

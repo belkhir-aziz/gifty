@@ -20,7 +20,9 @@ class InvitationListScreen extends BaseRoute {
 class _InvitationListScreenState extends BaseRouteState {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   late UserProfile currentProfile;
-  late List<UserProfile> invitations = [];
+  late List<Map<String, dynamic>> invitations = [];
+  bool _isLoading = true;
+
   _InvitationListScreenState() : super();
 
   @override
@@ -32,149 +34,261 @@ class _InvitationListScreenState extends BaseRouteState {
   }
 
   Future<void> fetchFriends() async {
+    setState(() {
+      _isLoading = true;
+    });
     var fetchedInvitations = await UserRelationsHandler().getUserInvitations(currentProfile.id);
     setState(() {
       invitations = fetchedInvitations;
+      _isLoading = false;
     });
+  }
+
+  String _getTimeAgo(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inDays > 7) {
+      return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
+    } else if (difference.inDays > 0) {
+      return '${difference.inDays}d ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m ago';
+    } else {
+      return 'Just now';
+    }
   }
 
   Future<void> _updateInvitationStatus(UserProfile invitation, InvitationStatus status) async {
     var userRelations = UserRelations(
-      userId: currentProfile.id,
-      friendId: invitation.id,
+      userId: invitation.id,
+      friendId: currentProfile.id,
       createdAt: DateTime.now(),
       status: status,
     );
     await UserRelationsHandler().updateUserRelations(userRelations);
-    fetchFriends(); // Refresh the list
+    fetchFriends();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Container(
+    return Scaffold(
+      key: _scaffoldKey,
+      body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
             colors: g.scaffoldBackgroundGradientColors,
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
           ),
         ),
-        child: Scaffold(
-          key: _scaffoldKey,
-          appBar: AppBar(
-            elevation: 0,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            leading: IconButton(
-              icon: const Icon(FontAwesomeIcons.longArrowAltLeft),
-              color: Theme.of(context).iconTheme.color,
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ),
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          body: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: invitations.length,
-                    itemBuilder: (ctx, index) {
-                      var invitation = invitations[index];
-                      var initials = invitation.firstName[0] + invitation.lastName[0];
-                      return Column(
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Custom App Bar
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: g.isDarkModeEnable ? Colors.black26 : Colors.white24,
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(20),
+                    bottomRight: Radius.circular(20),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        Icons.arrow_back_ios,
+                        color: g.isDarkModeEnable ? Colors.white : g.AppColors.primary,
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Invitations',
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        color: g.isDarkModeEnable ? Colors.white : g.AppColors.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Content
+              Expanded(
+                child: _isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                          color: g.AppColors.primary,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : invitations.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  radius: 31,
-                                  child: CircleAvatar(
-                                    backgroundColor: Colors.blue,
-                                    radius: 30,
-                                    child: Text(
-                                      initials,
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 24,
-                                      ),
-                                    ),
+                                Container(
+                                  padding: const EdgeInsets.all(20),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: g.isDarkModeEnable ? Colors.white12 : Colors.white24,
+                                  ),
+                                  child: Icon(
+                                    Icons.notifications_off_outlined,
+                                    size: 48,
+                                    color: g.isDarkModeEnable ? Colors.white54 : g.AppColors.primary.withOpacity(0.5),
                                   ),
                                 ),
-                                Padding(
-                                  padding: g.isRTL
-                                      ? const EdgeInsets.only(right: 12)
-                                      : const EdgeInsets.only(left: 12),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Invitation from ${invitation.firstName} ${invitation.lastName}',
-                                        style: Theme.of(context)
-                                            .primaryTextTheme
-                                            .titleMedium,
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 4, bottom: 4),
-                                        child: Text(
-                                          'Would you like to connect?',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .bodyLarge,
+                                const SizedBox(height: 24),
+                                Text(
+                                  'No New Invitations',
+                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    color: g.isDarkModeEnable ? Colors.white70 : g.AppColors.primary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  'When someone invites you,\nit will appear here',
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: g.isDarkModeEnable ? Colors.white54 : g.AppColors.primary.withOpacity(0.7),
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            itemCount: invitations.length,
+                            itemBuilder: (ctx, index) {
+                              var invitation = invitations[index];
+                              var user = invitation['user'] as UserProfile;
+                              var createdAt = invitation['created_at'] as DateTime;
+                              
+                              return Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: g.isDarkModeEnable 
+                                        ? [Colors.white12, Colors.white.withOpacity(0.08)]
+                                        : [Colors.white, Colors.white.withOpacity(0.9)],
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: g.AppColors.primary.withOpacity(0.1),
+                                      blurRadius: 15,
+                                      offset: const Offset(0, 5),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  children: [
+                                    ListTile(
+                                      contentPadding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+                                      leading: Container(
+                                        padding: const EdgeInsets.all(2),
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: g.gradientColors,
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                          ),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: CircleAvatar(
+                                          radius: 24,
+                                          backgroundColor: g.isDarkModeEnable ? Colors.black26 : Colors.white,
+                                          child: Text(
+                                            '${user.firstName[0]}${user.lastName[0]}',
+                                            style: TextStyle(
+                                              color: g.AppColors.primary,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                      Row(
+                                      title: Text(
+                                        '${user.firstName} ${user.lastName}',
+                                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          color: g.isDarkModeEnable ? Colors.white : g.AppColors.primary,
+                                        ),
+                                      ),
+                                      subtitle: Text(
+                                        _getTimeAgo(createdAt),
+                                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                          color: g.isDarkModeEnable ? Colors.white60 : g.AppColors.primary.withOpacity(0.6),
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                                      child: Row(
                                         children: [
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              _updateInvitationStatus(invitation, InvitationStatus.accepted);
-                                            },
-                                            child: Text("accept"),
+                                          Expanded(
+                                            child: Container(
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                  colors: g.gradientColors,
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                ),
+                                                borderRadius: BorderRadius.circular(20),
+                                              ),
+                                              child: TextButton(
+                                                onPressed: () => _updateInvitationStatus(user, InvitationStatus.accepted),
+                                                style: TextButton.styleFrom(
+                                                  foregroundColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(20),
+                                                  ),
+                                                ),
+                                                child: const Text('Accept'),
+                                              ),
+                                            ),
                                           ),
-                                          SizedBox(width: 8),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              _updateInvitationStatus(invitation, InvitationStatus.rejected);
-                                            },
-                                            child: Text("reject"),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Container(
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                color: g.isDarkModeEnable ? Colors.white12 : Colors.white,
+                                                borderRadius: BorderRadius.circular(20),
+                                                border: Border.all(
+                                                  color: g.AppColors.primary.withOpacity(0.3),
+                                                ),
+                                              ),
+                                              child: TextButton(
+                                                onPressed: () => _updateInvitationStatus(user, InvitationStatus.rejected),
+                                                style: TextButton.styleFrom(
+                                                  foregroundColor: g.AppColors.primary,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(20),
+                                                  ),
+                                                ),
+                                                child: const Text('Decline'),
+                                              ),
+                                            ),
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
                           ),
-                          Container(
-                            margin: const EdgeInsets.only(top: 12, bottom: 12),
-                            height: 1.5,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                                colors: g.gradientColors,
-                              ),
-                            ),
-                            child: const Divider(),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

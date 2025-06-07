@@ -5,8 +5,8 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.dark(
-        primary: const Color(0xFFDD3663),
-        secondary: const Color(0xFF483585),
+        primary: const Color(0xFF9C27B0),
+        secondary: const Color(0xFFE91E63),
         surface: const Color(0xFF03000C),
         background: const Color(0xFF03000C),
         error: const Color(0xFFF0384F),
@@ -44,7 +44,7 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
           fontWeight: FontWeight.w500,
         ),
         headlineMedium: const TextStyle(
-          color: Color(0xFFEF3A6A),
+          color: Color(0xFF9C27B0),
           fontSize: 16,
           fontWeight: FontWeight.w600,
         ),
@@ -96,12 +96,12 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
         ),
         displayMedium: const TextStyle(
           fontSize: 24,
-          color: Color(0xFFDD3663),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.bold,
         ),
         displaySmall: const TextStyle(
           fontSize: 20,
-          color: Color(0xFF33196B),
+          color: Color(0xFFE91E63),
           fontWeight: FontWeight.bold,
         ),
         headlineMedium: const TextStyle(
@@ -110,11 +110,11 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
         ),
         headlineSmall: const TextStyle(
           fontSize: 16,
-          color: Color(0xFF33196B),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w700,
         ),
         titleLarge: const TextStyle(
-          color: Color(0xFF8169DE),
+          color: Color(0xFFE91E63),
           fontSize: 16,
         ),
         titleMedium: const TextStyle(
@@ -126,21 +126,21 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
           color: Colors.white60,
         ),
         bodyLarge: TextStyle(
-          color: Colors.yellow[700],
+          color: const Color(0xFF9C27B0),
           fontWeight: FontWeight.w600,
         ),
         bodyMedium: const TextStyle(
           fontSize: 14,
-          color: Color(0xFFDD3663),
+          color: Color(0xFFE91E63),
           fontWeight: FontWeight.w700,
         ),
         bodySmall: const TextStyle(
           fontSize: 12,
-          color: Color(0xFFDD3663),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w400,
         ),
         labelSmall: const TextStyle(
-          color: Color(0xFFDD3663),
+          color: Color(0xFFE91E63),
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
@@ -148,7 +148,7 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
       scaffoldBackgroundColor: Colors.transparent,
       fontFamily: 'Lexend',
       dividerColor: Colors.transparent,
-      disabledColor: const Color(0xFF33196B),
+      disabledColor: const Color(0xFF9C27B0),
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.all(Colors.transparent),
@@ -187,16 +187,16 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
       tabBarTheme: const TabBarTheme(
         labelPadding: EdgeInsets.all(0),
         indicatorSize: TabBarIndicatorSize.label,
-        labelColor: Color(0xFF862254),
-        unselectedLabelColor: Color(0xFF483585),
+        labelColor: Color(0xFF9C27B0),
+        unselectedLabelColor: Color(0xFFE91E63),
         labelStyle: TextStyle(
           fontSize: 14,
-          color: Color(0xFF862254),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w500,
         ),
         unselectedLabelStyle: TextStyle(
           fontSize: 14,
-          color: Color(0xFF483585),
+          color: Color(0xFFE91E63),
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -218,7 +218,7 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-          backgroundColor: WidgetStateProperty.all(const Color(0xFFDD3663)),
+          backgroundColor: WidgetStateProperty.all(const Color(0xFF9C27B0)),
           foregroundColor: WidgetStateProperty.all(Colors.white),
           padding: WidgetStateProperty.all(
             const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -235,22 +235,22 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
     return ThemeData(
       useMaterial3: true,
       colorScheme: ColorScheme.light(
-        primary: const Color(0xFFDD3663),
-        secondary: const Color(0xFF483585),
+        primary: const Color(0xFF9C27B0),
+        secondary: const Color(0xFFE91E63),
         surface: const Color(0xFFEEFCFF),
         background: const Color(0xFFEEFCFF),
         error: const Color(0xFFF0384F),
       ),
       textSelectionTheme: const TextSelectionThemeData(
-        cursorColor: Color(0xFF33196B),
-        selectionHandleColor: Color(0xFF33196B),
+        cursorColor: Color(0xFF9C27B0),
+        selectionHandleColor: Color(0xFF9C27B0),
       ),
       appBarTheme: AppBarTheme(
         color: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Color(0xFF33196B)),
+        iconTheme: const IconThemeData(color: Color(0xFF9C27B0)),
         titleTextStyle: TextStyle(
-          color: const Color(0xFF33196B),
+          color: const Color(0xFF9C27B0),
           fontSize: 20,
           fontWeight: FontWeight.w600,
           fontFamily: 'Lexend',
@@ -259,29 +259,29 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
       primaryTextTheme: TextTheme(
         displayLarge: const TextStyle(
           fontSize: 32,
-          color: Color(0xFF33196B),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w700,
           letterSpacing: 0.3,
         ),
         displayMedium: const TextStyle(
           fontSize: 24,
-          color: Color(0xFF33196B),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w600,
         ),
         displaySmall: const TextStyle(
           fontSize: 20,
-          color: Color(0xFF33196B),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w500,
         ),
         headlineMedium: const TextStyle(
-          color: Color(0xFF33196B),
+          color: Color(0xFF9C27B0),
           fontSize: 16,
           fontWeight: FontWeight.w600,
         ),
         headlineSmall: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.bold,
-          color: Color(0xFF33196B),
+          color: Color(0xFF9C27B0),
         ),
         titleLarge: const TextStyle(
           fontSize: 16,
@@ -290,22 +290,22 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
         ),
         titleMedium: const TextStyle(
           fontSize: 14,
-          color: Color(0xFF33196B),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w700,
         ),
         titleSmall: const TextStyle(
           fontSize: 12,
-          color: Color(0xFF33196B),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w400,
         ),
         bodyLarge: const TextStyle(
           fontSize: 14,
-          color: Color(0xFF33196B),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w500,
         ),
         bodyMedium: const TextStyle(
           fontSize: 12,
-          color: Color(0xFF33196B),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w400,
         ),
         bodySmall: TextStyle(
@@ -313,7 +313,7 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
           fontSize: 10,
         ),
         labelSmall: TextStyle(
-          color: Colors.purple[100],
+          color: const Color(0xFF9C27B0).withOpacity(0.7),
           fontSize: 10,
           fontWeight: FontWeight.normal,
           letterSpacing: 0,
@@ -323,16 +323,16 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
         displayLarge: TextStyle(
           fontSize: 32,
           fontWeight: FontWeight.bold,
-          color: const Color(0xFF33196B),
+          color: const Color(0xFF9C27B0),
         ),
         displayMedium: TextStyle(
           fontSize: 24,
-          color: const Color(0xFFDD3663),
+          color: const Color(0xFF9C27B0),
           fontWeight: FontWeight.bold,
         ),
         displaySmall: TextStyle(
           fontSize: 20,
-          color: const Color(0xFF33196B),
+          color: const Color(0xFFE91E63),
           fontWeight: FontWeight.bold,
         ),
         headlineMedium: const TextStyle(
@@ -341,11 +341,11 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
         ),
         headlineSmall: TextStyle(
           fontSize: 16,
-          color: const Color(0xFF33196B),
+          color: const Color(0xFF9C27B0),
           fontWeight: FontWeight.w700,
         ),
         titleLarge: const TextStyle(
-          color: Color(0xFF8169DE),
+          color: Color(0xFFE91E63),
           fontSize: 16,
         ),
         titleMedium: const TextStyle(
@@ -357,21 +357,21 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
           color: Colors.white60,
         ),
         bodyLarge: TextStyle(
-          color: const Color(0xFFDD3663),
+          color: const Color(0xFF9C27B0),
           fontWeight: FontWeight.w600,
         ),
         bodyMedium: TextStyle(
           fontSize: 14,
-          color: const Color(0xFFDD3663),
+          color: const Color(0xFFE91E63),
           fontWeight: FontWeight.w700,
         ),
         bodySmall: TextStyle(
           fontSize: 12,
-          color: const Color(0xFFDD3663),
+          color: const Color(0xFF9C27B0),
           fontWeight: FontWeight.w400,
         ),
         labelSmall: TextStyle(
-          color: const Color(0xFFDD3663),
+          color: const Color(0xFFE91E63),
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
@@ -380,10 +380,10 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
       fontFamily: 'Lexend',
       dividerColor: Colors.transparent,
       inputDecorationTheme: const InputDecorationTheme(
-        labelStyle: TextStyle(color: Colors.white),
+        labelStyle: TextStyle(color: Color(0xFF9C27B0)),
         hintStyle: TextStyle(
           fontSize: 14,
-          color: Color(0xFF33196B),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w400,
         ),
         border: InputBorder.none,
@@ -405,7 +405,7 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
           textStyle: WidgetStateProperty.all(
             const TextStyle(
               fontSize: 14,
-              color: Colors.white,
+              color: Color(0xFF9C27B0),
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -418,20 +418,20 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
           foregroundColor: WidgetStateProperty.all(Colors.transparent),
         ),
       ),
-      iconTheme: const IconThemeData(color: Color(0xFF3929C7)),
+      iconTheme: const IconThemeData(color: Color(0xFF9C27B0)),
       tabBarTheme: const TabBarTheme(
-        unselectedLabelColor: Color(0xFF483585),
+        unselectedLabelColor: Color(0xFFE91E63),
         labelPadding: EdgeInsets.all(0),
         indicatorSize: TabBarIndicatorSize.label,
-        labelColor: Color(0xFF33196B),
+        labelColor: Color(0xFF9C27B0),
         labelStyle: TextStyle(
           fontSize: 14,
-          color: Color(0xFF862254),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w500,
         ),
         unselectedLabelStyle: TextStyle(
           fontSize: 14,
-          color: Color(0xFF483585),
+          color: Color(0xFFE91E63),
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -448,7 +448,7 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-          backgroundColor: WidgetStateProperty.all(const Color(0xFFDD3663)),
+          backgroundColor: WidgetStateProperty.all(const Color(0xFF9C27B0)),
           foregroundColor: WidgetStateProperty.all(Colors.white),
           padding: WidgetStateProperty.all(
             const EdgeInsets.symmetric(horizontal: 24, vertical: 12),

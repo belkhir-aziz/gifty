@@ -262,10 +262,25 @@ class _LoginScreenState extends BaseRouteState {
   }
 
 Future<void> _loginUser() async {
+
+  // for development only
+  // Validate input fields
+  final profile = await _profileHandler.getUserProfileWithEmail("aziz.belkhir.aziz@gmail.com");
+  if(profile != null){
+    userProvider.setUserProfile(profile);
+  }
+  Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  BottomNavigationWidgetLight(
+                                    currentIndex: 0,
+                                    a: widget.analytics,
+                                    o: widget.observer,
+                                  )));
+  if(profile != null){
+    return;
+  }
   final email = _cEmail.text.trim();
   final password = _cPassword.text.trim();
-
-  // Validate input fields
   if (email.isEmpty || password.isEmpty) {
     _showNotification('Email and Password cannot be empty', isError: true);
     return;

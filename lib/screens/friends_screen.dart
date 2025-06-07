@@ -7,7 +7,7 @@ import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/provider/user_relation_handler.dart';
 import 'package:datingapp/screens/interest_screen.dart';
 import 'package:datingapp/screens/invitation_dialog.dart';
-import 'package:datingapp/screens/notification_list_screen.dart';
+import 'package:datingapp/screens/invitations_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -106,7 +106,7 @@ class _FriendsScreenState extends BaseRouteState {
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => InvitationListScreen(
+                            builder: (context) => InvitationsScreen(
                               a: widget.analytics,
                               o: widget.observer,
                             ),

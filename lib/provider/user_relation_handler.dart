@@ -95,4 +95,29 @@ Future<List<Map<String, dynamic>>> getUserInvitations(String userId) async {
     return [];
   }
 }
+
+Future<List<UserProfile>> getPendingInvitations(String userId) async {
+  final relations = await getUserProfileRelations(userId);
+  return relations.where((user) => user.relationStatus == InvitationStatus.pending).toList();
+}
+
+Future<void> acceptInvitation(String userId, String friendId) async {
+  final relation = UserRelations(
+    userId: userId,
+    friendId: friendId,
+    status: InvitationStatus.accepted,
+    createdAt: DateTime.now(),
+  );
+  await updateUserRelations(relation);
+}
+
+Future<void> rejectInvitation(String userId, String friendId) async {
+  final relation = UserRelations(
+    userId: userId,
+    friendId: friendId,
+    status: InvitationStatus.rejected,
+    createdAt: DateTime.now(),
+  );
+  await updateUserRelations(relation);
+}
 }

@@ -1,7 +1,7 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
-import 'package:datingapp/screens/add_story_screen.dart';
-import 'package:datingapp/screens/add_your_story_screen.dart';
 import 'package:datingapp/screens/my_profile_detail_screen.dart';
+import 'package:datingapp/screens/create_story_screen.dart';
+import 'package:datingapp/screens/friends_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -128,7 +128,7 @@ class _BottomNavigationWidgetDarkState extends BaseRouteState<BottomNavigationWi
       });
     }
     _tabController =
-        TabController(length: 4, vsync: this, initialIndex: _currentIndex!);
+        TabController(length: 3, vsync: this, initialIndex: _currentIndex!);
     _tabController!.addListener(_tabControllerListener);
   }
 
@@ -139,9 +139,8 @@ class _BottomNavigationWidgetDarkState extends BaseRouteState<BottomNavigationWi
   }
 
   List<Widget> _screens() => [
-    AddStoryScreen(a: widget.analytics, o: widget.observer),
+    CreateStoryScreen(a: widget.analytics, o: widget.observer),
     FriendsScreen(a: widget.analytics, o: widget.observer),
-
-    MyProfileScreen(a: widget.analytics, o: widget.observer),
+    MyProfileDetailScreen(a: widget.analytics, o: widget.observer),
   ];
 }

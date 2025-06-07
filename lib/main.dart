@@ -3,7 +3,7 @@ import 'package:datingapp/l10n/l10n.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:datingapp/provider/local_provider.dart';
 import 'package:datingapp/provider/user_provider.dart';
-import 'package:datingapp/screens/intro_screen.dart';
+import 'package:datingapp/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
@@ -65,7 +65,7 @@ class MyAppState extends State<MyApp> {
   Widget build(BuildContext context) => MultiProvider(
       providers: [
           ChangeNotifierProvider(create: (context) => LocaleProvider()),
-          ChangeNotifierProvider(create: (context) => UserProvider()), // Add UserProvider
+          ChangeNotifierProvider(create: (context) => UserProvider()),
         ],
       builder: (context, child) {
         final provider = Provider.of<LocaleProvider>(context);
@@ -73,7 +73,7 @@ class MyAppState extends State<MyApp> {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: nativeTheme(g.isDarkModeEnable),
-          home: IntroScreen(a: analytics, o: observer),
+          home: LoginScreen(a: analytics, o: observer),
           locale: provider.locale,
           supportedLocales: L10n.all,
           localizationsDelegates: const [

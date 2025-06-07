@@ -6,18 +6,18 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class MyProfileScreen extends BaseRoute {
-  const MyProfileScreen({super.key, super.a, super.o}) : super(r: 'MyProfileScreen');
+class MyProfileDetailScreen extends BaseRoute {
+  const MyProfileDetailScreen({super.key, super.a, super.o}) : super(r: 'MyProfileDetailScreen');
 
   @override
-  BaseRouteState createState() => _MyProfileScreenState();
+  BaseRouteState createState() => _MyProfileDetailScreenState();
 }
 
-class _MyProfileScreenState extends BaseRouteState {
+class _MyProfileDetailScreenState extends BaseRouteState {
   late UserProvider userProvider;
   final UserProfileHandler userProfileHandler = UserProfileHandler();
 
-  _MyProfileScreenState() : super();
+  _MyProfileDetailScreenState() : super();
 
   @override
   Widget build(BuildContext context) {

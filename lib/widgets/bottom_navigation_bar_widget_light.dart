@@ -1,6 +1,6 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
-import 'package:datingapp/screens/add_story_screen.dart';
-import 'package:datingapp/screens/add_your_story_screen.dart';
+import 'package:datingapp/screens/friends_screen.dart';
+import 'package:datingapp/screens/gift_discovery_screen.dart';
 import 'package:datingapp/screens/my_profile_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
@@ -77,9 +77,9 @@ class _BottomNavigationWidgetLightState extends BaseRouteState<BottomNavigationW
       body: TabBarView(
         controller: _tabController,
         children: [
-          AddStoryScreen(a: widget.analytics, o: widget.observer),
+          GiftDiscoveryScreen(a: widget.analytics, o: widget.observer),
           FriendsScreen(a: widget.analytics, o: widget.observer),
-          MyProfileScreen(a: widget.analytics, o: widget.observer),
+          MyProfileDetailScreen(a: widget.analytics, o: widget.observer),
         ],
       ),
     );

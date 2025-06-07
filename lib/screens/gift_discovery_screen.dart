@@ -13,14 +13,14 @@ import 'package:provider/provider.dart';
 import 'package:tcard/tcard.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class AddStoryScreen extends BaseRoute {
-  const AddStoryScreen({super.key, super.a, super.o}) : super(r: 'AddStoryScreen');
+class GiftDiscoveryScreen extends BaseRoute {
+  const GiftDiscoveryScreen({super.key, super.a, super.o}) : super(r: 'GiftDiscoveryScreen');
 
   @override
-  BaseRouteState createState() => _AddStoryScreenState();
+  BaseRouteState createState() => _GiftDiscoveryScreenState();
 }
 
-class _AddStoryScreenState extends BaseRouteState {
+class _GiftDiscoveryScreenState extends BaseRouteState {
   final TCardController _controller = TCardController();
   ProductHandler productHandler = ProductHandler();
   UserReactionsHandler userReactionsHandler = UserReactionsHandler();
@@ -45,7 +45,7 @@ class _AddStoryScreenState extends BaseRouteState {
     }
   }
   
-  _AddStoryScreenState() : super();
+  _GiftDiscoveryScreenState() : super();
 
   @override
   void initState() {

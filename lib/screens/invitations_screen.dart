@@ -30,7 +30,7 @@ class _InvitationsScreenState extends BaseRouteState {
 
   Future<void> _loadInvitations() async {
     try {
-      final invitations = await UserRelationsHandler().getPendingInvitations(userProvider.userProfile?.id ?? '');
+      final invitations = await UserRelationsHandler().getUserInvitations(userProvider.userProfile?.id ?? '');
       setState(() {
         pendingInvitations = invitations;
         _isLoading = false;

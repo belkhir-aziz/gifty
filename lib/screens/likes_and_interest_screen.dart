@@ -26,29 +26,145 @@ class _LikesInterestScreenState extends BaseRouteState {
   List<String> _list = [];
   late UserProvider userProvider;
   bool isEditHobbies = false;
+  bool _isLoading = false;
+  
   _LikesInterestScreenState(this.userProfile, this.isEditHobbies);
   
-  void updateProfileUser() {
-    userProfile.hobbies = _list;
-    userProvider.setUserProfile(userProfile);
-    userProfileHandler.createUserProfile(userProfile);
-    userProvider.clearCachedProducts();
+  // Available interests with their icons
+  final List<Map<String, dynamic>> availableInterests = [
+    {'name': 'readers', 'icon': MdiIcons.book},
+    {'name': 'pet lovers', 'icon': MdiIcons.paw},
+    {'name': 'gamers', 'icon': Icons.videogame_asset},
+    {'name': 'musicians', 'icon': MdiIcons.music},
+    {'name': 'travelers', 'icon': Icons.travel_explore_outlined},
+    {'name': 'artists', 'icon': Icons.palette},
+    {'name': 'chefs', 'icon': MdiIcons.chefHat},
+    {'name': 'fitness enthusiasts', 'icon': MdiIcons.run},
+  ];
+  
+  void updateProfileUser() async {
+    setState(() => _isLoading = true);
+    try {
+      userProfile.hobbies = _list;
+      userProvider.setUserProfile(userProfile);
+      await userProfileHandler.createUserProfile(userProfile);
+      userProvider.clearCachedProducts();
+      
+      if (mounted) {
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => BottomNavigationWidgetLight(
+            currentIndex: 0,
+            a: widget.analytics,
+            o: widget.observer,
+          ),
+        ));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update profile: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
-  void editProfileUser() {
-    userProfile.hobbies = _list;
-    userProfileHandler.editUserProfile(userProfile);
-    userProvider.clearCachedProducts();
+  Future<void> editProfileUser() async {
+    setState(() => _isLoading = true);
+    try {
+      userProfile.hobbies = _list;
+      final response = await userProfileHandler.editUserProfile(userProfile);
+      userProvider.setUserProfile(userProfile);
+      userProvider.clearCachedProducts();
+      
+      if (mounted) {
+        Navigator.of(context).pop(_list); // Return the updated list
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update interests: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
   }
 
   @override
   void initState() {
     super.initState();
-    // Initialize the list only once
     userProvider = Provider.of<UserProvider>(context, listen: false);
     if (isEditHobbies) {
-      _list = userProvider.userProfile!.hobbies;
+      _list = List.from(userProvider.userProfile?.hobbies ?? []);
     }
+  }
+
+  Widget _buildInterestChip(Map<String, dynamic> interest) {
+    final isSelected = _list.contains(interest['name']);
+    
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          if (isSelected) {
+            _list.remove(interest['name']);
+          } else {
+            _list.add(interest['name']);
+          }
+        });
+      },
+      child: Container(
+        margin: const EdgeInsets.all(8),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected 
+              ? const Color(0xFF9C27B0)
+              : Colors.white,
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(
+            color: isSelected 
+                ? const Color(0xFF9C27B0)
+                : Colors.grey.shade300,
+            width: 2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: isSelected 
+                  ? const Color(0xFF9C27B0).withOpacity(0.3)
+                  : Colors.grey.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              interest['icon'],
+              color: isSelected ? Colors.white : const Color(0xFF9C27B0),
+              size: 20,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              interest['name'],
+              style: TextStyle(
+                color: isSelected ? Colors.white : const Color(0xFF9C27B0),
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -58,1431 +174,130 @@ class _LikesInterestScreenState extends BaseRouteState {
       appBar: _appBarWidget(),
       resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
+      backgroundColor: Colors.grey.shade50,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.lbl_likes_intrets,
-                    textAlign: TextAlign.left,
-                    style: Theme.of(context).primaryTextTheme.displayLarge,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(
-                      AppLocalizations.of(context)!
-                          .lbl_likes_intrets_subtitle,
-                      textAlign: TextAlign.left,
-                      style: Theme.of(context).primaryTextTheme.titleSmall,
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header Section
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        const Color(0xFF9C27B0),
+                        const Color(0xFFE91E63),
+                      ],
                     ),
-                  ),
-                  Wrap(
-                    spacing: 0,
-                    runAlignment: WrapAlignment.start,
-                    children: [
-                      InkWell(
-
-                        onTap: () {
-                          
-                          setState(() {
-                            _list.contains('readers')
-                                ? _list.removeWhere((e) => e == 'readers')
-                                : _list.add('readers');
-                          });
-                        },
-                        hoverColor: Colors.transparent, // Set hover color to transparent
-                       
-                        child: !_list.contains('readers')
-                            ? Container(
-                                padding: g.isRTL
-                                    ? const EdgeInsets.only(right: 10)
-                                    : const EdgeInsets.only(left: 10),
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                decoration: BoxDecoration(
-                                  color: g.isDarkModeEnable
-                                      ? const Color(0xFF1B1143)
-                                      : Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      MdiIcons.book,
-                                      color: Color(0xFF845EB5),
-                                      size: 20,
-                                    ),
-                                    Padding(
-                                      padding: g.isRTL
-                                          ? const EdgeInsets.only(right: 6)
-                                          : const EdgeInsets.only(left: 6),
-                                      child: Text(
-                                        'readers',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall
-                                            ?.copyWith(
-                                                color:const Color(0xFF845EB5),
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.normal,
-                                                letterSpacing: 0),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            : Container(
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                padding: const EdgeInsets.all(1.2),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: g.gradientColors,
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                child: Container(
-                                  padding: g.isRTL
-                                      ? const EdgeInsets.only(right: 10)
-                                      : const EdgeInsets.only(left: 10),
-                                  decoration: BoxDecoration(
-                                    color: g.isDarkModeEnable
-                                        ? Colors.black
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(35),
-                                  ),
-                                  height: 60,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        MdiIcons.book,
-                                        color: g.isDarkModeEnable
-                                            ? Colors.white
-                                            : Theme.of(context)
-                                                .primaryColorLight,
-                                        size: 20,
-                                      ),
-                                      Padding(
-                                        padding: g.isRTL
-                                            ? const EdgeInsets.only(right: 6)
-                                            : const EdgeInsets.only(left: 6),
-                                        child: Text(
-                                          'readers',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .titleSmall,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                      ),
-
-
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _list.contains('pet lovers')
-                                ? _list.removeWhere((e) => e == 'pet lovers')
-                                : _list.add('pet lovers');
-                          });
-                        },
-                        hoverColor: Colors.transparent, // Set hover color to transparent
-                       
-                        child: !_list.contains('pet lovers')
-                            ? Container(
-                                padding: g.isRTL
-                                    ? const EdgeInsets.only(right: 10)
-                                    : const EdgeInsets.only(left: 10),
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                decoration: BoxDecoration(
-                                  color: g.isDarkModeEnable
-                                      ? const Color(0xFF1B1143)
-                                      : Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      MdiIcons.paw,
-                                      color: Color(0xFF845EB5),
-                                      size: 20,
-                                    ),
-                                    Padding(
-                                      padding: g.isRTL
-                                          ? const EdgeInsets.only(right: 6)
-                                          : const EdgeInsets.only(left: 6),
-                                      child: Text(
-                                        'pet lovers',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall
-                                            ?.copyWith(
-                                                color:const Color(0xFF845EB5),
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.normal,
-                                                letterSpacing: 0),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            : Container(
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                padding: const EdgeInsets.all(1.2),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: g.gradientColors,
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                child: Container(
-                                  padding: g.isRTL
-                                      ? const EdgeInsets.only(right: 10)
-                                      : const EdgeInsets.only(left: 10),
-                                  decoration: BoxDecoration(
-                                    color: g.isDarkModeEnable
-                                        ? Colors.black
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(35),
-                                  ),
-                                  height: 60,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        MdiIcons.paw,
-                                        color: g.isDarkModeEnable
-                                            ? Colors.white
-                                            : Theme.of(context)
-                                                .primaryColorLight,
-                                        size: 20,
-                                      ),
-                                      Padding(
-                                        padding: g.isRTL
-                                            ? const EdgeInsets.only(right: 6)
-                                            : const EdgeInsets.only(left: 6),
-                                        child: Text(
-                                          'pet lovers',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .titleSmall,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                      ),
-
-
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _list.contains('gamers')
-                                ? _list.removeWhere((e) => e == 'gamers')
-                                : _list.add('gamers');
-                          });
-                        },
-                        hoverColor: Colors.transparent, // Set hover color to transparent
-                       
-                        child: !_list.contains('gamers')
-                            ? Container(
-                                padding: g.isRTL
-                                    ? const EdgeInsets.only(right: 10)
-                                    : const EdgeInsets.only(left: 10),
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                               decoration: BoxDecoration(
-                                  color: g.isDarkModeEnable
-                                      ? const Color(0xFF1B1143)
-                                      : Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      Icons.videogame_asset,
-                                      color: Color(0xFF845EB5),
-                                      size: 20,
-                                    ),
-                                    Padding(
-                                      padding: g.isRTL
-                                          ? const EdgeInsets.only(right: 6)
-                                          : const EdgeInsets.only(left: 6),
-                                      child: Text(
-                                        'gamers',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall
-                                            ?.copyWith(
-                                                color: const Color(0xFF845EB5),
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.normal,
-                                                letterSpacing: 0),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            : Container(
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                padding: const EdgeInsets.all(1.2),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: g.gradientColors,
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                child: Container(
-                                  padding: g.isRTL
-                                      ? const EdgeInsets.only(right: 10)
-                                      : const EdgeInsets.only(left: 10),
-                                  decoration: BoxDecoration(
-                                    color: g.isDarkModeEnable
-                                        ? Colors.black
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(35),
-                                  ),
-                                  height: 60,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.videogame_asset,
-                                        color: g.isDarkModeEnable
-                                            ? Colors.white
-                                            : Theme.of(context)
-                                                .primaryColorLight,
-                                        size: 20,
-                                      ),
-                                      Padding(
-                                        padding: g.isRTL
-                                            ? const EdgeInsets.only(right: 6)
-                                            : const EdgeInsets.only(left: 6),
-                                        child: Text(
-                                          'gamers',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .titleSmall,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                      ),
-
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _list.contains('musicians')
-                                ? _list.removeWhere((e) => e == 'musicians')
-                                : _list.add('musicians');
-                          });
-                        },
-                        hoverColor: Colors.transparent, // Set hover color to transparent
-                       
-                        child: !_list.contains('musicians')
-                            ? Container(
-                                padding: g.isRTL
-                                    ? const EdgeInsets.only(right: 10)
-                                    : const EdgeInsets.only(left: 10),
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                decoration: BoxDecoration(
-                                  color: g.isDarkModeEnable
-                                      ? const Color(0xFF1B1143)
-                                      : Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      MdiIcons.music,
-                                      color: Color(0xFF845EB5),
-                                      size: 20,
-                                    ),
-                                    Padding(
-                                      padding: g.isRTL
-                                          ? const EdgeInsets.only(right: 6)
-                                          : const EdgeInsets.only(left: 6),
-                                      child: Text(
-                                        'musicians',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall
-                                            ?.copyWith(
-                                                color:const Color(0xFF845EB5),
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.normal,
-                                                letterSpacing: 0),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            : Container(
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                padding: const EdgeInsets.all(1.2),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: g.gradientColors,
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                child: Container(
-                                  padding: g.isRTL
-                                      ? const EdgeInsets.only(right: 10)
-                                      : const EdgeInsets.only(left: 10),
-                                  decoration: BoxDecoration(
-                                    color: g.isDarkModeEnable
-                                        ? Colors.black
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(35),
-                                  ),
-                                  height: 60,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        MdiIcons.music,
-                                        color: g.isDarkModeEnable
-                                            ? Colors.white
-                                            : Theme.of(context)
-                                                .primaryColorLight,
-                                        size: 20,
-                                      ),
-                                      Padding(
-                                        padding: g.isRTL
-                                            ? const EdgeInsets.only(right: 6)
-                                            : const EdgeInsets.only(left: 6),
-                                        child: Text(
-                                          'musicians',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .titleSmall,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                      ),
-
-
-                      InkWell(	
-                        		
-                        onTap: () {
-                          setState(() {  
-                            _list.contains('travelers')
-                                ? _list.removeWhere((e) => e == 'travelers')
-                                : _list.add('travelers');
-                          });
-                        },
-                        hoverColor: Colors.transparent, // Set hover color to transparent
-                        child: !_list.contains('travelers')
-                            ? Container(
-                                padding: g.isRTL
-                                    ? const EdgeInsets.only(right: 10)
-                                    : const EdgeInsets.only(left: 10),
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                decoration: BoxDecoration(
-                                  color: g.isDarkModeEnable
-                                      ? const Color(0xFF1B1143)
-                                      : Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      Icons.travel_explore_outlined,
-                                      color: Color(0xFF845EB5),
-                                      size: 20,
-                                    ),
-                                    Padding(
-                                      padding: g.isRTL
-                                          ? const EdgeInsets.only(right: 6)
-                                          : const EdgeInsets.only(left: 6),
-                                      child: Text(
-                                        'travelers',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall
-                                            ?.copyWith(
-                                                color:const Color(0xFF845EB5),
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.normal,
-                                                letterSpacing: 0),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            : Container(
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                padding: const EdgeInsets.all(1.2),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: g.gradientColors,
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                child: Container(
-                                  padding: g.isRTL
-                                      ? const EdgeInsets.only(right: 10)
-                                      : const EdgeInsets.only(left: 10),
-                                  decoration: BoxDecoration(
-                                    color: g.isDarkModeEnable
-                                        ? Colors.black
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(35),
-                                  ),
-                                  height: 60,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                Icons.travel_explore_outlined,
-                                        color: g.isDarkModeEnable
-                                            ? Colors.white
-                                            : Theme.of(context)
-                                                .primaryColorLight,
-                                        size: 20,
-                                      ),
-                                      Padding(
-                                        padding: g.isRTL
-                                            ? const EdgeInsets.only(right: 6)
-                                            : const EdgeInsets.only(left: 6),
-                                        child: Text(
-                                          'travelers',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .titleSmall,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                      ),
-                      /*
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _list.contains('Shopping')
-                                ? _list.removeWhere((e) => e == 'Shopping')
-                                : _list.add('Shopping');
-                          });
-                        },
-                        hoverColor: Colors.transparent, // Set hover color to transparent
-                       
-                        child: !_list.contains('Shopping')
-                            ? Container(
-                                padding: g.isRTL
-                                    ? const EdgeInsets.only(right: 10)
-                                    : const EdgeInsets.only(left: 10),
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                decoration: BoxDecoration(
-                                  color: g.isDarkModeEnable
-                                      ? const Color(0xFF1B1143)
-                                      : Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      Icons.shopping_bag_outlined,
-                                      color: Color(0xFF845EB5),
-                                      size: 20,
-                                    ),
-                                    Padding(
-                                      padding: g.isRTL
-                                          ? const EdgeInsets.only(right: 6)
-                                          : const EdgeInsets.only(left: 6),
-                                      child: Text(
-                                        'Shopping',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall
-                                            ?.copyWith(
-                                                color: const Color(0xFF845EB5),
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.normal,
-                                                letterSpacing: 0),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            : Container(
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                padding: const EdgeInsets.all(1.2),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: g.gradientColors,
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                child: Container(
-                                  padding: g.isRTL
-                                      ? const EdgeInsets.only(right: 10)
-                                      : const EdgeInsets.only(left: 10),
-                                  decoration: BoxDecoration(
-                                    color: g.isDarkModeEnable
-                                        ? Colors.black
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(35),
-                                  ),
-                                  height: 60,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.shopping_bag_outlined,
-                                        color: g.isDarkModeEnable
-                                            ? Colors.white
-                                            : Theme.of(context)
-                                                .primaryColorLight,
-                                        size: 20,
-                                      ),
-                                      Padding(
-                                        padding: g.isRTL
-                                            ? const EdgeInsets.only(right: 6)
-                                            : const EdgeInsets.only(left: 6),
-                                        child: Text(
-                                          'Shopping',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .titleSmall,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                      ),
-                      InkWell(
-                          onTap: () {
-                            setState(() {
-                              _list.contains('Speeches')
-                                  ? _list.removeWhere((e) => e == 'Speeches')
-                                  : _list.add('Speeches');
-                            });
-                          },
-                          hoverColor: Colors.transparent, // Set hover color to transparent
-                         
-                          child: !_list.contains('Speeches')
-                              ? Container(
-                                  padding: g.isRTL
-                                      ? const EdgeInsets.only(right: 10)
-                                      : const EdgeInsets.only(left: 10),
-                                  margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                  decoration: BoxDecoration(
-                                    color: g.isDarkModeEnable
-                                        ? const Color(0xFF1B1143)
-                                        : Theme.of(context)
-                                            .scaffoldBackgroundColor,
-                                    borderRadius: BorderRadius.circular(35),
-                                  ),
-                                  height: 60,
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.42,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(
-                                        MdiIcons.microphone,
-                                        color: Color(0xFF845EB5),
-                                        size: 20,
-                                      ),
-                                      Padding(
-                                        padding: g.isRTL
-                                            ? const EdgeInsets.only(right: 6)
-                                            : const EdgeInsets.only(left: 6),
-                                        child: Text(
-                                          'Speeches',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .labelSmall
-                                              ?.copyWith(
-                                                  color: const Color(0xFF845EB5),
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.normal,
-                                                  letterSpacing: 0),
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              : Container(
-                                  margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                    padding: const EdgeInsets.all(1.2),
-                                    height: 60,
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.42,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: g.gradientColors,
-                                      begin: Alignment.topLeft,
-                                      end: Alignment.bottomRight,
-                                    ),
-                                    borderRadius: BorderRadius.circular(35),
-                                  ),
-                                  child: Container(
-                                    padding: g.isRTL
-                                        ? const EdgeInsets.only(right: 10)
-                                        : const EdgeInsets.only(left: 10),
-                                    decoration: BoxDecoration(
-                                      color: g.isDarkModeEnable
-                                          ? Colors.black
-                                          : Colors.white,
-                                      borderRadius: BorderRadius.circular(35),
-                                    ),
-                                    height: 60,
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          MdiIcons.microphone,
-                                          color: g.isDarkModeEnable
-                                              ? Colors.white
-                                              : Theme.of(context)
-                                                  .primaryColorLight,
-                                          size: 20,
-                                        ),
-                                        Padding(
-                                          padding: g.isRTL
-                                              ? const EdgeInsets.only(right: 6)
-                                              : const EdgeInsets.only(left: 6),
-                                          child: Text(
-                                            'Speeches',
-                                            style: Theme.of(context)
-                                                .primaryTextTheme
-                                                .titleSmall,
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                )),
-                      */
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _list.contains('artists')
-                                ? _list
-                                    .removeWhere((e) => e == 'artists')
-                                : _list.add('artists');
-                          });
-                        },
-                        hoverColor: Colors.transparent, // Set hover color to transparent
-                       
-                        child: !_list.contains('artists')
-                            ? Container(
-                                padding: g.isRTL
-                                    ? const EdgeInsets.only(right: 10)
-                                    : const EdgeInsets.only(left: 10),
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                decoration: BoxDecoration(
-                                  color: g.isDarkModeEnable
-                                      ? const Color(0xFF1B1143)
-                                      : Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      Icons.palette,
-                                      color: Color(0xFF845EB5),
-                                      size: 20,
-                                    ),
-                                    Padding(
-                                      padding: g.isRTL
-                                          ? const EdgeInsets.only(right: 6)
-                                          : const EdgeInsets.only(left: 6),
-                                      child: Text(
-                                        'artists',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall
-                                            ?.copyWith(
-                                                color: const Color(0xFF845EB5),
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.normal,
-                                                letterSpacing: 0),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            : Container(
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                padding: const EdgeInsets.all(1.2),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: g.gradientColors,
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                child: Container(
-                                  padding: g.isRTL
-                                      ? const EdgeInsets.only(right: 10)
-                                      : const EdgeInsets.only(left: 10),
-                                  decoration: BoxDecoration(
-                                    color: g.isDarkModeEnable
-                                        ? Colors.black
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(35),
-                                  ),
-                                  height: 60,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.palette,
-                                        color: g.isDarkModeEnable
-                                            ? Colors.white
-                                            : Theme.of(context)
-                                                .primaryColorLight,
-                                        size: 20,
-                                      ),
-                                      Padding(
-                                        padding: g.isRTL
-                                            ? const EdgeInsets.only(right: 6)
-                                            : const EdgeInsets.only(left: 6),
-                                        child: Text(
-                                          'artists',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .titleSmall,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                      ),
-                      /*
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _list.contains('Swimming')
-                                ? _list.removeWhere((e) => e == 'Swimming')
-                                : _list.add('Swimming');
-                          });
-                        },
-                        hoverColor: Colors.transparent, // Set hover color to transparent
-                       
-                        child: !_list.contains('Swimming')
-                            ? Container(
-                                padding: g.isRTL
-                                    ? const EdgeInsets.only(right: 10)
-                                    : const EdgeInsets.only(left: 10),
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                decoration: BoxDecoration(
-                                  color: g.isDarkModeEnable
-                                      ? const Color(0xFF1B1143)
-                                      : Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      MdiIcons.swim,
-                                      color: Color(0xFF845EB5),
-                                      size: 20,
-                                    ),
-                                    Padding(
-                                      padding: g.isRTL
-                                          ? const EdgeInsets.only(right: 6)
-                                          : const EdgeInsets.only(left: 6),
-                                      child: Text(
-                                        'Swimming',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall
-                                            ?.copyWith(
-                                                color: const Color(0xFF845EB5),
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.normal,
-                                                letterSpacing: 0),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            : Container(
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                padding: const EdgeInsets.all(1.2),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: g.gradientColors,
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                child: Container(
-                                  padding: g.isRTL
-                                      ? const EdgeInsets.only(right: 10)
-                                      : const EdgeInsets.only(left: 10),
-                                  decoration: BoxDecoration(
-                                    color: g.isDarkModeEnable
-                                        ? Colors.black
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(35),
-                                  ),
-                                  height: 60,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        MdiIcons.swim,
-                                        color: g.isDarkModeEnable
-                                            ? Colors.white
-                                            : Theme.of(context)
-                                                .primaryColorLight,
-                                        size: 20,
-                                      ),
-                                      Padding(
-                                        padding: g.isRTL
-                                            ? const EdgeInsets.only(right: 6)
-                                            : const EdgeInsets.only(left: 6),
-                                        child: Text(
-                                          'Swimming',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .titleSmall,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _list.contains('Drinking')
-                                ? _list.removeWhere((e) => e == 'Drinking')
-                                : _list.add('Drinking');
-                          });
-                        },
-                        hoverColor: Colors.transparent, // Set hover color to transparent
-                       
-                        child: !_list.contains('Drinking')
-                            ? Container(
-                                padding: g.isRTL
-                                    ? const EdgeInsets.only(right: 10)
-                                    : const EdgeInsets.only(left: 10),
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                decoration: BoxDecoration(
-                                  color: g.isDarkModeEnable
-                                      ? const Color(0xFF1B1143)
-                                      : Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      Icons.wine_bar,
-                                      color: Color(0xFF845EB5),
-                                      size: 20,
-                                    ),
-                                    Padding(
-                                      padding: g.isRTL
-                                          ? const EdgeInsets.only(right: 6)
-                                          : const EdgeInsets.only(left: 6),
-                                      child: Text(
-                                        'Drinking',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall
-                                            ?.copyWith(
-                                                color: const Color(0xFF845EB5),
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.normal,
-                                                letterSpacing: 0),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            : Container(
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                padding: const EdgeInsets.all(1.2),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: g.gradientColors,
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                child: Container(
-                                  padding: g.isRTL
-                                      ? const EdgeInsets.only(right: 10)
-                                      : const EdgeInsets.only(left: 10),
-                                  decoration: BoxDecoration(
-                                    color: g.isDarkModeEnable
-                                        ? Colors.black
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(35),
-                                  ),
-                                  height: 60,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.wine_bar,
-                                        color: g.isDarkModeEnable
-                                            ? Colors.white
-                                            : Theme.of(context)
-                                                .primaryColorLight,
-                                        size: 20,
-                                      ),
-                                      Padding(
-                                        padding: g.isRTL
-                                            ? const EdgeInsets.only(right: 6)
-                                            : const EdgeInsets.only(left: 6),
-                                        child: Text(
-                                          'Drinking',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .titleSmall,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                      ),
-                      */
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _list.contains('chefs')
-                                ? _list.removeWhere(
-                                    (e) => e == 'chefs')
-                                : _list.add('chefs');
-                          });
-                        },
-                        hoverColor: Colors.transparent, // Set hover color to transparent
-                       
-                        child: !_list.contains('chefs')
-                            ? Container(
-                                padding: g.isRTL
-                                    ? const EdgeInsets.only(right: 10)
-                                    : const EdgeInsets.only(left: 10),
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                decoration: BoxDecoration(
-                                  color: g.isDarkModeEnable
-                                      ? const Color(0xFF1B1143)
-                                      : Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      MdiIcons.chefHat,
-                                      color: Color(0xFF845EB5),
-                                      size: 20,
-                                    ),
-                                    Padding(
-                                      padding: g.isRTL
-                                          ? const EdgeInsets.only(right: 6)
-                                          : const EdgeInsets.only(left: 6),
-                                      child: Text(
-                                        'chefs',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall
-                                            ?.copyWith(
-                                                color: const Color(0xFF845EB5),
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.normal,
-                                                letterSpacing: 0),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            : Container(
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                padding: const EdgeInsets.all(1.2),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: g.gradientColors,
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                child: Container(
-                                  padding: g.isRTL
-                                      ? const EdgeInsets.only(right: 10)
-                                      : const EdgeInsets.only(left: 10),
-                                  decoration: BoxDecoration(
-                                    color: g.isDarkModeEnable
-                                        ? Colors.black
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(35),
-                                  ),
-                                  height: 60,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        MdiIcons.chefHat,
-                                        color: g.isDarkModeEnable
-                                            ? Colors.white
-                                            : Theme.of(context)
-                                                .primaryColorLight,
-                                        size: 20,
-                                      ),
-                                      Padding(
-                                        padding: g.isRTL
-                                            ? const EdgeInsets.only(right: 6)
-                                            : const EdgeInsets.only(left: 6),
-                                        child: Text(
-                                          'chefs',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .titleSmall,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          setState(() {
-                            _list.contains('fitness enthusiasts')
-                                ? _list.removeWhere((e) => e == 'fitness enthusiasts')
-                                : _list.add('fitness enthusiasts');
-                          });
-                        },
-                        hoverColor: Colors.transparent, // Set hover color to transparent
-                       
-                        child: !_list.contains('fitness enthusiasts')
-                            ? Container(
-                                padding: g.isRTL
-                                    ? const EdgeInsets.only(right: 10)
-                                    : const EdgeInsets.only(left: 10),
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                decoration: BoxDecoration(
-                                  color: g.isDarkModeEnable
-                                      ? const Color(0xFF1B1143)
-                                      : Theme.of(context)
-                                          .scaffoldBackgroundColor,
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    const Icon(
-                                      MdiIcons.run,
-                                      color: Color(0xFF845EB5),
-                                      size: 20,
-                                    ),
-                                    Padding(
-                                      padding: g.isRTL
-                                          ? const EdgeInsets.only(right: 6)
-                                          : const EdgeInsets.only(left: 6),
-                                      child: Text(
-                                        'fitness enthusiasts',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall
-                                            ?.copyWith(
-                                                color: const Color(0xFF845EB5),
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.normal,
-                                                letterSpacing: 0),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              )
-                            : Container(
-                                margin: g.isRTL
-                                    ? const EdgeInsets.only(top: 20, right: 20)
-                                    : const EdgeInsets.only(top: 20, left: 20),
-                                padding: const EdgeInsets.all(1.2),
-                                height: 60,
-                                width:
-                                    MediaQuery.of(context).size.width * 0.42,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: g.gradientColors,
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(35),
-                                ),
-                                child: Container(
-                                  padding: g.isRTL
-                                      ? const EdgeInsets.only(right: 10)
-                                      : const EdgeInsets.only(left: 10),
-                                  decoration: BoxDecoration(
-                                    color: g.isDarkModeEnable
-                                        ? Colors.black
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(35),
-                                  ),
-                                  height: 60,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        MdiIcons.run,
-                                        color: g.isDarkModeEnable
-                                            ? Colors.white
-                                            : Theme.of(context)
-                                                .primaryColorLight,
-                                        size: 20,
-                                      ),
-                                      Padding(
-                                        padding: g.isRTL
-                                            ? const EdgeInsets.only(right: 6)
-                                            : const EdgeInsets.only(left: 6),
-                                        child: Text(
-                                          'fitness enthusiasts',
-                                          style: Theme.of(context)
-                                              .primaryTextTheme
-                                              .titleSmall,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF9C27B0).withOpacity(0.3),
+                        blurRadius: 15,
+                        offset: const Offset(0, 5),
                       ),
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 30),
-                    child: ShaderMask(
-                      blendMode: BlendMode.srcIn,
-                      shaderCallback: (Rect bounds) {
-                        return LinearGradient(
-                          colors: g.gradientColors,
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                        ).createShader(bounds);
-                      },
-                      child: Text(
-                        AppLocalizations.of(context)!.lbl_load_more,
-                        style: const TextStyle(fontSize: 20),
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 30, bottom: 20),
-                      height: 50,
-                      width: 180,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(25),
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: g.gradientColors,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isEditHobbies ? 'Edit Your Interests' : AppLocalizations.of(context)!.lbl_likes_intrets,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      child: TextButton(
-                        onPressed: () {
-                          isEditHobbies
-                          ? () {
-                              editProfileUser();
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => BottomNavigationWidgetLight(
-                                currentIndex: 2,
-                                a: widget.analytics,
-                                o: widget.observer,
-                                ),
-                              ));
-                              isEditHobbies = false;
-                            }()
-                          : () {
-                              updateProfileUser();
-                              Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => BottomNavigationWidgetLight(
-                                    currentIndex: 0,
-                                    a: widget.analytics,
-                                    o: widget.observer,
-                                ),
-                              )); 
-                            }();
-                          
-                          
-                          
-                          
-                        },
-                        child: Text(
-                            AppLocalizations.of(context)!.btn_continue,
-                            style: Theme.of(context)
-                                .textButtonTheme
-                                .style!
-                                .textStyle!
-                                .resolve({
-                              WidgetState.pressed,
-                            })),
+                      const SizedBox(height: 8),
+                      Text(
+                        isEditHobbies 
+                            ? 'Update your interests to get better matches'
+                            : AppLocalizations.of(context)!.lbl_likes_intrets_subtitle,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                const SizedBox(height: 30),
+                
+                // Selected count
+                if (_list.isNotEmpty)
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF9C27B0).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(
+                      '${_list.length} interest${_list.length == 1 ? '' : 's'} selected',
+                      style: const TextStyle(
+                        color: Color(0xFF9C27B0),
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
-                ],
-              ),
+                
+                const SizedBox(height: 20),
+                
+                // Interests Grid
+                Wrap(
+                  alignment: WrapAlignment.start,
+                  children: availableInterests.map((interest) => _buildInterestChip(interest)).toList(),
+                ),
+                
+                const SizedBox(height: 40),
+                
+                // Continue Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : () {
+                      if (isEditHobbies) {
+                        editProfileUser();
+                      } else {
+                        updateProfileUser();
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF9C27B0),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28),
+                      ),
+                      elevation: 4,
+                    ),
+                    child: _isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : Text(
+                            isEditHobbies ? 'Save Changes' : AppLocalizations.of(context)!.btn_continue,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                  ),
+                ),
+                
+                const SizedBox(height: 20),
+              ],
             ),
           ),
         ),
@@ -1506,16 +321,9 @@ class _LikesInterestScreenState extends BaseRouteState {
                     Navigator.of(context).pop();
                   },
                 ),
-                trailing: InkWell(
+                trailing: !isEditHobbies ? InkWell(
                   onTap: () {
                     updateProfileUser();
-                    Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  BottomNavigationWidgetLight(
-                                    currentIndex: 0,
-                                    a: widget.analytics,
-                                    o: widget.observer,
-                                  )));
                   },
                   child: Text(
                     AppLocalizations.of(context)!.btn_skip,
@@ -1524,7 +332,7 @@ class _LikesInterestScreenState extends BaseRouteState {
                         .titleLarge
                         ?.copyWith(fontSize: 14, color: const Color(0xFFDD3663)),
                   ),
-                ),
+                ) : null,
               ),
             ),
           ],
@@ -1532,5 +340,4 @@ class _LikesInterestScreenState extends BaseRouteState {
       ),
     );
   }
-
 }

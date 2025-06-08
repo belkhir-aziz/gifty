@@ -59,7 +59,7 @@ class UserRelationsHandler {
   }).toList();
 }
 
-Future<List<Map<String, dynamic>>> getUserInvitations(String userId) async {
+Future<List<UserProfile>> getUserInvitations(String userId) async {
   try {
     // First get the relations with pending invitations
     var relationsRes = await _client
@@ -83,22 +83,14 @@ Future<List<Map<String, dynamic>>> getUserInvitations(String userId) async {
         .inFilter('id', userIds);
 
     // Combine user data with invitation creation date
-    return usersRes.map((userData) {
-      var relation = relationsRes.firstWhere((r) => r['user_id'] == userData['id']);
-      return {
-        'user': UserProfile.fromJson(userData),
-        'created_at': DateTime.parse(relation['created_at']),
-      };
+    return usersRes.map((item) {
+      return UserProfile.fromJson(item['users']);
     }).toList();
+
   } catch (e) {
     print('Error in getUserInvitations: $e');
     return [];
   }
-}
-
-Future<List<UserProfile>> getPendingInvitations(String userId) async {
-  final relations = await getUserProfileRelations(userId);
-  return relations.where((user) => user.relationStatus == InvitationStatus.pending).toList();
 }
 
 Future<void> acceptInvitation(String userId, String friendId) async {

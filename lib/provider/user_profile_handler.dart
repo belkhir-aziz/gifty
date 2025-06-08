@@ -39,7 +39,7 @@ class UserProfileHandler {
       .select();
 
   if (response.isEmpty) {
-    throw Exception('Failed to update profile: No response received.');
+    print('Failed to update profile: No response received.');
   }
   }
 

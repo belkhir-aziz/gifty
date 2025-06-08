@@ -9,7 +9,6 @@ class UserProfile {
   late DateTime dateOfBirth;
   late List<String> hobbies;
   late String merchantCountry;
-  InvitationStatus? relationStatus;
 
   UserProfile({
     required this.id,
@@ -20,7 +19,6 @@ class UserProfile {
     DateTime? dateOfBirth,
     List<String>? hobbies,
     this.merchantCountry = '',
-    this.relationStatus,
   }) : dateOfBirth = dateOfBirth ?? DateTime(1970, 1, 1),
        hobbies = hobbies ?? [];
 
@@ -39,9 +37,6 @@ class UserProfile {
           ? (json['hobbies'] as String).split(', ')
           : [],
       merchantCountry: json['merchant_country'] ?? '',
-      relationStatus: json['relation_status'] != null
-          ? InvitationStatus.values[json['relation_status']]
-          : null,
     );
   }
 
@@ -56,7 +51,6 @@ class UserProfile {
       'date_of_birth': dateOfBirth.toIso8601String(),
       'hobbies': hobbies.join(', '),
       'merchant_country': merchantCountry,
-      'relation_status': relationStatus?.index,
     };
   }
 }

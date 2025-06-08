@@ -2,6 +2,7 @@ import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:datingapp/provider/user_profile_handler.dart';
 import 'package:datingapp/provider/user_provider.dart';
+import 'package:datingapp/screens/likes_and_interest_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,28 @@ class MyProfileDetailScreen extends BaseRoute {
 class _MyProfileDetailScreenState extends BaseRouteState {
   late UserProvider userProvider;
   final UserProfileHandler userProfileHandler = UserProfileHandler();
+  
+  // Available interests to choose from
+  final List<String> availableInterests = [
+    'Fashion',
+    'Electronics',
+    'Home & Living',
+    'Beauty',
+    'Sports',
+    'Books',
+    'Toys',
+    'Music',
+    'Movies',
+    'Travel',
+    'Cooking',
+    'Photography',
+    'Gaming',
+    'Art',
+    'Fitness',
+    'Technology',
+    'Nature',
+    'Dancing',
+  ];
 
   _MyProfileDetailScreenState() : super();
 
@@ -217,15 +240,7 @@ class _MyProfileDetailScreenState extends BaseRouteState {
                     Wrap(
                       spacing: 12,
                       runSpacing: 12,
-                      children: [
-                        'Fashion',
-                        'Electronics',
-                        'Home & Living',
-                        'Beauty',
-                        'Sports',
-                        'Books',
-                        'Toys',
-                      ].map((interest) {
+                      children: (userProvider.userProfile?.hobbies ?? []).map((interest) {
                         return Container(
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           decoration: BoxDecoration(
@@ -251,12 +266,40 @@ class _MyProfileDetailScreenState extends BaseRouteState {
                         );
                       }).toList(),
                     ),
+                    if ((userProvider.userProfile?.hobbies ?? []).isEmpty)
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.grey.withOpacity(0.3),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.info_outline,
+                              color: Colors.grey[600],
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'No interests added yet. Tap "Edit Interests" to add some!',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     const SizedBox(height: 32),
                     // Edit Interests Button
                     Center(
                       child: ElevatedButton.icon(
                         onPressed: () {
-                          _showEditInterestsDialog();
+                          _navigateToEditInterests();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF9C27B0),
@@ -367,6 +410,49 @@ class _MyProfileDetailScreenState extends BaseRouteState {
     );
   }
 
+  void _navigateToEditInterests() async {
+    if (userProvider.userProfile != null) {
+      final result = await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => LikesInterestScreen(
+            userProfile: userProvider.userProfile!,
+            isEditHobbies: true,
+            a: widget.analytics,
+            o: widget.observer,
+          ),
+        ),
+      );
+      
+      // If result is returned (updated interests), refresh the UI
+      if (result != null && result is List<String>) {
+        setState(() {
+          // The UI will automatically update since we're using userProvider
+        });
+        
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(
+                  Icons.check_circle,
+                  color: Colors.white,
+                  size: 20,
+                ),
+                const SizedBox(width: 8),
+                const Text('Interests updated successfully!'),
+              ],
+            ),
+            backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+      }
+    }
+  }
 
   @override
   void initState() {

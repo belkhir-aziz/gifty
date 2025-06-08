@@ -28,4 +28,51 @@ class UserReactionsHandler {
 
     return response.map((json) => Reaction.fromJson(json)).toList();
   }
+
+  Future<void> updateReaction(String userId, String productId, String newReactionType) async {
+    final response = await supabase
+        .from('reactions')
+        .update({'reaction_type': newReactionType})
+        .eq('user_id', userId)
+        .eq('product_id', productId);
+    
+    if (response.error != null) {
+      throw Exception('Failed to update reaction: ${response.error!.message}');
+    }
+  }
+
+  Future<void> removeFromWishlist(String userId, String productId) async {
+    // Update reaction from superLike to like to remove from wishlist
+    await updateReaction(userId, productId, 'like');
+  }
+
+  Future<void> reserveProduct(String userId, String productId, String reservedByUserId) async {
+    final response = await supabase
+        .from('reactions')
+        .update({
+          'reserved': true,
+          'reserved_by_user_id': reservedByUserId,
+        })
+        .eq('user_id', userId)
+        .eq('product_id', productId);
+    
+    if (response.error != null) {
+      throw Exception('Failed to reserve product: ${response.error!.message}');
+    }
+  }
+
+  Future<void> unreserveProduct(String userId, String productId) async {
+    final response = await supabase
+        .from('reactions')
+        .update({
+          'reserved': false,
+          'reserved_by_user_id': null,
+        })
+        .eq('user_id', userId)
+        .eq('product_id', productId);
+    
+    if (response.error != null) {
+      throw Exception('Failed to unreserve product: ${response.error!.message}');
+    }
+  }
 }

@@ -69,18 +69,38 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
         body: SafeArea(
           child: Column(
             children: [
-              // Header
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              // Header with modern design matching friends screen
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 30),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      const Color(0xFF9C27B0), // Purple
+                      const Color(0xFFE91E63), // Pink
+                    ],
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(40),
+                    bottomRight: Radius.circular(40),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF9C27B0).withOpacity(0.3),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       'Discover Gifts',
                       style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: g.isDarkModeEnable ? Colors.white : g.AppColors.primary,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 24,
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ],

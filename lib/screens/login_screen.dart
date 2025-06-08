@@ -49,10 +49,31 @@ class _LoginScreenState extends BaseRouteState {
                 // Logo and Title
                 Image.asset(
                   g.isDarkModeEnable
-                      ? 'assets/images/splash_new_dark.png'
-                      : 'assets/images/splash_new_light.png',
+                      ? 'assets/images/logo_dark.png'
+                      : 'assets/images/logo_light.png',
                   height: 120,
                   fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    // Fallback to a simple icon if image fails to load
+                    return Container(
+                      height: 120,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            g.AppColors.primary,
+                            g.AppColors.secondary,
+                          ],
+                        ),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.favorite,
+                        size: 60,
+                        color: Colors.white,
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 40),
                 Text(

@@ -5,12 +5,16 @@ class Reaction {
   final String productId;
   final DateTime createdAt;
   final ReactionTypes reactionType;
+  final bool reserved;
+  final String? reservedByUserId;
 
   Reaction({
     required this.userId,
     required this.productId,
     required this.createdAt,
     required this.reactionType,
+    this.reserved = false,
+    this.reservedByUserId,
   });
 
   factory Reaction.fromJson(Map<String, dynamic> json) {
@@ -19,6 +23,8 @@ class Reaction {
       productId: json['product_id'],
       createdAt: DateTime.parse(json['created_at']),
       reactionType: json['reaction_type'],
+      reserved: json['reserved'] ?? false,
+      reservedByUserId: json['reserved_by_user_id'],
     );
   }
 
@@ -28,6 +34,8 @@ class Reaction {
       'product_id': productId,
       'created_at': createdAt.toIso8601String(),
       'reaction_type': reactionType.toString().split('.').last,
+      'reserved': reserved,
+      'reserved_by_user_id': reservedByUserId,
     };
   }
 }

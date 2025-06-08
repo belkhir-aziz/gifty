@@ -40,7 +40,7 @@ class _FriendsScreenState extends BaseRouteState {
     super.initState();
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     currentProfile = userProvider.userProfile ?? UserProfile(id: "", email: "");
-    generateRandomFriends();
+    fetchFriends();
     searchController.addListener(_onSearchChanged);
   }
 
@@ -67,35 +67,6 @@ class _FriendsScreenState extends BaseRouteState {
         return fullName.contains(searchQuery.toLowerCase());
       }).toList();
     }
-  }
-
-  void generateRandomFriends() {
-    final List<String> firstNames = [
-      'Emma', 'Liam', 'Olivia', 'Noah', 'Ava', 'Ethan', 'Sophia', 'Mason',
-      'Isabella', 'William', 'Mia', 'James', 'Charlotte', 'Benjamin', 'Amelia',
-      'Lucas', 'Harper', 'Henry', 'Evelyn', 'Alexander'
-    ];
-    
-    final List<String> lastNames = [
-      'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller',
-      'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez',
-      'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin'
-    ];
-
-    friends.clear();
-    for (int i = 0; i < 20; i++) {
-      friends.add(UserProfile(
-        id: 'friend_$i',
-        email: '${firstNames[i % firstNames.length].toLowerCase()}.${lastNames[i % lastNames.length].toLowerCase()}@example.com',
-        firstName: firstNames[i % firstNames.length],
-        lastName: lastNames[i % lastNames.length],
-      ));
-    }
-    
-    filteredFriends = List.from(friends);
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   @override
@@ -1050,141 +1021,31 @@ class _FriendsScreenState extends BaseRouteState {
     var fetchedFriends = await UserRelationsHandler().getUserProfileRelations(currentProfile.id);
     setState(() {
       friends = fetchedFriends;
+      filteredFriends = friends;
       _isLoading = false;
     });
   }
 
   Future<void> fetchProducts(String id) async {
-    try {
       setState(() {
         _isLoading = true;
       });
-      
-      // For testing purposes, generate random products for friends
-      if (id != currentProfile.id) {
-        _generateRandomProductsForFriend(id);
-      } else {
         // For current user, try to fetch from database, fallback to random
-        try {
-          final result = await productHandler.getSuperLikedProductsWithReservationsByUser(id);
-          setState(() {
-            products = result['products'];
-            reservationStatus = result['reservationStatus'];
-            reservedByUsers = result['reservedByUsers'];
-            _isLoading = false;
-          });
-        } catch (e) {
-          // Fallback to random products for current user too
-          _generateRandomProductsForFriend(id);
-        }
-      }
-    } catch (e) {
-      setState(() {
+      try {
+        final result = await productHandler.getSuperLikedProductsWithReservationsByUser(id);
+        setState(() {
+          products = result['products'];
+          reservationStatus = result['reservationStatus'];
+          reservedByUsers = result['reservedByUsers'];
+          _isLoading = false;
+        });
+      } catch (e) {
+        setState(() {
         _isLoading = false;
-      });
-    }
-  }
-
-  void _generateRandomProductsForFriend(String friendId) {
-    final List<Map<String, dynamic>> sampleProducts = [
-      {
-        'id': 'prod_1_$friendId',
-        'name': 'Wireless Bluetooth Headphones',
-        'price': 89.99,
-        'rating': 4.5,
-        'image_url': 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
-      },
-      {
-        'id': 'prod_2_$friendId',
-        'name': 'Smart Fitness Watch',
-        'price': 199.99,
-        'rating': 4.3,
-        'image_url': 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400',
-      },
-      {
-        'id': 'prod_3_$friendId',
-        'name': 'Coffee Maker Machine',
-        'price': 129.99,
-        'rating': 4.7,
-        'image_url': 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400',
-      },
-      {
-        'id': 'prod_4_$friendId',
-        'name': 'Portable Phone Charger',
-        'price': 29.99,
-        'rating': 4.2,
-        'image_url': 'https://images.unsplash.com/photo-1609592806596-b5c5c5b8e5e5?w=400',
-      },
-      {
-        'id': 'prod_5_$friendId',
-        'name': 'Yoga Mat Premium',
-        'price': 45.99,
-        'rating': 4.6,
-        'image_url': 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400',
-      },
-      {
-        'id': 'prod_6_$friendId',
-        'name': 'Desk Organizer Set',
-        'price': 34.99,
-        'rating': 4.4,
-        'image_url': 'https://images.unsplash.com/photo-1586953208448-b95a79798f07?w=400',
-      },
-      {
-        'id': 'prod_7_$friendId',
-        'name': 'LED Strip Lights',
-        'price': 24.99,
-        'rating': 4.1,
-        'image_url': 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
-      },
-      {
-        'id': 'prod_8_$friendId',
-        'name': 'Scented Candle Set',
-        'price': 39.99,
-        'rating': 4.8,
-        'image_url': 'https://images.unsplash.com/photo-1602874801006-e26d3d17d0a5?w=400',
-      },
-    ];
-
-    // Randomly select 3-6 products for each friend
-    final random = DateTime.now().millisecondsSinceEpoch % 1000;
-    final numProducts = 3 + (random % 4); // 3-6 products
-    final selectedProducts = <Product>[];
-    final selectedIndices = <int>{};
-    
-    while (selectedIndices.length < numProducts && selectedIndices.length < sampleProducts.length) {
-      final index = (random + selectedIndices.length * 17) % sampleProducts.length;
-      if (!selectedIndices.contains(index)) {
-        selectedIndices.add(index);
-        selectedProducts.add(Product.fromJson(sampleProducts[index]));
+        });
       }
     }
-
-    // Generate random reservation status
-    final Map<String, bool> tempReservationStatus = {};
-    final Map<String, String?> tempReservedByUsers = {};
     
-    for (final product in selectedProducts) {
-      // 30% chance of being reserved
-      final isReserved = (random + product.id.hashCode) % 10 < 3;
-      tempReservationStatus[product.id] = isReserved;
-      
-      if (isReserved) {
-        // 50% chance it's reserved by current user, 50% by someone else
-        final reservedByCurrentUser = (random + product.id.hashCode * 2) % 2 == 0;
-        tempReservedByUsers[product.id] = reservedByCurrentUser ? currentProfile.id : 'other_user_${product.id}';
-      } else {
-        tempReservedByUsers[product.id] = null;
-      }
-    }
-
-    setState(() {
-      products = selectedProducts;
-      reservationStatus = tempReservationStatus;
-      reservedByUsers = tempReservedByUsers;
-      _isLoading = false;
-    });
-  }
-
   void _showRemoveConfirmationDialog(Product product) {
     showDialog(
       context: context,

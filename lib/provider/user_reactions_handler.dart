@@ -34,10 +34,11 @@ class UserReactionsHandler {
         .from('reactions')
         .update({'reaction_type': newReactionType})
         .eq('user_id', userId)
-        .eq('product_id', productId);
+        .eq('product_id', productId)
+        .select();
     
-    if (response.error != null) {
-      throw Exception('Failed to update reaction: ${response.error!.message}');
+    if (response.isEmpty) {
+      throw Exception('Failed to update reaction');
     }
   }
 
@@ -54,10 +55,11 @@ class UserReactionsHandler {
           'reserved_by_user_id': reservedByUserId,
         })
         .eq('user_id', userId)
-        .eq('product_id', productId);
+        .eq('product_id', productId)
+        .select();
     
-    if (response.error != null) {
-      throw Exception('Failed to reserve product: ${response.error!.message}');
+    if (response.isEmpty) {
+      throw Exception('Failed to reserve product');
     }
   }
 
@@ -69,10 +71,11 @@ class UserReactionsHandler {
           'reserved_by_user_id': null,
         })
         .eq('user_id', userId)
-        .eq('product_id', productId);
+        .eq('product_id', productId)
+        .select();
     
-    if (response.error != null) {
-      throw Exception('Failed to unreserve product: ${response.error!.message}');
+    if (response.isEmpty) {
+      throw Exception('Failed to unreserve product');
     }
   }
 }

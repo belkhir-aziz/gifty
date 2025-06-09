@@ -1,7 +1,5 @@
 import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/provider/user_reactions_handler.dart';
-import 'package:datingapp/provider/product_reservation_handler.dart';
-import 'package:datingapp/models/product_reservation.dart';
 import 'package:datingapp/recommendation_models/reaction_based_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/product.dart';

@@ -1,6 +1,5 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
-import 'package:datingapp/screens/start_conversion_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -69,11 +68,6 @@ class _InterestScreenState extends BaseRouteState {
                           icon: const Icon(MdiIcons.messageReplyTextOutline),
                           color: Colors.white,
                           onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => StartConversionScreen(
-                                      a: widget.analytics,
-                                      o: widget.observer,
-                                    )));
                           },
                         )),
                   )
@@ -200,12 +194,6 @@ class _InterestScreenState extends BaseRouteState {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          StartConversionScreen(
-                                            a: widget.analytics,
-                                            o: widget.observer,
-                                          )));
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(right: 10),

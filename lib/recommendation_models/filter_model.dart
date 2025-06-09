@@ -1,7 +1,7 @@
 import 'package:datingapp/models/product.dart';
 import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/recommendation_models/base_model.dart';
-import 'package:datingapp/services/country_handler.dart';
+import 'package:datingapp/helpers/country_handler.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class FilterModel implements BaseModel {

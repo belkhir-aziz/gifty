@@ -165,7 +165,7 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
             ),
           ),
           shadowColor: WidgetStateProperty.all(Colors.transparent),
-          foregroundColor: WidgetStateProperty.all(Colors.transparent),
+          foregroundColor: WidgetStateProperty.all(const Color(0xFF9C27B0)),
         ),
       ),
       inputDecorationTheme: const InputDecorationTheme(
@@ -415,7 +415,7 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
             ),
           ),
           shadowColor: WidgetStateProperty.all(Colors.transparent),
-          foregroundColor: WidgetStateProperty.all(Colors.transparent),
+          foregroundColor: WidgetStateProperty.all(const Color(0xFF9C27B0)),
         ),
       ),
       iconTheme: const IconThemeData(color: Color(0xFF9C27B0)),

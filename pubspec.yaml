@@ -45,6 +45,8 @@ dependencies:
   multi_image_picker_plus: ^0.0.2
   provider: any
   country_picker: ^2.0.27
+  shared_preferences: ^2.2.2
+  url_launcher: ^6.2.4
 
 dev_dependencies:
   build_runner: ^2.0.0

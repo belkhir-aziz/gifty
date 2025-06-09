@@ -28,6 +28,8 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
   List<Product> products = [];
   int _current = 0;
   bool _isLoading = true;
+  bool _showHelpPopup = true; // Always show initially
+  bool _isHelpExpanded = false; // Start collapsed
   
   Future<void> _loadProducts() async {
     try {
@@ -57,7 +59,108 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return Scaffold(
+        backgroundColor: g.isDarkModeEnable ? g.AppColors.darkBackground : Colors.white,
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+    
+    // Show message if no products are available
+    if (products.isEmpty) {
+      return Scaffold(
+        backgroundColor: g.isDarkModeEnable ? g.AppColors.darkBackground : Colors.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              // Header with modern design matching friends screen
+              Container(
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 30),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    colors: [
+                      const Color(0xFF9C27B0), // Purple
+                      const Color(0xFFE91E63), // Pink
+                    ],
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(40),
+                    bottomRight: Radius.circular(40),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF9C27B0).withOpacity(0.3),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Discover Gifts',
+                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // No products message
+              Expanded(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.card_giftcard,
+                          size: 80,
+                          color: g.isDarkModeEnable ? Colors.white54 : Colors.grey,
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          'No Gifts Available',
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: g.isDarkModeEnable ? Colors.white : Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Complete your profile to see personalized gift recommendations!',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: g.isDarkModeEnable ? Colors.white70 : Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () {
+                            _loadProducts(); // Retry loading products
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: g.AppColors.primary,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            ),
+                          ),
+                          child: const Text('Refresh'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
     }
     return PopScope(
       canPop: true,
@@ -138,6 +241,8 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
                         ),
                       ),
                     ),
+                    // Help popup
+                    if (_showHelpPopup) _buildHelpPopup(),
                   ],
                 ),
               ),
@@ -211,34 +316,6 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
                   products[i].imageUrl,
                   fit: BoxFit.cover,
                 ),
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.transparent,
-                        Colors.black.withOpacity(0.7),
-                      ],
-                    ),
-                  ),
-                ),
-                // Action buttons overlay
-                Positioned(
-                  right: 16,
-                  top: 16,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: g.isDarkModeEnable ? Colors.black26 : Colors.white24,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: IconButton(
-                      icon: const Icon(Icons.info_outline),
-                      color: Colors.white,
-                      onPressed: () => _showInfoDialog(context),
-                    ),
-                  ),
-                ),
                 // Action buttons at the bottom
                 Positioned(
                   left: 0,
@@ -310,7 +387,7 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
                           icon: const Icon(Icons.shopping_cart),
                           color: Colors.white,
                           iconSize: 32,
-                          onPressed: () => _showInfoDialog(context),
+                          onPressed: () => _goToMerchant(context),
                         ),
                       ),
                       // Save to wishlist button
@@ -587,6 +664,32 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
     );
   }
 
+  void _goToMerchant(BuildContext context) async {
+    if (products[_current].affiliateLink != null && products[_current].affiliateLink!.isNotEmpty) {
+      final Uri url = Uri.parse(products[_current].affiliateLink!);
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      } else {
+        if (kDebugMode) {
+          print('Could not launch ${products[_current].affiliateLink}');
+        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Could not open the merchant link'),
+            backgroundColor: g.AppColors.error,
+          ),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('No merchant link available for this product'),
+          backgroundColor: g.AppColors.warning,
+        ),
+      );
+    }
+  }
+
   void _showSaveConfirmation(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -614,6 +717,285 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
         ),
         margin: const EdgeInsets.all(16),
         duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  Widget _buildHelpPopup() {
+    return Positioned(
+      top: 30,
+      right: 20,
+      left: _isHelpExpanded ? 20 : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 350),
+        curve: Curves.easeOutCubic,
+        width: _isHelpExpanded ? null : 48,
+        height: _isHelpExpanded ? null : 48,
+        constraints: _isHelpExpanded
+          ? BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width - 40,
+              maxHeight: MediaQuery.of(context).size.height * 0.6,
+            )
+          : const BoxConstraints(
+              minWidth: 48,
+              maxWidth: 48,
+              minHeight: 48,
+              maxHeight: 48,
+            ),
+        decoration: BoxDecoration(
+          color: g.isDarkModeEnable ? Colors.grey[900] : Colors.white,
+          borderRadius: BorderRadius.circular(_isHelpExpanded ? 12 : 24),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: _isHelpExpanded ? _buildExpandedHelp() : _buildCollapsedHelp(),
+      ),
+    );
+  }
+
+  Widget _buildCollapsedHelp() {
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(28),
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            _isHelpExpanded = true;
+          });
+        },
+        borderRadius: BorderRadius.circular(28),
+        splashColor: g.AppColors.primary.withOpacity(0.2),
+        highlightColor: g.AppColors.primary.withOpacity(0.1),
+        child: Container(
+          width: 56,
+          height: 56,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(28),
+          ),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              // Pulsing animation background
+              AnimatedContainer(
+                duration: const Duration(seconds: 2),
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: g.AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              // Help icon with better styling
+              Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  color: g.AppColors.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Icon(
+                  Icons.help_outline_rounded,
+                  color: g.AppColors.primary,
+                  size: 24,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildExpandedHelp() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header with close button
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  'How to Use',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: g.isDarkModeEnable ? Colors.white : Colors.black,
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Minimize button
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        _isHelpExpanded = false;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      child: Icon(
+                        Icons.minimize,
+                        color: g.AppColors.primary,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Close button
+                  InkWell(
+                    onTap: () {
+                      setState(() {
+                        _showHelpPopup = false;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      child: Icon(
+                        Icons.close,
+                        color: g.AppColors.error,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // Help content - make it scrollable
+          Flexible(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildHelpItem(
+                    icon: Icons.close,
+                    color: g.AppColors.error,
+                    title: 'Dislike',
+                    description: 'Skip this product if you don\'t like it',
+                  ),
+                  const SizedBox(height: 12),
+                  _buildHelpItem(
+                    icon: Icons.favorite,
+                    color: g.AppColors.success,
+                    title: 'Like',
+                    description: 'Show interest in this product',
+                  ),
+                  const SizedBox(height: 12),
+                  _buildHelpItem(
+                    icon: Icons.shopping_cart,
+                    color: g.AppColors.primary,
+                    title: 'Go to Merchant',
+                    description: 'Visit the store to check and buy this product',
+                  ),
+                  const SizedBox(height: 12),
+                  _buildHelpItem(
+                    icon: Icons.bookmark,
+                    color: g.AppColors.warning,
+                    title: 'Save to Wishlist',
+                    description: 'Save it so friends can see it and know what you like',
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSimpleHelpItem(IconData icon, String title, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Container(
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: 14,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            title,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: g.isDarkModeEnable ? Colors.white : Colors.black87,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHelpItem({
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String description,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: color.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              icon,
+              color: color,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: g.isDarkModeEnable ? Colors.white : Colors.black,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  description,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: g.isDarkModeEnable ? Colors.white70 : Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

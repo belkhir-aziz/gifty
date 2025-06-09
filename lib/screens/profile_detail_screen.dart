@@ -57,76 +57,109 @@ void _showNotification(String message, {bool isError = false}) {
     },
   );}
 bool updateProfileUser() {
-  bool hasError = false;
-  String errorMessage = 'Please fill in all required fields.';
-
-  // Check if gender and country are set to their default values
-  if (_cGender.text == 'Select Gender' || _cCountry.text == 'Merchant Country') {
-    hasError = true;
-  }
+  String errorMessage = '';
 
   // Update the profileUser object with the current input
   if (isUpdate && (_cFirstName.text.isEmpty || _cFirstName.text == '')) {
     userProfile.firstName = userProvider.userProfile!.firstName;
   } else {
-    userProfile.firstName = _cFirstName.text;
+    userProfile.firstName = _cFirstName.text.trim();
   }
 
   if (isUpdate && (_cLastName.text.isEmpty || _cLastName.text == '')) {
     userProfile.lastName = userProvider.userProfile!.lastName;
   } else {
-    userProfile.lastName = _cLastName.text;
+    userProfile.lastName = _cLastName.text.trim();
   }
 
   if (isUpdate && (_cBDate.text.isEmpty || _cBDate.text == '')) {
     userProfile.dateOfBirth = userProvider.userProfile!.dateOfBirth;
   } else {
-    userProfile.dateOfBirth = DateFormat("dd-MM-yyyy").parse(_cBDate.text);
+    try {
+      userProfile.dateOfBirth = DateFormat("dd-MM-yyyy").parse(_cBDate.text);
+    } catch (e) {
+      errorMessage = 'Invalid date format';
+    }
   }
 
-  if (isUpdate && (_cGender.text.isEmpty || _cGender.text == '' || _cGender.text == 'Select Gender')) {
+  if (isUpdate && (_gender == null || _gender!.isEmpty)) {
     userProfile.gender = userProvider.userProfile!.gender;
   } else {
-    userProfile.gender = _cGender.text;
+    userProfile.gender = _gender ?? '';
   }
 
-  if (isUpdate && (_cCountry.text.isEmpty || _cCountry.text == '' || _cCountry.text == 'Merchant Country')) {
+  if (isUpdate && (_country == null || _country!.isEmpty)) {
     userProfile.merchantCountry = userProvider.userProfile!.merchantCountry;
   } else {
-    userProfile.merchantCountry = _cCountry.text;
+    userProfile.merchantCountry = _country ?? '';
   }
 
-  // Check if any required fields are missing
-  if (userProfile.firstName.isEmpty || userProfile.lastName.isEmpty || userProfile.gender.isEmpty || userProfile.merchantCountry.isEmpty) {
-    hasError = true;
+  // Validation
+  if (userProfile.firstName.isEmpty) {
+    errorMessage = 'First name is required';
+  } else if (userProfile.lastName.isEmpty) {
+    errorMessage = 'Last name is required';
+  } else if (userProfile.gender.isEmpty) {
+    errorMessage = 'Please select your gender';
+  } else if (userProfile.merchantCountry.isEmpty) {
+    errorMessage = 'Please select your country';
+  } else if (userProfile.age > 100) {
+    errorMessage = 'Please enter a valid birth date';
   }
       
-  if (hasError) {
+  if (errorMessage.isNotEmpty) {
     _showNotification(errorMessage, isError: true);
     return false;
   }
 
-  // Show success notification
-  _showNotification('Profile updated successfully!', isError: false);
+  // Save profile to database only if updating
+  if (isUpdate) {
+    _saveProfile();
+  } else {
+    // For new users, just show success message - profile will be saved after interests selection
+    _showNotification('Basic profile information saved!', isError: false);
+  }
   return true;
+}
+
+Future<void> _saveProfile() async {
+  try {
+    await userProfileHandler.editUserProfile(userProfile);
+    userProvider.setUserProfile(userProfile);
+    _showNotification('Profile updated successfully!', isError: false);
+  } catch (e) {
+    _showNotification('Failed to save profile. Please try again.', isError: true);
+  }
 }
   @override
   void initState() {
     super.initState();
     _cFirstName.addListener(_updateState);
     _cLastName.addListener(_updateState);
-    _cCountry.addListener(_updateState);
     _cBDate.addListener(_updateState);
     _firstNameFocusNode.addListener(_updateState);
     _lastNameFocusNode.addListener(_updateState);
     _bDateFocusNode.addListener(_updateState);
+    
+    // Initialize fields if updating
+    if (isUpdate && userProvider.userProfile != null) {
+      _cFirstName.text = userProvider.userProfile!.firstName;
+      _cLastName.text = userProvider.userProfile!.lastName;
+      _gender = userProvider.userProfile!.gender.isNotEmpty ? userProvider.userProfile!.gender : null;
+      _country = userProvider.userProfile!.merchantCountry.isNotEmpty ? userProvider.userProfile!.merchantCountry : null;
+      if (userProvider.userProfile!.dateOfBirth.year != 1970) {
+        _cBDate.text = DateFormat("dd-MM-yyyy").format(userProvider.userProfile!.dateOfBirth);
+      }
+    }
   }
 
   @override
   void dispose() {
     _cFirstName.dispose();
     _cLastName.dispose();
+    _cCountry.dispose();
     _cBDate.dispose();
+    _cGender.dispose();
     _firstNameFocusNode.dispose();
     _lastNameFocusNode.dispose();
     _bDateFocusNode.dispose();
@@ -306,7 +339,7 @@ bool updateProfileUser() {
                   filled: true,
                   fillColor: g.isDarkModeEnable ? Colors.white10 : Colors.grey[50],
                 ),
-                items: ['Male', 'Female', 'Other'].map((String value) {
+                items: ['male', 'female', 'other'].map((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Text(value),
@@ -316,6 +349,66 @@ bool updateProfileUser() {
                   setState(() {
                     _gender = newValue;
                     _cGender.text = newValue ?? '';
+                  });
+                },
+              ),
+              const SizedBox(height: 24),
+              // Country Selection
+              Text(
+                'Country',
+                style: TextStyle(
+                  color: g.isDarkModeEnable ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
+              DropdownButtonFormField<String>(
+                value: _country,
+                style: TextStyle(
+                  color: g.isDarkModeEnable ? Colors.white : Colors.black,
+                ),
+                decoration: InputDecoration(
+                  hintText: 'Select your country',
+                  hintStyle: TextStyle(
+                    color: g.isDarkModeEnable ? Colors.white54 : Colors.black54,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: g.isDarkModeEnable ? Colors.white24 : Colors.black12,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: g.isDarkModeEnable ? Colors.white24 : Colors.black12,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: g.AppColors.primary,
+                      width: 2,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: g.isDarkModeEnable ? Colors.white10 : Colors.grey[50],
+                ),
+                items: [
+                  'United States', 'Canada', 'United Kingdom', 'Germany', 'France', 'Italy',
+                  'Spain', 'Netherlands', 'Belgium', 'Switzerland', 'Austria', 'Sweden',
+                  'Norway', 'Denmark', 'Finland', 'Australia', 'New Zealand', 'Japan',
+                  'South Korea', 'Singapore', 'Brazil', 'Argentina', 'Mexico', 'India',
+                  'China', 'Thailand', 'Malaysia', 'Indonesia', 'Philippines', 'Vietnam'
+                ].map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _country = newValue;
                   });
                 },
               ),
@@ -370,9 +463,32 @@ bool updateProfileUser() {
                 onTap: () async {
                   final DateTime? picked = await showDatePicker(
                     context: context,
-                    initialDate: DateTime.now(),
+                    initialDate: DateTime.now().subtract(const Duration(days: 7300)), // 20 years ago as default
                     firstDate: DateTime(1900),
                     lastDate: DateTime.now(),
+                    builder: (context, child) {
+                      return Theme(
+                        data: Theme.of(context).copyWith(
+                          colorScheme: ColorScheme.light(
+                            primary: g.AppColors.primary, // Header background color
+                            onPrimary: Colors.white, // Header text color
+                            onSurface: g.isDarkModeEnable ? Colors.white : Colors.black, // Body text color
+                            surface: g.isDarkModeEnable ? g.AppColors.darkBackground : Colors.white, // Background color
+                          ),
+                          textButtonTheme: TextButtonThemeData(
+                            style: TextButton.styleFrom(
+                              foregroundColor: g.AppColors.primary, // Button text color
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          dialogBackgroundColor: g.isDarkModeEnable ? g.AppColors.darkBackground : Colors.white,
+                        ),
+                        child: child!,
+                      );
+                    },
                   );
                   if (picked != null) {
                     setState(() {
@@ -405,17 +521,35 @@ bool updateProfileUser() {
                   ],
                 ),
                 child: TextButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (updateProfileUser()) {
-                      Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) => BottomNavigationWidgetLight(
-                            currentIndex: 0,
-                            a: widget.analytics,
-                            o: widget.observer,
+                      // Small delay to show success message
+                      await Future.delayed(const Duration(milliseconds: 500));
+                      
+                      if (!isUpdate) {
+                        // For new users, navigate to interests selection
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => LikesInterestScreen(
+                              userProfile: userProfile,
+                              isEditHobbies: false,
+                              a: widget.analytics,
+                              o: widget.observer,
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      } else {
+                        // For profile updates, go back to main app
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => BottomNavigationWidgetLight(
+                              currentIndex: 0,
+                              a: widget.analytics,
+                              o: widget.observer,
+                            ),
+                          ),
+                        );
+                      }
                     }
                   },
                   style: TextButton.styleFrom(
@@ -425,7 +559,7 @@ bool updateProfileUser() {
                     ),
                   ),
                   child: Text(
-                    isUpdate ? 'Update Profile' : 'Complete Profile',
+                    isUpdate ? 'Update Profile' : 'Continue',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,

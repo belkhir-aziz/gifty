@@ -22,6 +22,29 @@ class UserProfile {
   }) : dateOfBirth = dateOfBirth ?? DateTime(1970, 1, 1),
        hobbies = hobbies ?? [];
 
+  // Helper method to calculate age
+  int get age {
+    final now = DateTime.now();
+    int age = now.year - dateOfBirth.year;
+    if (now.month < dateOfBirth.month ||
+        (now.month == dateOfBirth.month && now.day < dateOfBirth.day)) {
+      age--;
+    }
+    return age;
+  }
+
+  // Helper method to get full name
+  String get fullName => '$firstName $lastName'.trim();
+
+  // Helper method to check if profile is complete
+  bool get isComplete {
+    return firstName.isNotEmpty &&
+           lastName.isNotEmpty &&
+           gender.isNotEmpty &&
+           merchantCountry.isNotEmpty &&
+           dateOfBirth.year != 1970;
+  }
+
   // Convert a JSON response from Supabase into a UserProfile object
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     return UserProfile(
@@ -34,7 +57,7 @@ class UserProfile {
           ? DateTime.parse(json['date_of_birth'])
           : DateTime(1970, 1, 1),
       hobbies: json['hobbies'] != null
-          ? (json['hobbies'] as String).split(', ')
+          ? (json['hobbies'] as String).split(', ').where((h) => h.isNotEmpty).toList()
           : [],
       merchantCountry: json['merchant_country'] ?? '',
     );

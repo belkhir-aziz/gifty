@@ -283,27 +283,17 @@ class _LoginScreenState extends BaseRouteState {
   }
 
 Future<void> _loginUser() async {
-
-  // for development only
-  // Validate input fields
-  final profile = await _profileHandler.getUserProfileWithEmail("aziz.belkhir.aziz@gmail.com");
-  if(profile != null){
-    userProvider.setUserProfile(profile);
-  }
-  Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  BottomNavigationWidgetLight(
-                                    currentIndex: 0,
-                                    a: widget.analytics,
-                                    o: widget.observer,
-                                  )));
-  if(profile != null){
-    return;
-  }
   final email = _cEmail.text.trim();
   final password = _cPassword.text.trim();
+  
+  // Validate input fields
   if (email.isEmpty || password.isEmpty) {
     _showNotification('Email and Password cannot be empty', isError: true);
+    return;
+  }
+
+  if (!_isValidEmail(email)) {
+    _showNotification('Please enter a valid email address', isError: true);
     return;
   }
 
@@ -321,19 +311,19 @@ Future<void> _loginUser() async {
       // Retrieve the user's profile from the "Users" table
       final profile = await _profileHandler.getUserProfileWithEmail(email);
       if (profile == null) {
-        _showNotification('For a nice experience, please feel your data', isError: true);
+        _showNotification('Please complete your profile to continue', isError: true);
         // Create a profile for the user in the Users table
-          final userProfile = UserProfile(
-          id: const Uuid().v4(),
+        final userProfile = UserProfile(
+          id: response.user!.id,
           email: email,
           firstName: '', // Placeholder - collect later
           lastName: '',  // Placeholder - collect later
           gender: '',    // Placeholder - collect later
-          dateOfBirth: DateTime.now(), // Placeholder or null
+          dateOfBirth: DateTime.now().subtract(const Duration(days: 6570)), // Default to 18 years ago
           hobbies: [],   // Placeholder - collect later
         );
 
-        // Navigate to the next screen and pass the UID and email to other components
+        // Navigate to the profile completion screen
         Navigator.of(context).pushReplacement(MaterialPageRoute(
           builder: (context) => ProfileDetailScreen(
             a: widget.analytics,
@@ -343,22 +333,21 @@ Future<void> _loginUser() async {
           ),
         ));
       } else {
-          userProvider.setUserProfile(profile);
-          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) =>
-                                  BottomNavigationWidgetLight(
-                                    currentIndex: 0,
-                                    a: widget.analytics,
-                                    o: widget.observer,
-                                  )));
+        userProvider.setUserProfile(profile);
+        Navigator.of(context).pushReplacement(MaterialPageRoute(
+          builder: (context) => BottomNavigationWidgetLight(
+            currentIndex: 0,
+            a: widget.analytics,
+            o: widget.observer,
+          ),
+        ));
       }
     } else {
       _showNotification('Login failed: Invalid credentials.', isError: true);
     }
   } catch (e) {
     String errorMessage = e.toString();
-     String extractedMessage = extractMessage(errorMessage);
-    _showNotification('Sign-up failed: $extractedMessage', isError: true);
+    String extractedMessage = extractMessage(errorMessage);
     _showNotification('Login failed: $extractedMessage', isError: true);
   }
 }
@@ -368,8 +357,19 @@ Future<void> _signUpUser() async {
   final password = _cPassword.text.trim();
   final confirmPassword = _cConfirmPassword.text.trim();
 
+  // Validate input fields
   if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
     _showNotification('Please fill in all fields', isError: true);
+    return;
+  }
+
+  if (!_isValidEmail(email)) {
+    _showNotification('Please enter a valid email address', isError: true);
+    return;
+  }
+
+  if (password.length < 6) {
+    _showNotification('Password must be at least 6 characters long', isError: true);
     return;
   }
 
@@ -379,26 +379,55 @@ Future<void> _signUpUser() async {
   }
 
   try {
+    // Check if user already exists
+    final existingProfile = await _profileHandler.getUserProfileWithEmail(email);
+    if (existingProfile != null) {
+      _showNotification('An account with this email already exists', isError: true);
+      return;
+    }
+
     final response = await Supabase.instance.client.auth.signUp(
       email: email,
       password: password,
     );
 
     if (response.user != null) {
-        // Navigate to the next screen and pass the UID and email to other components
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-          builder: (context) => LoginScreen(
+      _showNotification('Account created successfully! Please complete your profile.', isError: false);
+      
+      // Create a basic user profile
+      final userProfile = UserProfile(
+        id: response.user!.id,
+        email: email,
+        firstName: '',
+        lastName: '',
+        gender: '',
+        dateOfBirth: DateTime.now().subtract(const Duration(days: 6570)), // Default to 18 years ago
+        hobbies: [],
+      );
+
+      // Navigate to profile completion screen
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) => ProfileDetailScreen(
           a: widget.analytics,
           o: widget.observer,
+          userProfile: userProfile,
+          isUpdate: false,
         ),
-        ));
-      } 
+      ));
+    } else {
+      _showNotification('Sign-up failed: Please try again', isError: true);
+    }
   } catch (e) {
-     String errorMessage = e.toString();
-     String extractedMessage = extractMessage(errorMessage);
+    String errorMessage = e.toString();
+    String extractedMessage = extractMessage(errorMessage);
     _showNotification('Sign-up failed: $extractedMessage', isError: true);
   }
 }
+
+bool _isValidEmail(String email) {
+  return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+}
+
 String extractMessage(String errorMessage) {
   final RegExp regex = RegExp(r'message:\s*(.*?),\s*statusCode:');
   final Match? match = regex.firstMatch(errorMessage);

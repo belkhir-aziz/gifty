@@ -58,7 +58,7 @@ class _LoginScreenState extends BaseRouteState {
                     return Container(
                       height: 120,
                       width: 120,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
                             g.AppColors.primary,
@@ -67,7 +67,7 @@ class _LoginScreenState extends BaseRouteState {
                         ),
                         shape: BoxShape.circle,
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.favorite,
                         size: 60,
                         color: Colors.white,
@@ -122,7 +122,7 @@ class _LoginScreenState extends BaseRouteState {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: g.AppColors.primary,
                         width: 2,
                       ),
@@ -163,7 +163,7 @@ class _LoginScreenState extends BaseRouteState {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: g.AppColors.primary,
                         width: 2,
                       ),
@@ -205,7 +205,7 @@ class _LoginScreenState extends BaseRouteState {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: g.AppColors.primary,
                           width: 2,
                         ),
@@ -222,7 +222,7 @@ class _LoginScreenState extends BaseRouteState {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(28),
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
@@ -268,7 +268,7 @@ class _LoginScreenState extends BaseRouteState {
                     isLogin
                         ? "Don't have an account? Sign Up"
                         : "Already have an account? Sign In",
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: g.AppColors.primary,
                       fontWeight: FontWeight.w500,
                     ),

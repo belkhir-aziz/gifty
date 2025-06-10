@@ -241,7 +241,7 @@ Future<void> _saveProfile() async {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: g.AppColors.primary,
                       width: 2,
                     ),
@@ -285,7 +285,7 @@ Future<void> _saveProfile() async {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: g.AppColors.primary,
                       width: 2,
                     ),
@@ -328,7 +328,7 @@ Future<void> _saveProfile() async {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: g.AppColors.primary,
                       width: 2,
                     ),
@@ -383,7 +383,7 @@ Future<void> _saveProfile() async {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: g.AppColors.primary,
                       width: 2,
                     ),
@@ -449,7 +449,7 @@ Future<void> _saveProfile() async {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: g.AppColors.primary,
                       width: 2,
                     ),
@@ -501,7 +501,7 @@ Future<void> _saveProfile() async {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(28),
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [

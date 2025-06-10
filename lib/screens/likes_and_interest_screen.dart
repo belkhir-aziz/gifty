@@ -186,12 +186,12 @@ class _LikesInterestScreenState extends BaseRouteState {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
+                    gradient: const LinearGradient(
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        const Color(0xFF9C27B0),
-                        const Color(0xFFE91E63),
+                        Color(0xFF9C27B0),
+                        Color(0xFFE91E63),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(20),

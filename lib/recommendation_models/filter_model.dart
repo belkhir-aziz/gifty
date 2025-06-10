@@ -115,7 +115,7 @@ class FilterModel implements BaseModel {
 
     // Filter out products that have reactions from the user
     final unseenProducts = productResponse
-        .where((product) => !reactedProductIds.contains(product['id']))
+        .where((product) => !reactedProductIds.contains(product['id'].toString()))
         .map((json) => Product.fromJson(json))
         .toList();
 
@@ -128,7 +128,7 @@ class FilterModel implements BaseModel {
         .select('product_id')
         .eq('user_id', userId);
 
-    // Cast the dynamic response data to List<String>
-    return (response as List<dynamic>).map((reaction) => reaction['product_id'] as String).toList();
+    // Cast the dynamic response data to List<String> with proper type conversion
+    return (response as List<dynamic>).map((reaction) => reaction['product_id'].toString()).toList();
   }
 }

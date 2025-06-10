@@ -60,12 +60,12 @@ class _MyProfileDetailScreenState extends BaseRouteState {
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 60, 20, 30),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      const Color(0xFF9C27B0), // Purple
-                      const Color(0xFFE91E63), // Pink
+                      Color(0xFF9C27B0), // Purple
+                      Color(0xFFE91E63), // Pink
                     ],
                   ),
                   borderRadius: const BorderRadius.only(
@@ -178,9 +178,9 @@ class _MyProfileDetailScreenState extends BaseRouteState {
                             color: const Color(0xFF9C27B0).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.person_outline,
-                            color: const Color(0xFF9C27B0),
+                            color: Color(0xFF9C27B0),
                             size: 24,
                           ),
                         ),
@@ -220,9 +220,9 @@ class _MyProfileDetailScreenState extends BaseRouteState {
                             color: const Color(0xFF9C27B0).withOpacity(0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Icon(
+                          child: const Icon(
                             Icons.favorite_outline,
-                            color: const Color(0xFF9C27B0),
+                            color: Color(0xFF9C27B0),
                             size: 24,
                           ),
                         ),
@@ -257,8 +257,8 @@ class _MyProfileDetailScreenState extends BaseRouteState {
                           ),
                           child: Text(
                             interest,
-                            style: TextStyle(
-                              color: const Color(0xFF9C27B0),
+                            style: const TextStyle(
+                              color: Color(0xFF9C27B0),
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                             ),
@@ -374,8 +374,8 @@ class _MyProfileDetailScreenState extends BaseRouteState {
                 children: [
                   Text(
                     title,
-                    style: TextStyle(
-                      color: const Color(0xFF9C27B0),
+                    style: const TextStyle(
+                      color: Color(0xFF9C27B0),
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -398,9 +398,9 @@ class _MyProfileDetailScreenState extends BaseRouteState {
                 color: const Color(0xFF9C27B0).withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.chevron_right,
-                color: const Color(0xFF9C27B0),
+                color: Color(0xFF9C27B0),
                 size: 20,
               ),
             ),
@@ -432,15 +432,15 @@ class _MyProfileDetailScreenState extends BaseRouteState {
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Row(
+            content: const Row(
               children: [
                 Icon(
                   Icons.check_circle,
                   color: Colors.white,
                   size: 20,
                 ),
-                const SizedBox(width: 8),
-                const Text('Interests updated successfully!'),
+                SizedBox(width: 8),
+                Text('Interests updated successfully!'),
               ],
             ),
             backgroundColor: Colors.green,
@@ -454,8 +454,4 @@ class _MyProfileDetailScreenState extends BaseRouteState {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
 }

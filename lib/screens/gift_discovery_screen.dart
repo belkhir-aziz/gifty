@@ -34,16 +34,20 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
   Future<void> _loadProducts() async {
     try {
       products = await productHandler.fetchProducts(userProvider);
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     } catch (e) {
       if (kDebugMode) {
         print('Error loading products: $e');
       }
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
   
@@ -54,6 +58,12 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
     userProvider = Provider.of<UserProvider>(context, listen: false);
     super.initState();
     _loadProducts();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -76,11 +86,11 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 40, 20, 30),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     colors: [
-                      const Color(0xFF9C27B0), // Purple
-                      const Color(0xFFE91E63), // Pink
+                      Color(0xFF9C27B0), // Purple
+                      Color(0xFFE91E63), // Pink
                     ],
                   ),
                   borderRadius: const BorderRadius.only(
@@ -176,12 +186,12 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
               Container(
                 padding: const EdgeInsets.fromLTRB(20, 40, 20, 30),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      const Color(0xFF9C27B0), // Purple
-                      const Color(0xFFE91E63), // Pink
+                      Color(0xFF9C27B0), // Purple
+                      Color(0xFFE91E63), // Pink
                     ],
                   ),
                   borderRadius: const BorderRadius.only(
@@ -213,7 +223,7 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
               Expanded(
                 child: Stack(
                   children: [
-                    // Cards
+                    // Cards with improved swipe handling
                     Center(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -221,18 +231,27 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
                           cards: _widgets(),
                           controller: _controller,
                           onForward: (index, info) {
-                            setState(() {
-                              _current = index;
-                            });
+                            // Only process if it's a deliberate swipe (not accidental)
+                            if (mounted && info.direction != null) {
+                              setState(() {
+                                _current = index;
+                              });
+                            }
                           },
                           onEnd: () {
-                            _controller.reset();
-                            _current = 0;
+                            if (mounted) {
+                              _controller.reset();
+                              setState(() {
+                                _current = 0;
+                              });
+                            }
                           },
                           onBack: (index, info) {
-                            setState(() {
-                              _current = index;
-                            });
+                            if (mounted) {
+                              setState(() {
+                                _current = index;
+                              });
+                            }
                           },
                           size: Size(
                             MediaQuery.of(context).size.width * 0.9,
@@ -342,8 +361,10 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
                           color: Colors.white,
                           iconSize: 32,
                           onPressed: () {
-                            _controller.forward(direction: SwipDirection.Left);
-                            _saveReaction(products[_current].id, ReactionTypes.dislike);
+                            if (mounted && _current < products.length) {
+                              _controller.forward(direction: SwipDirection.Left);
+                              _saveReaction(products[_current].id, ReactionTypes.dislike);
+                            }
                           },
                         ),
                       ),
@@ -365,8 +386,10 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
                           color: Colors.white,
                           iconSize: 32,
                           onPressed: () {
-                            _controller.forward(direction: SwipDirection.Right);
-                            _saveReaction(products[_current].id, ReactionTypes.like);
+                            if (mounted && _current < products.length) {
+                              _controller.forward(direction: SwipDirection.Right);
+                              _saveReaction(products[_current].id, ReactionTypes.like);
+                            }
                           },
                         ),
                       ),
@@ -408,9 +431,11 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
                           color: Colors.white,
                           iconSize: 32,
                           onPressed: () {
-                            _controller.forward(direction: SwipDirection.Right);
-                            _saveReaction(products[_current].id, ReactionTypes.superLike);
-                            _showSaveConfirmation(context);
+                            if (mounted && _current < products.length) {
+                              _controller.forward(direction: SwipDirection.Right);
+                              _saveReaction(products[_current].id, ReactionTypes.superLike);
+                              _showSaveConfirmation(context);
+                            }
                           },
                         ),
                       ),
@@ -447,7 +472,7 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.shopping_bag,
                                   color: Colors.white,
                                   size: 14,
@@ -475,7 +500,7 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.star,
                                     color: Colors.white,
                                     size: 14,
@@ -569,7 +594,7 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
                     ),
                     child: Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.local_offer,
                           color: g.AppColors.primary,
                           size: 20,
@@ -599,7 +624,7 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
                         print('Could not launch ${products[_current].affiliateLink}');
                       }
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
+                        const SnackBar(
                           content: Text('Could not open the product link'),
                           backgroundColor: g.AppColors.primary,
                         ),
@@ -614,7 +639,7 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
                     ),
                     child: Row(
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.link,
                           color: g.AppColors.primary,
                           size: 20,
@@ -629,7 +654,7 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
                             ),
                           ),
                         ),
-                        Icon(
+                        const Icon(
                           Icons.arrow_forward_ios,
                           color: g.AppColors.primary,
                           size: 16,
@@ -650,7 +675,7 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(
+              child: const Text(
                 'Close',
                 style: TextStyle(
                   color: g.AppColors.primary,
@@ -674,7 +699,7 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
           print('Could not launch ${products[_current].affiliateLink}');
         }
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Could not open the merchant link'),
             backgroundColor: g.AppColors.error,
           ),
@@ -682,7 +707,7 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('No merchant link available for this product'),
           backgroundColor: g.AppColors.warning,
         ),
@@ -693,14 +718,14 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
   void _showSaveConfirmation(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Row(
+        content: const Row(
           children: [
             Icon(
               Icons.check_circle,
               color: Colors.white,
               size: 24,
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             Text(
               'Saved to your wish list!',
               style: TextStyle(
@@ -764,9 +789,11 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
       borderRadius: BorderRadius.circular(28),
       child: InkWell(
         onTap: () {
-          setState(() {
-            _isHelpExpanded = true;
-          });
+          if (mounted) {
+            setState(() {
+              _isHelpExpanded = true;
+            });
+          }
         },
         borderRadius: BorderRadius.circular(28),
         splashColor: g.AppColors.primary.withOpacity(0.2),
@@ -797,7 +824,7 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
                   color: g.AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.help_outline_rounded,
                   color: g.AppColors.primary,
                   size: 24,
@@ -836,13 +863,15 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
                   // Minimize button
                   InkWell(
                     onTap: () {
-                      setState(() {
-                        _isHelpExpanded = false;
-                      });
+                      if (mounted) {
+                        setState(() {
+                          _isHelpExpanded = false;
+                        });
+                      }
                     },
                     child: Container(
                       padding: const EdgeInsets.all(4),
-                      child: Icon(
+                      child: const Icon(
                         Icons.minimize,
                         color: g.AppColors.primary,
                         size: 20,
@@ -853,13 +882,15 @@ class _GiftDiscoveryScreenState extends BaseRouteState {
                   // Close button
                   InkWell(
                     onTap: () {
-                      setState(() {
-                        _showHelpPopup = false;
-                      });
+                      if (mounted) {
+                        setState(() {
+                          _showHelpPopup = false;
+                        });
+                      }
                     },
                     child: Container(
                       padding: const EdgeInsets.all(4),
-                      child: Icon(
+                      child: const Icon(
                         Icons.close,
                         color: g.AppColors.error,
                         size: 20,

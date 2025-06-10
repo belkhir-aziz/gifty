@@ -8,7 +8,7 @@ import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:provider/provider.dart';
 
 class InvitationDialog extends StatefulWidget {
-  const InvitationDialog({Key? key}) : super(key: key);
+  const InvitationDialog({super.key});
 
   @override
   _InvitationDialogState createState() => _InvitationDialogState();
@@ -77,14 +77,14 @@ class _InvitationDialogState extends State<InvitationDialog> {
   void _showSuccess() {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Row(
+        content: const Row(
           children: [
             Icon(
               Icons.check_circle,
               color: Colors.white,
               size: 24,
             ),
-            const SizedBox(width: 8),
+            SizedBox(width: 8),
             Text(
               'Invitation sent successfully!',
               style: TextStyle(
@@ -118,7 +118,7 @@ class _InvitationDialogState extends State<InvitationDialog> {
       ),
       title: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.person_add,
             color: g.AppColors.primary,
             size: 28,
@@ -132,7 +132,7 @@ class _InvitationDialogState extends State<InvitationDialog> {
           ),
         ],
       ),
-      content: Container(
+      content: SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -150,7 +150,7 @@ class _InvitationDialogState extends State<InvitationDialog> {
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.all(16),
                 hintText: 'friend@example.com',
-                prefixIcon: Icon(
+                prefixIcon: const Icon(
                   Icons.email,
                   color: g.AppColors.primary,
                 ),
@@ -164,7 +164,7 @@ class _InvitationDialogState extends State<InvitationDialog> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: g.AppColors.primary),
+                  borderSide: const BorderSide(color: g.AppColors.primary),
                 ),
               ),
             ),
@@ -194,7 +194,7 @@ class _InvitationDialogState extends State<InvitationDialog> {
                     : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.send,
                             color: Colors.white,
                             size: 20,

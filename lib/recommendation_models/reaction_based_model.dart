@@ -52,7 +52,7 @@ class ReactionBasedModel implements BaseModel {
       int likeCount = 0;
       int dislikeCount = 0;
 
-      productReactions.forEach((reaction) {
+      for (var reaction in productReactions) {
         if (reaction['reaction_type'] == 'superLike') {
           superLikeCount++;
         } else if (reaction['reaction_type'] == 'like') {
@@ -60,7 +60,7 @@ class ReactionBasedModel implements BaseModel {
         } else if (reaction['reaction_type'] == 'dislike') {
           dislikeCount++;
         }
-      });
+      }
 
       int nbInteraction = superLikeCount + likeCount + dislikeCount;
       double score = (3 * superLikeCount + likeCount - dislikeCount) / nbInteraction;

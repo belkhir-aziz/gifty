@@ -1,4 +1,3 @@
-import 'package:datingapp/utils/data_types/invitation_status.dart';
 
 class UserProfile {
   final String id;

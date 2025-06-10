@@ -20,7 +20,7 @@ class FriendsScreen extends BaseRoute {
 }
 
 class _FriendsScreenState extends BaseRouteState {
-  int _currentIndex = 0;
+  final int _currentIndex = 0;
   TabController? _tabController;
   List<UserProfile> friends = [];
   List<UserProfile> filteredFriends = [];
@@ -92,12 +92,12 @@ class _FriendsScreenState extends BaseRouteState {
         Container(
           padding: const EdgeInsets.fromLTRB(20, 40, 20, 30),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                const Color(0xFF9C27B0), // Purple
-                const Color(0xFFE91E63), // Pink
+                Color(0xFF9C27B0), // Purple
+                Color(0xFFE91E63), // Pink
               ],
             ),
             borderRadius: const BorderRadius.only(
@@ -223,15 +223,15 @@ class _FriendsScreenState extends BaseRouteState {
                     controller: searchController,
                     decoration: InputDecoration(
                       hintText: 'Search friends...',
-                      prefixIcon: Icon(
+                      prefixIcon: const Icon(
                         Icons.search,
-                        color: const Color(0xFF9C27B0),
+                        color: Color(0xFF9C27B0),
                       ),
                       suffixIcon: searchQuery.isNotEmpty
                           ? IconButton(
-                              icon: Icon(
+                              icon: const Icon(
                                 Icons.clear,
-                                color: const Color(0xFF9C27B0),
+                                color: Color(0xFF9C27B0),
                               ),
                               onPressed: () {
                                 searchController.clear();
@@ -247,10 +247,10 @@ class _FriendsScreenState extends BaseRouteState {
               const SizedBox(width: 12),
               Container(
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [
-                      const Color(0xFF9C27B0),
-                      const Color(0xFFE91E63),
+                      Color(0xFF9C27B0),
+                      Color(0xFFE91E63),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
@@ -319,10 +319,10 @@ class _FriendsScreenState extends BaseRouteState {
                     padding: const EdgeInsets.all(2),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      gradient: LinearGradient(
+                      gradient: const LinearGradient(
                         colors: [
-                          const Color(0xFF9C27B0),
-                          const Color(0xFFE91E63),
+                          Color(0xFF9C27B0),
+                          Color(0xFFE91E63),
                         ],
                       ),
                       boxShadow: [
@@ -338,8 +338,8 @@ class _FriendsScreenState extends BaseRouteState {
                       backgroundColor: g.isDarkModeEnable ? g.AppColors.darkSurface : Colors.white,
                       child: Text(
                         '${currentProfile.firstName[0].toUpperCase()}${currentProfile.lastName[0].toUpperCase()}',
-                        style: TextStyle(
-                          color: const Color(0xFF9C27B0),
+                        style: const TextStyle(
+                          color: Color(0xFF9C27B0),
                           fontWeight: FontWeight.bold,
                           fontSize: 20,
                         ),
@@ -374,9 +374,9 @@ class _FriendsScreenState extends BaseRouteState {
                       color: const Color(0xFF9C27B0).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.arrow_forward_ios,
-                      color: const Color(0xFF9C27B0),
+                      color: Color(0xFF9C27B0),
                       size: 16,
                     ),
                   ),
@@ -406,8 +406,8 @@ class _FriendsScreenState extends BaseRouteState {
                 ),
                 child: Text(
                   '${filteredFriends.length} friends',
-                  style: TextStyle(
-                    color: const Color(0xFF9C27B0),
+                  style: const TextStyle(
+                    color: Color(0xFF9C27B0),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -425,7 +425,7 @@ class _FriendsScreenState extends BaseRouteState {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.search_off,
                             size: 64,
                             color: Colors.grey,
@@ -483,10 +483,10 @@ class _FriendsScreenState extends BaseRouteState {
                                 padding: const EdgeInsets.all(2),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  gradient: LinearGradient(
+                                  gradient: const LinearGradient(
                                     colors: [
-                                      const Color(0xFF9C27B0),
-                                      const Color(0xFFE91E63),
+                                      Color(0xFF9C27B0),
+                                      Color(0xFFE91E63),
                                     ],
                                   ),
                                   boxShadow: [
@@ -502,8 +502,8 @@ class _FriendsScreenState extends BaseRouteState {
                                   backgroundColor: g.isDarkModeEnable ? g.AppColors.darkSurface : Colors.white,
                                   child: Text(
                                     '${friend.firstName[0].toUpperCase()}${friend.lastName[0].toUpperCase()}',
-                                    style: TextStyle(
-                                      color: const Color(0xFF9C27B0),
+                                    style: const TextStyle(
+                                      color: Color(0xFF9C27B0),
                                       fontWeight: FontWeight.bold,
                                       fontSize: 18,
                                     ),
@@ -537,9 +537,9 @@ class _FriendsScreenState extends BaseRouteState {
                                   color: const Color(0xFF9C27B0).withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: Icon(
+                                child: const Icon(
                                   Icons.arrow_forward_ios,
-                                  color: const Color(0xFF9C27B0),
+                                  color: Color(0xFF9C27B0),
                                   size: 16,
                                 ),
                               ),
@@ -562,7 +562,7 @@ class _FriendsScreenState extends BaseRouteState {
         Container(
           padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
@@ -592,7 +592,7 @@ class _FriendsScreenState extends BaseRouteState {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: IconButton(
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.arrow_back_ios,
                         color: Colors.white,
                       ),
@@ -643,7 +643,7 @@ class _FriendsScreenState extends BaseRouteState {
                                 ),
                               ],
                             ),
-                            child: Icon(
+                            child: const Icon(
                               MdiIcons.giftOpen,
                               size: 48,
                               color: g.AppColors.primary,
@@ -820,7 +820,7 @@ class _FriendsScreenState extends BaseRouteState {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.shopping_bag,
                                 color: g.AppColors.primary,
                                 size: 14,
@@ -828,7 +828,7 @@ class _FriendsScreenState extends BaseRouteState {
                               const SizedBox(width: 4),
                               Text(
                                 '\$${product.price?.toStringAsFixed(2) ?? '0.00'}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: g.AppColors.primary,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 14,
@@ -847,7 +847,7 @@ class _FriendsScreenState extends BaseRouteState {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.star,
                                   color: Colors.amber,
                                   size: 14,
@@ -938,7 +938,7 @@ class _FriendsScreenState extends BaseRouteState {
                           color: Colors.red.withOpacity(0.3),
                         ),
                       ),
-                      child: Column(
+                      child: const Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
@@ -946,7 +946,7 @@ class _FriendsScreenState extends BaseRouteState {
                             color: Colors.red,
                             size: 18,
                           ),
-                          const SizedBox(height: 2),
+                          SizedBox(height: 2),
                           Text(
                             'Remove',
                             style: TextStyle(
@@ -985,7 +985,7 @@ class _FriendsScreenState extends BaseRouteState {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.bookmark,
                       color: Colors.white,
                       size: 12,
@@ -1063,7 +1063,7 @@ class _FriendsScreenState extends BaseRouteState {
                   color: Colors.red.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.remove_circle_outline,
                   color: Colors.red,
                   size: 24,
@@ -1105,7 +1105,7 @@ class _FriendsScreenState extends BaseRouteState {
                 ),
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.info_outline,
                       color: Colors.orange,
                       size: 20,
@@ -1186,7 +1186,7 @@ class _FriendsScreenState extends BaseRouteState {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CircularProgressIndicator(
+                const CircularProgressIndicator(
                   color: g.AppColors.primary,
                 ),
                 const SizedBox(height: 16),
@@ -1218,7 +1218,7 @@ class _FriendsScreenState extends BaseRouteState {
         SnackBar(
           content: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.check_circle,
                 color: Colors.white,
               ),
@@ -1248,7 +1248,7 @@ class _FriendsScreenState extends BaseRouteState {
         SnackBar(
           content: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.error,
                 color: Colors.white,
               ),
@@ -1280,17 +1280,17 @@ class _FriendsScreenState extends BaseRouteState {
       // Show message that item is already reserved by someone else
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Row(
+          content: const Row(
             children: [
               Icon(
                 Icons.info,
                 color: Colors.white,
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Expanded(
                 child: Text(
                   'This item is already reserved by another friend',
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ],
@@ -1320,7 +1320,7 @@ class _FriendsScreenState extends BaseRouteState {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CircularProgressIndicator(
+                const CircularProgressIndicator(
                   color: g.AppColors.primary,
                 ),
                 const SizedBox(height: 16),
@@ -1360,7 +1360,7 @@ class _FriendsScreenState extends BaseRouteState {
         SnackBar(
           content: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.check_circle,
                 color: Colors.white,
               ),
@@ -1392,7 +1392,7 @@ class _FriendsScreenState extends BaseRouteState {
         SnackBar(
           content: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.error,
                 color: Colors.white,
               ),

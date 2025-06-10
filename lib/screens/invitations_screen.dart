@@ -1,12 +1,9 @@
 import 'package:datingapp/models/businessLayer/base_route.dart';
 import 'package:datingapp/models/businessLayer/global.dart' as g;
 import 'package:datingapp/models/user_profile.dart';
-import 'package:datingapp/models/user_relations.dart';
 import 'package:datingapp/provider/user_provider.dart';
 import 'package:datingapp/provider/user_relation_handler.dart';
-import 'package:datingapp/utils/data_types/invitation_status.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
 class InvitationsScreen extends BaseRoute {

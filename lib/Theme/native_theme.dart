@@ -4,21 +4,21 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
   if (isDarkModeEnable) {
     return ThemeData(
       useMaterial3: true,
-      colorScheme: ColorScheme.dark(
-        primary: const Color(0xFF9C27B0),
-        secondary: const Color(0xFFE91E63),
-        surface: const Color(0xFF03000C),
-        background: const Color(0xFF03000C),
-        error: const Color(0xFFF0384F),
+      colorScheme: const ColorScheme.dark(
+        primary: Color(0xFF9C27B0),
+        secondary: Color(0xFFE91E63),
+        surface: Color(0xFF03000C),
+        background: Color(0xFF03000C),
+        error: Color(0xFFF0384F),
       ),
       textSelectionTheme: const TextSelectionThemeData(
         cursorColor: Colors.white,
         selectionHandleColor: Colors.white,
       ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         color: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: IconThemeData(color: Colors.white),
         titleTextStyle: TextStyle(
           color: Colors.white,
           fontSize: 20,
@@ -88,58 +88,58 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
           letterSpacing: 0,
         ),
       ),
-      textTheme: TextTheme(
-        displayLarge: const TextStyle(
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(
           fontSize: 32,
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
-        displayMedium: const TextStyle(
+        displayMedium: TextStyle(
           fontSize: 24,
           color: Color(0xFF9C27B0),
           fontWeight: FontWeight.bold,
         ),
-        displaySmall: const TextStyle(
+        displaySmall: TextStyle(
           fontSize: 20,
           color: Color(0xFFE91E63),
           fontWeight: FontWeight.bold,
         ),
-        headlineMedium: const TextStyle(
+        headlineMedium: TextStyle(
           color: Colors.white,
           fontSize: 18,
         ),
-        headlineSmall: const TextStyle(
+        headlineSmall: TextStyle(
           fontSize: 16,
           color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w700,
         ),
-        titleLarge: const TextStyle(
+        titleLarge: TextStyle(
           color: Color(0xFFE91E63),
           fontSize: 16,
         ),
-        titleMedium: const TextStyle(
+        titleMedium: TextStyle(
           fontSize: 14,
           color: Colors.white,
         ),
-        titleSmall: const TextStyle(
+        titleSmall: TextStyle(
           fontSize: 12,
           color: Colors.white60,
         ),
         bodyLarge: TextStyle(
-          color: const Color(0xFF9C27B0),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w600,
         ),
-        bodyMedium: const TextStyle(
+        bodyMedium: TextStyle(
           fontSize: 14,
           color: Color(0xFFE91E63),
           fontWeight: FontWeight.w700,
         ),
-        bodySmall: const TextStyle(
+        bodySmall: TextStyle(
           fontSize: 12,
           color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w400,
         ),
-        labelSmall: const TextStyle(
+        labelSmall: TextStyle(
           color: Color(0xFFE91E63),
           fontSize: 20,
           fontWeight: FontWeight.bold,
@@ -234,23 +234,23 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
   } else {
     return ThemeData(
       useMaterial3: true,
-      colorScheme: ColorScheme.light(
-        primary: const Color(0xFF9C27B0),
-        secondary: const Color(0xFFE91E63),
-        surface: const Color(0xFFEEFCFF),
-        background: const Color(0xFFEEFCFF),
-        error: const Color(0xFFF0384F),
+      colorScheme: const ColorScheme.light(
+        primary: Color(0xFF9C27B0),
+        secondary: Color(0xFFE91E63),
+        surface: Color(0xFFEEFCFF),
+        background: Color(0xFFEEFCFF),
+        error: Color(0xFFF0384F),
       ),
       textSelectionTheme: const TextSelectionThemeData(
         cursorColor: Color(0xFF9C27B0),
         selectionHandleColor: Color(0xFF9C27B0),
       ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         color: Colors.transparent,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Color(0xFF9C27B0)),
+        iconTheme: IconThemeData(color: Color(0xFF9C27B0)),
         titleTextStyle: TextStyle(
-          color: const Color(0xFF9C27B0),
+          color: Color(0xFF9C27B0),
           fontSize: 20,
           fontWeight: FontWeight.w600,
           fontFamily: 'Lexend',
@@ -319,59 +319,59 @@ ThemeData nativeTheme(bool isDarkModeEnable) {
           letterSpacing: 0,
         ),
       ),
-      textTheme: TextTheme(
+      textTheme: const TextTheme(
         displayLarge: TextStyle(
           fontSize: 32,
           fontWeight: FontWeight.bold,
-          color: const Color(0xFF9C27B0),
+          color: Color(0xFF9C27B0),
         ),
         displayMedium: TextStyle(
           fontSize: 24,
-          color: const Color(0xFF9C27B0),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.bold,
         ),
         displaySmall: TextStyle(
           fontSize: 20,
-          color: const Color(0xFFE91E63),
+          color: Color(0xFFE91E63),
           fontWeight: FontWeight.bold,
         ),
-        headlineMedium: const TextStyle(
+        headlineMedium: TextStyle(
           color: Colors.white,
           fontSize: 18,
         ),
         headlineSmall: TextStyle(
           fontSize: 16,
-          color: const Color(0xFF9C27B0),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w700,
         ),
-        titleLarge: const TextStyle(
+        titleLarge: TextStyle(
           color: Color(0xFFE91E63),
           fontSize: 16,
         ),
-        titleMedium: const TextStyle(
+        titleMedium: TextStyle(
           fontSize: 14,
           color: Colors.white,
         ),
-        titleSmall: const TextStyle(
+        titleSmall: TextStyle(
           fontSize: 12,
           color: Colors.white60,
         ),
         bodyLarge: TextStyle(
-          color: const Color(0xFF9C27B0),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w600,
         ),
         bodyMedium: TextStyle(
           fontSize: 14,
-          color: const Color(0xFFE91E63),
+          color: Color(0xFFE91E63),
           fontWeight: FontWeight.w700,
         ),
         bodySmall: TextStyle(
           fontSize: 12,
-          color: const Color(0xFF9C27B0),
+          color: Color(0xFF9C27B0),
           fontWeight: FontWeight.w400,
         ),
         labelSmall: TextStyle(
-          color: const Color(0xFFE91E63),
+          color: Color(0xFFE91E63),
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
